@@ -1,0 +1,10 @@
+# Archivos internos de Eclipse.
+/.classpath
+/.project
+/*.iml
+# Archivos internos de IntelliJ IDEA.
+/.idea/
+/.settings/
+# Archivos de bytecode
+/bin/
+
