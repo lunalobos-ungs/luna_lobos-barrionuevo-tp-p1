@@ -2,11 +2,7 @@ package juego;
 
 import entorno.Entorno;
 
-public class Princesa implements Elemento{
-
-    public Princesa(){
-    }
-
+public class Enemigo implements Elemento{
     @Override
     public int id() {
         throw new UnsupportedOperationException("método aún sin implementar");
@@ -14,7 +10,7 @@ public class Princesa implements Elemento{
 
     @Override
     public String tipo() {
-        return "princesa";
+        return "enemigo";
     }
 
     @Override
