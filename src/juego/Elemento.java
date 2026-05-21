@@ -13,7 +13,7 @@ public interface Elemento {
      * Un identificador único para el elemento.
      * @return el identificador del elemento
      */
-    Integer id();
+    int id();
 
     /**
      * El tipo del elemento (por ejemplo: princesa, isla flotante, enemigo, proyectil, etc)
@@ -58,17 +58,7 @@ public interface Elemento {
      *
      * @param angulo el ángulo en radianes
      */
-    void mover(float angulo);
-
-    /**
-     * Para aquellos casos en los que haya colisiones u otros eventos,
-     * la idea es llamar a este método en cada tick. Las implementaciones
-     * deben detectar de que evento se trata y actuar en consecuencia.
-     *
-     * @param entorno el entorno
-     * @param contexto el contexto
-     */
-    void reaccionar(Entorno entorno, Contexto contexto);
+    void mover(float angulo, Entorno entorno);
 
     /**
      * Cambia las propiedades del elemento argumento si este está en colisión.
