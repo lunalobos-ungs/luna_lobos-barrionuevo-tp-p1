@@ -66,4 +66,34 @@ public interface Elemento {
      */
     void actuar(Elemento elemento);
 
+    /**
+     * Establece el angulo.
+     * @param angulo el nuevo angulo
+     */
+    void establecerAngulo(double angulo);
+
+    /**
+     * Establece la coordenada x
+     * @param x la nueva coordenada x
+     */
+    void establecerX(double x);
+
+    /**
+     * Establece la coordenada y.
+     * @param y la nueva coordenada y
+     */
+    void establecerY(double y);
+
+    /**
+     * La idea de este método es que las implementaciones lo usen cuando
+     * necesiten que ocurra un cambio que no solo involucre el ángulo,
+     * o las coordenadas x o y. Por ejemplo, que cuando un enemigo muere
+     * muestre otra imagen, o que cuando la princesa está saltando muestre
+     * otra imágen, etc. Quien llame a este método deberá colocar un mensaje
+     * válido, esto dependerá de la implementación y del contexto en cual
+     * se llame al método.
+     * @param mensaje el mensaje que recibe el elemento, debe ser válido
+     * @param entorno el entorno
+     */
+    void recibirMensaje(String mensaje, Entorno entorno);
 }
