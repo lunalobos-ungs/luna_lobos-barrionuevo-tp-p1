@@ -47,4 +47,24 @@ public class Isla implements Elemento{
     public void actuar(Elemento elemento) {
         throw new UnsupportedOperationException("método aún sin implementar");
     }
+
+    @Override
+    public void establecerAngulo(double angulo) {
+        throw new UnsupportedOperationException("método aún sin implementar");
+    }
+
+    @Override
+    public void establecerX(double x) {
+        throw new UnsupportedOperationException("método aún sin implementar");
+    }
+
+    @Override
+    public void establecerY(double y) {
+        throw new UnsupportedOperationException("método aún sin implementar");
+    }
+
+    @Override
+    public void recibirMensaje(String mensaje, Entorno entorno) {
+        throw new UnsupportedOperationException("método aún sin implementar");
+    }
 }
