@@ -3,6 +3,7 @@ package juego;
 import entorno.Entorno;
 
 public class Isla implements Elemento{
+
     @Override
     public int id() {
         throw new UnsupportedOperationException("método aún sin implementar");

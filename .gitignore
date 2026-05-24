@@ -7,4 +7,5 @@
 /.settings/
 # Archivos de bytecode
 /bin/
+/out/
 

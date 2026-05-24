@@ -40,6 +40,38 @@ public interface Elemento {
     double y();
 
     /**
+     *
+     * @return el ancho de este elemento
+     */
+    default double ancho(){
+        throw new UnsupportedOperationException("sin implementar");
+    }
+
+    /**
+     *
+     * @return el alto de este elemento
+     */
+    default double alto(){
+        throw new UnsupportedOperationException("sin implementar");
+    }
+
+    /**
+     *
+     * @param ancho el nuevo ancho del elemento
+     */
+    default void establecerAncho(double ancho){
+        throw new UnsupportedOperationException("sin implementar");
+    }
+
+    /**
+     *
+     * @param alto el nuevo alto del elemento
+     */
+    default void establecerAlto(double alto){
+        throw new UnsupportedOperationException("sin implementar");
+    }
+
+    /**
      * Devuelve true cuando las coordenadas introducidas están dentro de los límites del elemento.
      * @param x la coordenada x a verificar
      * @param y la coordenada y a verificar
@@ -58,7 +90,13 @@ public interface Elemento {
      *
      * @param angulo el ángulo en radianes
      */
-    void mover(float angulo, Entorno entorno);
+    default void mover(float angulo, Entorno entorno) {
+        throw new UnsupportedOperationException("sin implementar");
+    }
+
+    default void mover(Entorno entorno){
+        throw new UnsupportedOperationException("sin implementar");
+    }
 
     /**
      * Cambia las propiedades del elemento argumento si este está en colisión.
@@ -95,5 +133,22 @@ public interface Elemento {
      * @param mensaje el mensaje que recibe el elemento, debe ser válido
      * @param entorno el entorno
      */
-    void recibirMensaje(String mensaje, Entorno entorno);
+    default void recibirMensaje(String mensaje, Entorno entorno){
+        throw new UnsupportedOperationException("sin implementar");
+    }
+
+
+    /**
+     * La idea de este método es que las implementaciones lo usen cuando
+     * necesiten que ocurra un cambio que no solo involucre el ángulo,
+     * o las coordenadas x o y. Por ejemplo, que cuando un enemigo muere
+     * muestre otra imagen, o que cuando la princesa está saltando muestre
+     * otra imágen, etc. Quien llame a este método deberá colocar un mensaje
+     * válido, esto dependerá de la implementación y del contexto en cual
+     * se llame al método.
+     * @param mensaje el mensaje que recibe el elemento, debe ser válido
+     */
+    default void recibirMensaje(String mensaje){
+        throw new UnsupportedOperationException("sin implementar");
+    }
 }
