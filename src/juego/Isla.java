@@ -2,6 +2,11 @@ package juego;
 
 import entorno.Entorno;
 
+/**
+ * Representa una isla flotante del juego. Implementación provisional;
+ * la mayoría de sus métodos aún no están implementados.
+ *
+ */
 public class Isla implements Elemento{
 
     @Override
@@ -30,8 +35,23 @@ public class Isla implements Elemento{
     }
 
     @Override
-    public void estaContenido(double x, double y) {
-        throw new UnsupportedOperationException("método aún sin implementar");
+    public double ancho() {
+        return 0;
+    }
+
+    @Override
+    public double alto() {
+        return 0;
+    }
+
+    @Override
+    public void establecerAncho(double ancho) {
+
+    }
+
+    @Override
+    public void establecerAlto(double alto) {
+
     }
 
     @Override
@@ -40,8 +60,8 @@ public class Isla implements Elemento{
     }
 
     @Override
-    public void mover(float angulo, Entorno entorno) {
-        throw new UnsupportedOperationException("método aún sin implementar");
+    public void mover(Entorno entorno) {
+
     }
 
     @Override
@@ -65,7 +85,7 @@ public class Isla implements Elemento{
     }
 
     @Override
-    public void recibirMensaje(String mensaje, Entorno entorno) {
+    public void recibirMensaje(String mensaje) {
         throw new UnsupportedOperationException("método aún sin implementar");
     }
 }

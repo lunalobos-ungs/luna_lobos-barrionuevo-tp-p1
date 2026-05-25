@@ -13,12 +13,15 @@ import java.util.Iterator;
 public interface Contexto {
 
     /**
-     * Este método detecta el elemento con el cual colisiona el elemento argumento, puede devolver null.
+     * Este método detecta los elementos con los cuales colisiona el
+     * elemento argumento, puede devolver un array vacío si no hay
+     * colisiones.
      *
      * @param elemento el elemento del cual queremos saber si está en colisión.
-     * @return el elemento con el cual colisiona el argumento o null si no está en colisión.
+     * @return los elementos con los cuales colisiona el argumento, o un array
+     * vacío si no hay colisiones.
      */
-    Elemento enColisionCon(Elemento elemento);
+    Elemento[] enColisionCon(Elemento elemento);
 
     /**
      * Agrega un elemento al contexto, el mismo debe renderizarse en
@@ -36,7 +39,16 @@ public interface Contexto {
      */
     void quitar(Elemento elemento);
 
-    default Iterator<Elemento> iterador() {
-        throw new UnsupportedOperationException("no implementado");
-    }
+    /**
+     * Devuelve un iterador sobre todos los elementos actualmente en el contexto.
+     *
+     * @return un iterador de {@link Elemento}
+     */
+    Iterator<Elemento> iterador();
+
+    /**
+     * Elimina del contexto todos los elementos que se encuentran fuera de los
+     * límites del mundo.
+     */
+    void purgar();
 }

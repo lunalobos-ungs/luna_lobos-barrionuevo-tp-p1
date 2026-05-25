@@ -7,7 +7,7 @@ import entorno.Entorno;
  *
  * @author Miguel Angel Luna Lobos
  */
-public interface Elemento {
+public interface Elemento extends Rectangulo{
 
     /**
      * Un identificador único para el elemento.
@@ -28,57 +28,6 @@ public interface Elemento {
     double angulo();
 
     /**
-     * La coordenada x del centro del elemento.
-     * @return la coordenada x del elemento
-     */
-    double x();
-
-    /**
-     * La coordenada y del centro del elemento.
-     * @return la coordenada y del elemento
-     */
-    double y();
-
-    /**
-     *
-     * @return el ancho de este elemento
-     */
-    default double ancho(){
-        throw new UnsupportedOperationException("sin implementar");
-    }
-
-    /**
-     *
-     * @return el alto de este elemento
-     */
-    default double alto(){
-        throw new UnsupportedOperationException("sin implementar");
-    }
-
-    /**
-     *
-     * @param ancho el nuevo ancho del elemento
-     */
-    default void establecerAncho(double ancho){
-        throw new UnsupportedOperationException("sin implementar");
-    }
-
-    /**
-     *
-     * @param alto el nuevo alto del elemento
-     */
-    default void establecerAlto(double alto){
-        throw new UnsupportedOperationException("sin implementar");
-    }
-
-    /**
-     * Devuelve true cuando las coordenadas introducidas están dentro de los límites del elemento.
-     * @param x la coordenada x a verificar
-     * @param y la coordenada y a verificar
-     */
-    void estaContenido(double x, double y);
-
-    /**
      * Renderiza el elemento en pantalla.
      *
      * @param entorno el entorno
@@ -86,17 +35,11 @@ public interface Elemento {
     void dibujar(Entorno entorno);
 
     /**
-     * Mueve el elemento en el ángulo indicado.
+     * Actualiza la posición del elemento.
      *
-     * @param angulo el ángulo en radianes
+     * @param entorno el entorno del juego
      */
-    default void mover(float angulo, Entorno entorno) {
-        throw new UnsupportedOperationException("sin implementar");
-    }
-
-    default void mover(Entorno entorno){
-        throw new UnsupportedOperationException("sin implementar");
-    }
+    void mover(Entorno entorno);
 
     /**
      * Cambia las propiedades del elemento argumento si este está en colisión.
@@ -122,33 +65,28 @@ public interface Elemento {
      */
     void establecerY(double y);
 
-    /**
-     * La idea de este método es que las implementaciones lo usen cuando
-     * necesiten que ocurra un cambio que no solo involucre el ángulo,
-     * o las coordenadas x o y. Por ejemplo, que cuando un enemigo muere
-     * muestre otra imagen, o que cuando la princesa está saltando muestre
-     * otra imágen, etc. Quien llame a este método deberá colocar un mensaje
-     * válido, esto dependerá de la implementación y del contexto en cual
-     * se llame al método.
-     * @param mensaje el mensaje que recibe el elemento, debe ser válido
-     * @param entorno el entorno
-     */
-    default void recibirMensaje(String mensaje, Entorno entorno){
-        throw new UnsupportedOperationException("sin implementar");
-    }
-
 
     /**
      * La idea de este método es que las implementaciones lo usen cuando
      * necesiten que ocurra un cambio que no solo involucre el ángulo,
      * o las coordenadas x o y. Por ejemplo, que cuando un enemigo muere
-     * muestre otra imagen, o que cuando la princesa está saltando muestre
-     * otra imágen, etc. Quien llame a este método deberá colocar un mensaje
-     * válido, esto dependerá de la implementación y del contexto en cual
-     * se llame al método.
+     * muestre otra imagen. Quien llame a este método deberá colocar un
+     * mensaje válido, esto dependerá de la implementación y del contexto
+     * en cual se llame al método.
      * @param mensaje el mensaje que recibe el elemento, debe ser válido
      */
-    default void recibirMensaje(String mensaje){
+    void recibirMensaje(String mensaje);
+
+    /**
+     * Dispara un proyectil desde la posición del elemento hacia el cursor del mouse.
+     * Por defecto lanza {@link UnsupportedOperationException}; las subclases que
+     * soporten esta operación deben sobreescribir este método.
+     *
+     * @param contexto     el contexto del juego donde se agrega el proyectil
+     * @param entorno      el entorno del juego
+     * @param generadorId  el generador de IDs para el nuevo proyectil
+     */
+    default void disparar(Contexto contexto, Entorno entorno, GeneradorId generadorId){
         throw new UnsupportedOperationException("sin implementar");
     }
 }
