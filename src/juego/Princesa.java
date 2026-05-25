@@ -7,6 +7,13 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * Personaje principal del juego. Se mueve horizontalmente con las teclas de dirección,
+ * salta con la tecla {@code 'a'} cuando está en tierra firme y cae por gravedad.
+ * Dispara {@link ProyectilPrincesa} hacia el cursor al presionar el botón izquierdo del mouse.
+ *
+ * @author Miguel Angel Luna Lobos
+ */
 public class Princesa implements Elemento {
 
     private final Image princesaOriginal;
@@ -31,6 +38,13 @@ public class Princesa implements Elemento {
     private double aceleracionGravitatoria;
     private Instant marcaTemporalDeCaida;
 
+    /**
+     * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación
+     * de caída libre.
+     *
+     * @param generadorId generador de IDs para asignar un identificador único
+     * @param entorno     el entorno del juego
+     */
     public Princesa(GeneradorId generadorId, Entorno entorno) {
         x = entorno.ancho() / 2.0;
         y = 0;
@@ -93,11 +107,6 @@ public class Princesa implements Elemento {
     }
 
     @Override
-    public void estaContenido(double x, double y) {
-        throw new UnsupportedOperationException("método aún sin implementar");
-    }
-
-    @Override
     public void dibujar(Entorno entorno) {
         entorno.dibujarImagen(princesa, x + 5, y, 0, 1);
     }
@@ -122,8 +131,12 @@ public class Princesa implements Elemento {
         }
     }
 
+    /**
+     * Aplica el movimiento lateral de la princesa, reduciendo la velocidad si está
+     * en tierra firme para evitar deslizamiento excesivo.
+     */
     private void movimientoLateral() {
-        if(aceleracionGravitatoria <= 0.1){
+        if (aceleracionGravitatoria <= 0.1) {
             movimiento(angulo, velocidad * 0.75);
         } else {
             movimiento(angulo, velocidad);
@@ -131,10 +144,11 @@ public class Princesa implements Elemento {
     }
 
     /**
-     * Un método para efectivamente mover a la princesa sin condiciones
+     * Desplaza a la princesa en la dirección y velocidad indicadas, sin ninguna
+     * condición adicional.
      *
-     * @param angulo
-     * @param velocidad
+     * @param angulo    el ángulo de desplazamiento en radianes
+     * @param velocidad la velocidad de desplazamiento en píxeles por frame
      */
     private void movimiento(double angulo, double velocidad) {
         x += Math.cos(angulo) * velocidad;
@@ -142,10 +156,13 @@ public class Princesa implements Elemento {
     }
 
     /**
-     * La princesa sufre los efectos de la gravedad
+     * Aplica la simulación de gravedad: acumula velocidad de caída libre con el tiempo
+     * y la anula cuando la princesa está en tierra firme.
+     *
+     * @param entorno el entorno del juego
      */
     private void gravedad(Entorno entorno) {
-        if(aceleracionGravitatoria <= 0.1){
+        if (aceleracionGravitatoria <= 0.1) {
             marcaTemporalDeCaida = Instant.now();
         } else {
             double lapso = Instant.now().toEpochMilli() - marcaTemporalDeCaida.toEpochMilli();
@@ -176,6 +193,16 @@ public class Princesa implements Elemento {
     }
 
     @Override
+    public void establecerAncho(double ancho) {
+        throw new UnsupportedOperationException("no se puede modificar las dimensiones de la princesa");
+    }
+
+    @Override
+    public void establecerAlto(double alto) {
+        throw new UnsupportedOperationException("no se puede modificar las dimensiones de la princesa");
+    }
+
+    @Override
     public void recibirMensaje(String mensaje) {
         switch (mensaje) {
             case "morir": // :C
@@ -189,15 +216,43 @@ public class Princesa implements Elemento {
         }
     }
 
+    /**
+     * Inicializa el estado de caída libre reseteando la velocidad y registrando
+     * el instante actual como marca de inicio de caída.
+     */
     private void cayendo() {
         marcaTemporalDeCaida = Instant.now();
         velocidadCaidaLibre = 0.0;
     }
 
+    /**
+     * Establece el estado de la princesa cuando toca tierra firme: detiene la
+     * gravedad, cancela el salto y resetea la velocidad de caída.
+     */
     private void enTierraFirme() {
         aceleracionGravitatoria = 0.0;
         enSalto = false;
         marcaTemporalDeCaida = null;
         velocidadCaidaLibre = 0.0;
+    }
+
+    /**
+     * Dispara un {@link ProyectilPrincesa} desde la posición actual de la princesa
+     * en dirección al cursor del mouse y lo agrega al contexto del juego.
+     *
+     * @param contexto    el contexto donde se agrega el proyectil
+     * @param entorno     el entorno del juego
+     * @param generadorId generador de IDs para el nuevo proyectil
+     */
+    public void disparar(Contexto contexto, Entorno entorno, GeneradorId generadorId) {
+        double mouseX = entorno.mouseX();
+        double mouseY = entorno.mouseY();
+        double distanciaX = mouseX - x;
+        double distanciaY = mouseY - y;
+        double distancia = Math.sqrt(Math.pow(distanciaX, 2.0) + Math.pow(distanciaY, 2.0));
+        double cos = (distanciaX) / distancia;
+        double sin = (distanciaY) / distancia;
+        Elemento proyectil = new ProyectilPrincesa(x, y, cos, sin, generadorId);
+        contexto.agregar(proyectil);
     }
 }

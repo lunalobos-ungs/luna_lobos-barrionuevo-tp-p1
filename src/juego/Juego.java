@@ -9,12 +9,13 @@ import java.util.Iterator;
 
 public class Juego extends InterfaceJuego {
     // El objeto Entorno que controla el tiempo y otros
-    private Entorno entorno;
+    private final Entorno entorno;
 
     // Variables y métodos propios de cada grupo
     // ...
-    private GeneradorId generadorId;
-    private Contexto contexto;
+    private final GeneradorId generadorId;
+    private final Contexto contexto;
+    private Princesa princesa;
     Juego() {
         // Inicializa el objeto entorno
         this.entorno = new Entorno(this, "Super Elizabeth Sis", 1366, 768);
@@ -22,9 +23,9 @@ public class Juego extends InterfaceJuego {
         // Inicializar lo que haga falta para el juego
         // ...
         generadorId = new GeneradorId();
-        Elemento princesa = new Princesa(generadorId, entorno);
+        princesa = new Princesa(generadorId, entorno);
         Elemento tierraFirme = new TierraFirme(generadorId, entorno);
-        contexto = new Mundo(princesa, tierraFirme);
+        contexto = new Mundo(entorno, princesa, tierraFirme);
 
         // Inicia el juego!
         this.entorno.iniciar();
@@ -40,15 +41,22 @@ public class Juego extends InterfaceJuego {
     public void tick() {
         // Procesamiento de un instante de tiempo
         // ...
+        entorno.dibujarRectangulo(entorno.ancho()/2.0, entorno.alto()/2.0, entorno.ancho(), entorno.alto(), 0, Color.WHITE);
+        contexto.purgar();
+        if(entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)){
+            princesa.disparar(contexto, entorno, generadorId);
+        }
         Iterator<Elemento> iterador = contexto.iterador();
         while(iterador.hasNext()){
             Elemento elemento = iterador.next();
-            Elemento enColisiconCon = contexto.enColisionCon(elemento);
-            if(enColisiconCon != null){
-                elemento.actuar(enColisiconCon);
+            Elemento[] enColisionCon = contexto.enColisionCon(elemento);
+            elemento.dibujar(entorno);
+            if(enColisionCon.length > 0){
+                for(int i = 0; i < enColisionCon.length; i++){
+                    elemento.actuar(enColisionCon[i]);
+                }
             }
             elemento.mover(entorno);
-            elemento.dibujar(entorno);
         }
 
     }

@@ -1,27 +1,107 @@
 package juego;
 
 
-import java.util.Iterator;
+import entorno.Entorno;
 
+import java.util.Iterator;
+import java.util.Objects;
+
+/**
+ * Implementación de {@link Contexto} que gestiona todos los elementos activos del juego.
+ * Mantiene un arreglo ordenado por ID y provee detección de colisiones rectangulares.
+ *
+ * @author Miguel Angel Luna Lobos
+ */
 public class Mundo implements Contexto {
+
+    private static boolean enColision(Rectangulo r1, Rectangulo r2) {
+        final double x1 = r1.x();
+        final double x2 = r2.x();
+        final double y1 = r1.y();
+        final double y2 = r2.y();
+        final double bordeIzquierdo1 = r1.bordeIzquierdo();
+        final double bordeDerecho1 = r1.bordeDerecho();
+        final double bordeSuperior1 = r1.bordeSuperior();
+        final double bordeInferior1 = r1.bordeInferior();
+        final double bordeIzquierdo2 = r2.bordeIzquierdo();
+        final double bordeDerecho2 = r2.bordeDerecho();
+        final double bordeSuperior2 = r2.bordeSuperior();
+        final double bordeInferior2 = r2.bordeInferior();
+        return ((bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2) || (bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2))
+                && ((bordeSuperior1 <= bordeInferior2 && y1 >= y2) || (bordeInferior1 >= bordeSuperior2 && y1 <= y2));
+    }
+
+    /**
+     * Determina la dirección desde la que {@code r1} llega a colisionar con {@code r2}.
+     *
+     * @param r1 el rectángulo cuya dirección de llegada se determina
+     * @param r2 el rectángulo impactado
+     * @return {@code "desde arriba"}, {@code "desde abajo"}, {@code "desde la izquierda"}
+     *         o {@code "desde la derecha"}
+     * @throws UnsupportedOperationException si los rectángulos no están en colisión
+     */
+    public static String tipoDeColision(Rectangulo r1, Rectangulo r2) {
+        final double x1 = r1.x();
+        final double x2 = r2.x();
+        final double y1 = r1.y();
+        final double y2 = r2.y();
+        final double bordeIzquierdo1 = r1.bordeIzquierdo();
+        final double bordeDerecho1 = r1.bordeDerecho();
+        final double bordeSuperior1 = r1.bordeSuperior();
+        final double bordeInferior1 = r1.bordeInferior();
+        final double bordeIzquierdo2 = r2.bordeIzquierdo();
+        final double bordeDerecho2 = r2.bordeDerecho();
+        final double bordeSuperior2 = r2.bordeSuperior();
+        final double bordeInferior2 = r2.bordeInferior();
+        if (bordeInferior1 >= bordeSuperior2 && y1 <= y2) {
+            return "desde arriba";
+        }
+        if (bordeSuperior1 <= bordeInferior2 && y1 >= y2) {
+            return "desde abajo";
+        }
+        if (bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2) {
+            return "desde la izquierda";
+        }
+        if (bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2) {
+            return "desde la derecha";
+        }
+        throw new UnsupportedOperationException("no hay colisión");
+    }
 
     /**
      * Puede haber nulos solo después del índice largo - 1.
      */
     private Elemento[] elementos;
     private int largo;
+    private final Rectangulo limitesMundo;
 
-    public Mundo() {
+    /**
+     * Crea un mundo vacío con los límites del entorno.
+     *
+     * @param entorno el entorno del juego
+     */
+    public Mundo(Entorno entorno) {
+        double ancho = entorno.ancho();
+        double alto = entorno.alto();
         elementos = new Elemento[10];
         largo = 0;
+        limitesMundo = new RectanguloSimple(ancho / 2.0, alto / 2.0, ancho, alto);
     }
 
-    public Mundo(Elemento... elementos) {
+    /**
+     * Crea un mundo con los elementos iniciales provistos.
+     *
+     * @param entorno   el entorno del juego
+     * @param elementos los elementos iniciales; ninguno puede ser nulo
+     * @throws NullPointerException si alguno de los elementos es nulo
+     */
+    public Mundo(Entorno entorno, Elemento... elementos) {
+        double ancho = entorno.ancho();
+        double alto = entorno.alto();
+        limitesMundo = new RectanguloSimple(ancho / 2.0, alto / 2.0, ancho, alto);
         this.elementos = new Elemento[Math.max(elementos.length, 10)];
         for (int i = 0; i < elementos.length; i++) {
-            if (elementos[i] == null) {
-                throw new NullPointerException("Los elementos provistos en este constructor no pueden ser nulos");
-            }
+            Objects.requireNonNull(elementos[i], "Los elementos provistos en este constructor no pueden ser nulos");
             this.elementos[i] = elementos[i];
         }
         largo = elementos.length;
@@ -29,35 +109,18 @@ public class Mundo implements Contexto {
 
 
     @Override
-    public Elemento enColisionCon(Elemento elemento) {
-        final double x = elemento.x();
-        final double y = elemento.y();
-        final double ancho = elemento.ancho();
-        final double alto = elemento.alto();
-        final double bordeIzquierdo = x - ancho / 2.0;
-        final double bordeDerecho = x + ancho / 2.0;
-        final double bordeArriba = y - alto / 2.0;
-        final double bordeAbajo = y + alto / 2.0;
+    public Elemento[] enColisionCon(Elemento elemento) {
+        final Elemento[] almacenador = new Elemento[largo];
+        int contador = 0;
         for (int i = 0; i < largo; i++) {
             Elemento elemento_ = elementos[i];
-            if(elemento.id() == elemento_.id()){
-                continue;
-            }
-            final double x_ = elemento_.x();
-            final double y_ = elemento_.y();
-            final double ancho_ = elemento_.ancho();
-            final double alto_ = elemento_.alto();
-            final double bordeIzquierdo_ = x_ - ancho_ / 2.0;
-            final double bordeDerecho_ = x_ + ancho_ / 2.0;
-            final double bordeArriba_ = y_ - alto_ / 2.0;
-            final double bordeAbajo_ = y_ + alto_ / 2.0;
-
-            if (((bordeDerecho >= bordeIzquierdo_ && x <= x_) || (bordeIzquierdo <= bordeDerecho_ && x >= x_) )
-                    && ((bordeArriba <= bordeAbajo_ && y >= y_) || (bordeAbajo >= bordeArriba_ && y <= y_))) {
-                return elemento_;
+            if (elemento.id() != elemento_.id() && enColision(elemento, elemento_)) {
+                almacenador[contador++] = elemento_;
             }
         }
-        return null;
+        final Elemento[] salida = new Elemento[contador];
+        System.arraycopy(almacenador, 0, salida, 0, contador);
+        return salida;
     }
 
     @Override
@@ -74,9 +137,10 @@ public class Mundo implements Contexto {
     public void quitar(Elemento elemento) {
         int indice = indiceDe(elemento);
         if (indice >= 0) {
-            for(int i = indice; i < largo - 1; i++){
+            for (int i = indice; i < largo - 1; i++) {
                 elementos[i] = elementos[i + 1];
             }
+            elementos[largo - 1] = null;
             largo--;
         }
     }
@@ -98,11 +162,16 @@ public class Mundo implements Contexto {
             int indiceIntermedio = (indiceMinimo + indiceMaximo) / 2;
             Elemento elementoIntermedio = elementos[indiceIntermedio];
             int comparacion = compararElementos(elementoIntermedio, elemento);
-            if (comparacion < 0) indiceMinimo = indiceIntermedio + 1;
-            else if (comparacion == 0) indiceMaximo = indiceIntermedio - 1;
-            else return indiceIntermedio; // encontrado
+
+            if (comparacion < 0) {
+                indiceMinimo = indiceIntermedio + 1;
+            } else if (comparacion > 0) {
+                indiceMaximo = indiceIntermedio - 1;
+            } else {
+                return indiceIntermedio; // Encontrado (comparacion == 0)
+            }
         }
-        return -(indiceMinimo + 1);  // no encontrado
+        return -(indiceMinimo + 1);
     }
 
     /**
@@ -128,19 +197,45 @@ public class Mundo implements Contexto {
     public Iterator<Elemento> iterador() {
         return new IteradorElementos(elementos, largo);
     }
+
+    @Override
+    public void purgar() {
+        int i = 0;
+        while (i < largo) {
+            Elemento elemento = elementos[i];
+            if (!enColision(elemento, limitesMundo)) {
+                quitar(elemento);
+            } else {
+                i++;
+            }
+        }
+    }
 }
 
 
+/**
+ * Iterador de instancia fija sobre un arreglo de elementos.
+ * Toma una copia del arreglo al momento de la creación para evitar interferencias
+ * con modificaciones realizadas durante la iteración.
+ */
 class IteradorElementos implements Iterator<Elemento> {
     int indice;
     int largo;
     Elemento[] elementos;
 
-    public IteradorElementos(Elemento[] elementos, int largo){
+    /**
+     * Crea un iterador sobre una copia del arreglo dado.
+     *
+     * @param elementos el arreglo de elementos a iterar
+     * @param largo     la cantidad de elementos válidos en el arreglo
+     */
+    public IteradorElementos(Elemento[] elementos, int largo) {
         indice = 0;
         this.largo = largo;
-        this.elementos = elementos;
+        this.elementos = new Elemento[largo];
+        System.arraycopy(elementos, 0, this.elementos, 0, largo);
     }
+
     @Override
     public boolean hasNext() {
         return indice < largo;
