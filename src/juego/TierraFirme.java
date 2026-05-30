@@ -29,8 +29,8 @@ public class TierraFirme implements Elemento {
      */
     public TierraFirme(GeneradorId generadorId, Entorno entorno) {
         this.id = generadorId.nuevoId();
-        ancho = 500.0;
-        alto = 50.0;
+        ancho = 800.0;
+        alto = 30.0;
         x = entorno.ancho() / 2.0;
         y = entorno.alto() - alto;
         tierraOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("tierra.png"))).getImage();
