@@ -18,7 +18,7 @@ public class Juego extends InterfaceJuego {
     private Princesa princesa;
     Juego() {
         // Inicializa el objeto entorno
-        this.entorno = new Entorno(this, "Super Elizabeth Sis", 1366, 768);
+        this.entorno = new Entorno(this, "Super Elizabeth Sis", 800, 600);
 
         // Inicializar lo que haga falta para el juego
         // ...
@@ -26,6 +26,26 @@ public class Juego extends InterfaceJuego {
         princesa = new Princesa(generadorId, entorno);
         Elemento tierraFirme = new TierraFirme(generadorId, entorno);
         contexto = new Mundo(entorno, princesa, tierraFirme);
+        
+        /*
+         * Dejo fijo valores : alto .
+         * X, Y , ancho de la isla, debe ser random  
+         */
+        FabricaIsla fabrica = new FabricaIsla ();
+        Elemento isla1 = fabrica.isla1 (generadorId, entorno);
+        Elemento isla2 = fabrica.isla2 (generadorId, entorno, (Isla) isla1);
+        Elemento isla3 = fabrica.isla3 (generadorId, entorno,  (Isla) isla1 ) ;
+        Elemento isla4 = fabrica.isla4 ( generadorId, entorno, princesa) ;
+        // islas creadas como modo de prueba 
+        //Elemento isla1 = new Isla (generadorId, entorno, 600 , 150, 200) ;
+        //Elemento isla2= new Isla (generadorId, entorno,  500 , 350, 200);
+        //Elemento isla3= new Isla (generadorId, entorno, 100 , 350, 200 ) ; 
+        
+        contexto.agregar(isla1);
+        contexto.agregar(isla2);
+        contexto.agregar(isla3);
+        contexto.agregar(isla4);
+        
 
         // Inicia el juego!
         this.entorno.iniciar();

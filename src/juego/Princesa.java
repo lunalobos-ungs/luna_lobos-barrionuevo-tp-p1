@@ -234,7 +234,8 @@ public class Princesa implements Elemento {
         enSalto = false;
         marcaTemporalDeCaida = null;
         velocidadCaidaLibre = 0.0;
-    }
+        }
+   
 
     /**
      * Dispara un {@link ProyectilPrincesa} desde la posición actual de la princesa
