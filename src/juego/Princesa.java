@@ -38,6 +38,9 @@ public class Princesa implements Elemento {
     private double aceleracionGravitatoria;
     private Instant marcaTemporalDeCaida;
 
+    private boolean xNoCrece;
+    private boolean xNoDecrece;
+
     /**
      * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación
      * de caída libre.
@@ -60,6 +63,8 @@ public class Princesa implements Elemento {
         angulo = 0.0;
         aceleracionGravitatoria = 10.0;
         cayendo();
+        xNoCrece = false;
+        xNoDecrece = false;
     }
 
     @Override
@@ -100,10 +105,6 @@ public class Princesa implements Elemento {
     public void setAncho(double ancho) {
         this.ancho = ancho;
         this.princesa = princesaOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
-    }
-
-    public void setAlto(double alto) {
-        this.alto = alto;
     }
 
     @Override
@@ -151,7 +152,17 @@ public class Princesa implements Elemento {
      * @param velocidad la velocidad de desplazamiento en píxeles por frame
      */
     private void movimiento(double angulo, double velocidad) {
-        x += Math.cos(angulo) * velocidad;
+        double deltaX = Math.cos(angulo) * velocidad;
+
+        if (deltaX > 0.0 && xNoCrece) {
+            deltaX = 0.0;
+            xNoCrece = false;
+        } else if (deltaX < 0 && xNoDecrece) {
+            deltaX = 0.0;
+            xNoDecrece = false;
+        }
+
+        x += deltaX;
         y += Math.sin(angulo) * velocidad;
     }
 
@@ -204,6 +215,7 @@ public class Princesa implements Elemento {
 
     @Override
     public void recibirMensaje(String mensaje) {
+
         switch (mensaje) {
             case "morir": // :C
                 cayendo();
@@ -211,9 +223,34 @@ public class Princesa implements Elemento {
             case "estas en tierra firme":
                 enTierraFirme();
                 break;
+            case "chocaste con el techo":
+                chocarTecho();
+                break;
+            case "chocaste con un muro desde tu derecha":
+                System.out.println(mensaje);
+                chocarMuroPorDerecha();
+                break;
+            case "chocaste con un muro desde tu izquierda":
+                System.out.println(mensaje);
+                chocarMuroPorIzquierda();
+                break;
             default:
                 throw new IllegalArgumentException("así no se le habla a la princesa -> mensaje: " + mensaje);
         }
+    }
+
+    private void chocarMuroPorIzquierda() {
+        enSalto = false;
+        xNoDecrece = true;
+    }
+
+    private void chocarTecho() {
+        enSalto = false;
+    }
+
+    private void chocarMuroPorDerecha() {
+        enSalto = false;
+        xNoCrece = true;
     }
 
     /**
@@ -234,17 +271,8 @@ public class Princesa implements Elemento {
         enSalto = false;
         marcaTemporalDeCaida = null;
         velocidadCaidaLibre = 0.0;
-        }
-   
+    }
 
-    /**
-     * Dispara un {@link ProyectilPrincesa} desde la posición actual de la princesa
-     * en dirección al cursor del mouse y lo agrega al contexto del juego.
-     *
-     * @param contexto    el contexto donde se agrega el proyectil
-     * @param entorno     el entorno del juego
-     * @param generadorId generador de IDs para el nuevo proyectil
-     */
     public void disparar(Contexto contexto, Entorno entorno, GeneradorId generadorId) {
         double mouseX = entorno.mouseX();
         double mouseY = entorno.mouseY();

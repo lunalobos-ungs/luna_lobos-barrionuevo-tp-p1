@@ -37,7 +37,7 @@ public class Mundo implements Contexto {
      * @param r1 el rectángulo cuya dirección de llegada se determina
      * @param r2 el rectángulo impactado
      * @return {@code "desde arriba"}, {@code "desde abajo"}, {@code "desde la izquierda"}
-     *         o {@code "desde la derecha"}
+     * o {@code "desde la derecha"}
      * @throws UnsupportedOperationException si los rectángulos no están en colisión
      */
     public static String tipoDeColision(Rectangulo r1, Rectangulo r2) {
@@ -53,18 +53,44 @@ public class Mundo implements Contexto {
         final double bordeDerecho2 = r2.bordeDerecho();
         final double bordeSuperior2 = r2.bordeSuperior();
         final double bordeInferior2 = r2.bordeInferior();
-        if (bordeInferior1 >= bordeSuperior2 && y1 <= y2) {
-            return "desde arriba";
+
+        double deltaY = 0.0;
+        double deltaX = 0.0;
+        boolean desdeArriba = bordeInferior1 >= bordeSuperior2 && y1 <= y2;
+        boolean desdeAbajo = bordeSuperior1 <= bordeInferior2 && y1 >= y2;
+        boolean desdeLaDerecha = bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2;
+        boolean desdeLaIzquierda = bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2;
+
+        if (desdeArriba) {
+            deltaY = Math.min(bordeInferior1 - bordeSuperior2, r1.alto());
         }
-        if (bordeSuperior1 <= bordeInferior2 && y1 >= y2) {
-            return "desde abajo";
+
+        if (desdeAbajo) {
+            deltaY = Math.min(bordeInferior2 - bordeSuperior1, r1.alto());
         }
-        if (bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2) {
-            return "desde la izquierda";
+
+        if (desdeLaDerecha) {
+            deltaX = Math.min(bordeDerecho1 - bordeIzquierdo2, r1.ancho());
         }
-        if (bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2) {
-            return "desde la derecha";
+
+        if (desdeLaIzquierda) {
+            deltaX = Math.min(bordeDerecho2 - bordeIzquierdo1, r1.ancho());
         }
+
+        if (deltaY >= deltaX) { // lateral
+            if (desdeLaDerecha) {
+                return "desde la derecha";
+            } else if (desdeLaIzquierda) {
+                return "desde la izquierda";
+            }
+        } else { // vertical
+            if (desdeArriba) {
+                return "desde arriba";
+            } else if (desdeAbajo) {
+                return "desde abajo";
+            }
+        }
+
         throw new UnsupportedOperationException("no hay colisión");
     }
 
