@@ -29,10 +29,13 @@ public class Enemigo implements Elemento {
     private Image enemigo;
     private final int id;
     private final double velocidad;
+    // los vos a implementar cuando el enemigo muera quiero que caiga con caida libre al suelo y luego desaparezca
+    
     private double velocidadCaidaLibre;
     private double aceleracionGravitatoria;
     private double angulo;
     private Instant marcaTemporalDeCaida;
+    private boolean vivo = true ;
     
     Enemigo (GeneradorId generadorId, Entorno entorno, double x , double y, double angulo  ){
         this.x = x;
@@ -96,7 +99,6 @@ public class Enemigo implements Elemento {
     	 this.alto = alto;
          enemigo = enemigoOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
     }
-
   
     // 0 represennta en angulo que luego tendra que ser cambiado para considerar colision y muerte en caida libre
     
@@ -116,15 +118,10 @@ public class Enemigo implements Elemento {
 
     @Override
     public void actuar(Elemento elemento) {
-    	//public void actuar(Elemento elemento) {
+    	if (elemento.tipo().equals("princesa")) {
+    		this.recibirMensaje("morir");
+    	}
 
-    	  //  if (elemento.tipo().equals("proyectil")) {
-    	        // morir
-    	   // }
-
-    	    //if (elemento.tipo().equals("princesa")) {
-    	        // quitar vida
-    	   // }
     	return ;
         
     }
@@ -146,6 +143,12 @@ public class Enemigo implements Elemento {
 
     @Override
     public void recibirMensaje(String mensaje) {
-        throw new UnsupportedOperationException("método aún sin implementar");
+        if (mensaje.equals("morir")) {
+        	 vivo = false;
+        }
+    }
+    
+    public boolean debeEliminarse () {
+    	return ! vivo ;
     }
 }

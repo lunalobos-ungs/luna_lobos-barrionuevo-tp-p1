@@ -225,13 +225,20 @@ public class Mundo implements Contexto {
     }
 
     @Override
+    
+    /*
+     * 1° elimina elementos que salgan de la pantalla
+     * 2° eliminar enemigos que tienen como estado "muerto"
+     * 3° eliminar enemigo cuando toda la princesa 
+     */
     public void purgar() {
         int i = 0;
         while (i < largo) {
             Elemento elemento = elementos[i];
-            if (!enColision(elemento, limitesMundo)) {
+            if (!enColision(elemento, limitesMundo)|| elemento.debeEliminarse()) {
                 quitar(elemento);
-            } else {
+             }
+            else {
                 i++;
             }
         }

@@ -37,6 +37,7 @@ public class Princesa implements Elemento {
 
     private double aceleracionGravitatoria;
     private Instant marcaTemporalDeCaida;
+    private boolean activo = true ;
 
     private boolean xNoCrece;
     private boolean xNoDecrece;
@@ -283,5 +284,9 @@ public class Princesa implements Elemento {
         double sin = (distanciaY) / distancia;
         Elemento proyectil = new ProyectilPrincesa(x, y, cos, sin, generadorId);
         contexto.agregar(proyectil);
+    }
+    
+    public boolean debeEliminarse () {
+    	return ! activo ;
     }
 }

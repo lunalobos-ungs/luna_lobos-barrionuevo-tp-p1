@@ -11,6 +11,8 @@ public class FabricaEnemigos {
 	 */
 	public int generarPosicion (Isla isla1, Isla isla2, Isla isla3, Isla isla4) {
 		// considero un margen por el alto/grosor de la isla 
+		// hago por 500*0,9 porq es lo maximo que quiero que valga la posicion
+		// del enemigo para que este por sobre la tierra firme . 
 		int margen= 40 ;
 		int y ;
 		y= (int) ( Math.random ()*500);
@@ -74,5 +76,14 @@ public class FabricaEnemigos {
 			
 		return new Enemigo ( generadorId , entorno, x, posicion3, Math.PI );
 	}
-
+	
+	/* 
+	 * Sugerencia : Crear un random que me arroje unicamnete dos posiciones de x,  
+	 * para que aparezca unicamnete por margen derecho o margen izquierdo 
+	 */
+	public EnemigoExtra enemigoExtra (GeneradorId generadorId, Entorno entorno) {
+		int x = 20 ;
+		int y= 520 ;
+		return new EnemigoExtra (generadorId, entorno, x, y);
+	}
 }

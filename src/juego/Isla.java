@@ -12,28 +12,29 @@ import java.util.Objects;
  *
  * @author Noelia Barrionuevo
  */
-public class Isla implements Elemento {
-    private int id;
-    private double x;
-    private double y;
-    private double ancho;
-    private double alto;
-    private final Image tierraOriginal;
-    private Image tierra;
-
-    Isla(GeneradorId generadorId, Entorno entorno, int x, int y, int ancho) {
-        this.id = generadorId.nuevoId();
-        // x , y ; cordenadas en el plano
-        this.x = x;
-        this.y = y;
-        //ancho en x de la isla
-        this.ancho = ancho;
-        // alto de la isla en y; fijo
-        alto = 20;
-        tierraOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("tierra.png"))).getImage();
-        tierra = tierraOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
-
-    }
+public class Isla implements Elemento{
+	    private int id;
+	    private double x;
+	    private double y;
+	    private double ancho;
+	    private double alto;
+	    private final Image tierraOriginal;
+	    private Image tierra;
+	    private boolean activo = true ;
+	    
+	     Isla(GeneradorId generadorId, Entorno entorno, int x , int y, int  ancho) {
+	        this.id = generadorId.nuevoId(); 
+	        // x , y ; cordenadas en el plano 
+	        this.x= x ;
+	        this.y =y ;
+	        //ancho en x de la isla 
+	        this.ancho= ancho;
+	        // alto de la isla en y; fijo
+	        alto = 20;
+	        tierraOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("tierra.png"))).getImage();
+	        tierra = tierraOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
+	        
+	    }
 
 
     @Override
@@ -170,5 +171,9 @@ public class Isla implements Elemento {
     @Override
     public void recibirMensaje(String mensaje) {
         // las islas son inalterables
+    }
+    
+    public boolean debeEliminarse () {
+    	return false ;
     }
 }

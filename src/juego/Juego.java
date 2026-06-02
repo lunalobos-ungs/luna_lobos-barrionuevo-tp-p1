@@ -27,10 +27,7 @@ public class Juego extends InterfaceJuego {
         Elemento tierraFirme = new TierraFirme(generadorId, entorno);
         contexto = new Mundo(entorno, princesa, tierraFirme);
         
-        /*
-         * Dejo fijo valor : alto .
-         * X, Y , ancho , de la isla, debe ser random  
-         */
+      
         FabricaIsla fabrica = new FabricaIsla ();
         Isla isla1 = fabrica.isla1 (generadorId, entorno);
         Isla isla2 = fabrica.isla2 (generadorId, entorno,  isla1);
@@ -50,11 +47,15 @@ public class Juego extends InterfaceJuego {
         Enemigo enemigo3 = fabricaEne.enemigo3 (generadorId, entorno, isla1,  isla2, isla3, isla4 , enemigo1);
         Enemigo enemigo4 = fabricaEne.enemigo4 (generadorId, entorno, isla1, isla2, isla3, isla4, enemigo2);
         
+        FabricaEnemigos fabricaExtra = new FabricaEnemigos ();
+        EnemigoExtra enemigoExtra1 = fabricaExtra.enemigoExtra (generadorId, entorno ) ;
+        
         contexto.agregar(enemigo1);
         contexto.agregar(enemigo2);
         contexto.agregar(enemigo3);
         contexto.agregar(enemigo4);
         
+        contexto.agregar (enemigoExtra1);
 
         // Inicia el juego!
         this.entorno.iniciar();

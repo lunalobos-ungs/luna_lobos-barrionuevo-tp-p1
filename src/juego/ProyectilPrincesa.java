@@ -23,6 +23,7 @@ public class ProyectilPrincesa implements Elemento {
     private double cos;
     private final Image proyectil;
     private final double velocidad;
+    private boolean activo= true;
 
     /**
      * Crea un proyectil en la posición indicada con la dirección definida por las
@@ -144,5 +145,10 @@ public class ProyectilPrincesa implements Elemento {
             default:
                 throw new IllegalArgumentException("el proyectil no entiende el mensaje %s".formatted(mensaje));
         }
+    }
+    
+    
+    public boolean debeEliminarse () {
+    	return ! activo ;
     }
 }
