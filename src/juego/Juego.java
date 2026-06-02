@@ -28,23 +28,32 @@ public class Juego extends InterfaceJuego {
         contexto = new Mundo(entorno, princesa, tierraFirme);
         
         /*
-         * Dejo fijo valores : alto .
-         * X, Y , ancho de la isla, debe ser random  
+         * Dejo fijo valor : alto .
+         * X, Y , ancho , de la isla, debe ser random  
          */
         FabricaIsla fabrica = new FabricaIsla ();
-        Elemento isla1 = fabrica.isla1 (generadorId, entorno);
-        Elemento isla2 = fabrica.isla2 (generadorId, entorno, (Isla) isla1);
-        Elemento isla3 = fabrica.isla3 (generadorId, entorno,  (Isla) isla1 ) ;
-        Elemento isla4 = fabrica.isla4 (generadorId, entorno, princesa) ;
-        // islas creadas como modo de prueba 
-        //Elemento isla1 = new Isla (generadorId, entorno, 600 , 150, 200) ;
-        //Elemento isla2= new Isla (generadorId, entorno,  500 , 350, 200);
-        //Elemento isla3= new Isla (generadorId, entorno, 100 , 350, 200 ) ; 
-        
+        Isla isla1 = fabrica.isla1 (generadorId, entorno);
+        Isla isla2 = fabrica.isla2 (generadorId, entorno,  isla1);
+        Isla isla3 = fabrica.isla3 (generadorId, entorno,  isla1 ) ;
+        Isla isla4 = fabrica.isla4 ( generadorId, entorno, princesa) ;
         contexto.agregar(isla1);
         contexto.agregar(isla2);
         contexto.agregar(isla3);
         contexto.agregar(isla4);
+        
+        /*
+         * 
+         */
+        FabricaEnemigos fabricaEne = new FabricaEnemigos ();
+        Enemigo enemigo1 = fabricaEne.enemigo1 (generadorId, entorno, isla1, isla2,  isla3, isla4 );
+        Enemigo enemigo2 = fabricaEne.enemigo2 (generadorId, entorno, isla1,  isla2, isla3, isla4 );
+        Enemigo enemigo3 = fabricaEne.enemigo3 (generadorId, entorno, isla1,  isla2, isla3, isla4 , enemigo1);
+        Enemigo enemigo4 = fabricaEne.enemigo4 (generadorId, entorno, isla1, isla2, isla3, isla4, enemigo2);
+        
+        contexto.agregar(enemigo1);
+        contexto.agregar(enemigo2);
+        contexto.agregar(enemigo3);
+        contexto.agregar(enemigo4);
         
 
         // Inicia el juego!

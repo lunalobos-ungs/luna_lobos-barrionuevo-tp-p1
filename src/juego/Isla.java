@@ -90,7 +90,7 @@ public class Isla implements Elemento {
 
     @Override
     public void mover(Entorno entorno) {
-
+    	
     }
 
     /*
