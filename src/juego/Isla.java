@@ -20,6 +20,7 @@ public class Isla implements Elemento{
 	    private double alto;
 	    private final Image tierraOriginal;
 	    private Image tierra;
+	    private boolean activo = true ;
 	    
 	     Isla(GeneradorId generadorId, Entorno entorno, int x , int y, int  ancho) {
 	        this.id = generadorId.nuevoId(); 
@@ -129,5 +130,9 @@ public class Isla implements Elemento{
     @Override
     public void recibirMensaje(String mensaje) {
         throw new UnsupportedOperationException("método aún sin implementar");
+    }
+    
+    public boolean debeEliminarse () {
+    	return false ;
     }
 }

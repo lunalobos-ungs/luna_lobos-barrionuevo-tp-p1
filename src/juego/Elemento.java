@@ -88,5 +88,13 @@ public interface Elemento extends Rectangulo{
      */
     default void disparar(Contexto contexto, Entorno entorno, GeneradorId generadorId){
         throw new UnsupportedOperationException("sin implementar");
+    	  
+      
     }
+    
+    /*
+     *  se agrega para determinar si un elemento debe ser eliminado 
+     *  como en el caso de los enemigos , proyectiles, princesa cuando pierde vidas
+     */
+    boolean debeEliminarse ();
 }

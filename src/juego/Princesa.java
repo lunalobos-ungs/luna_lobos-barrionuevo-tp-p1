@@ -37,6 +37,7 @@ public class Princesa implements Elemento {
 
     private double aceleracionGravitatoria;
     private Instant marcaTemporalDeCaida;
+    private boolean activo = true ;
 
     /**
      * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación
@@ -255,5 +256,9 @@ public class Princesa implements Elemento {
         double sin = (distanciaY) / distancia;
         Elemento proyectil = new ProyectilPrincesa(x, y, cos, sin, generadorId);
         contexto.agregar(proyectil);
+    }
+    
+    public boolean debeEliminarse () {
+    	return ! activo ;
     }
 }

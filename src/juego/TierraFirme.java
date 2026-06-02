@@ -20,7 +20,7 @@ public class TierraFirme implements Elemento {
     private double alto;
     private final Image tierraOriginal;
     private Image tierra;
-
+    private boolean activo= true ;
     /**
      * Crea la tierra firme centrada horizontalmente en la parte inferior del entorno.
      *
@@ -173,5 +173,8 @@ public class TierraFirme implements Elemento {
     @Override
     public void recibirMensaje(String mensaje) {
         // la tierra firme es inerte
+    }
+    public boolean debeEliminarse () {
+    	return false ;
     }
 }
