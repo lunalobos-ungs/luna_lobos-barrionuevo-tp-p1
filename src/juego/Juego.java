@@ -35,7 +35,7 @@ public class Juego extends InterfaceJuego {
         Elemento isla1 = fabrica.isla1 (generadorId, entorno);
         Elemento isla2 = fabrica.isla2 (generadorId, entorno, (Isla) isla1);
         Elemento isla3 = fabrica.isla3 (generadorId, entorno,  (Isla) isla1 ) ;
-        Elemento isla4 = fabrica.isla4 ( generadorId, entorno, princesa) ;
+        Elemento isla4 = fabrica.isla4 (generadorId, entorno, princesa) ;
         // islas creadas como modo de prueba 
         //Elemento isla1 = new Isla (generadorId, entorno, 600 , 150, 200) ;
         //Elemento isla2= new Isla (generadorId, entorno,  500 , 350, 200);
