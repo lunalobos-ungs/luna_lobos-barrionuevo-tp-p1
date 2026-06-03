@@ -115,7 +115,7 @@ public class TierraFirme implements Elemento {
      * @param elemento el cuerpo en colisión
      */
     private void actuarSobreCuerpo(Elemento elemento){
-        String tipoDeColision = Mundo.tipoDeColision(elemento, this);
+        String tipoDeColision = Rectangulos.tipoDeColision(elemento, this);
         switch (tipoDeColision) {
             case "desde arriba":
                 elemento.recibirMensaje("estas en tierra firme");
@@ -137,7 +137,7 @@ public class TierraFirme implements Elemento {
      * @param elemento el proyectil en colisión
      */
     private void actuarSobreProyectil(Elemento elemento){
-        String tipoDeColision = Mundo.tipoDeColision(elemento, this);
+        String tipoDeColision = Rectangulos.tipoDeColision(elemento, this);
         switch (tipoDeColision){
             case "desde arriba":
                 elemento.recibirMensaje("rebotar desde arriba");
