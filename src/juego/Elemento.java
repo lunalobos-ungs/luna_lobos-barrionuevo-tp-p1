@@ -86,7 +86,7 @@ public interface Elemento extends Rectangulo{
      * @param entorno      el entorno del juego
      * @param generadorId  el generador de IDs para el nuevo proyectil
      */
-    default void disparar(Contexto contexto, Entorno entorno, GeneradorId generadorId){
+    default void disparar(Mundo mundo, Entorno entorno, GeneradorId generadorId){
         throw new UnsupportedOperationException("sin implementar");
     	  
       

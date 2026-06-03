@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author Miguel Angel Luna Lobos y Noelia Barrionuevo
  */
-public class Mundo implements Contexto {
+public class Mundo  {
 
     /**
      * Puede haber nulos solo después del índice largo - 1.
@@ -54,7 +54,6 @@ public class Mundo implements Contexto {
     }
 
 
-    @Override
     public Elemento[] enColisionCon(Elemento elemento) {
         if(elemento.tipo().equals("fronteraIsla")){
             return enColisionIsla(elemento);
@@ -91,7 +90,7 @@ public class Mundo implements Contexto {
         return salida;
     }
 
-    @Override
+    
     public void agregar(Elemento elemento) {
         if (largo == elementos.length) {
             Elemento[] nuevoArray = new Elemento[elementos.length * 2];
@@ -101,7 +100,7 @@ public class Mundo implements Contexto {
         elementos[largo++] = elemento;
     }
 
-    @Override
+    
     public void quitar(Elemento elemento) {
         int indice = indiceDe(elemento);
         if (indice >= 0) {
@@ -161,12 +160,12 @@ public class Mundo implements Contexto {
         }
     }
 
-    @Override
+    
     public Iterator<Elemento> iterador() {
         return new IteradorElementos(elementos, largo);
     }
 
-    @Override
+    
     /*
      * 1° elimina elementos que salgan de la pantalla
      * 2° eliminar enemigos que tienen como estado "muerto"
@@ -185,7 +184,7 @@ public class Mundo implements Contexto {
         }
     }
 
-    @Override
+    
     public Rectangulo limitesMundo() {
         return limitesMundo;
     }

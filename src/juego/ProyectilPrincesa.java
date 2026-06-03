@@ -24,6 +24,7 @@ public class ProyectilPrincesa implements Elemento {
     private final Image proyectil;
     private final double velocidad;
     private boolean activo= true;
+    private Rectangulo2 rectangulo ;
 
     /**
      * Crea un proyectil en la posición indicada con la dirección definida por las
@@ -43,6 +44,7 @@ public class ProyectilPrincesa implements Elemento {
         this.cos = cos;
         this.ancho = 15.0;
         this.alto = 15.0;
+        rectangulo = new Rectangulo2 (x,y, ancho, alto );
         this.velocidad = 8.0;
         Image proyectilOriginal = Imagenes.cargarImagen("proyectil_princesa.png");
         this.proyectil = Imagenes.escalar(proyectilOriginal, ancho, alto);
@@ -150,5 +152,9 @@ public class ProyectilPrincesa implements Elemento {
     
     public boolean debeEliminarse () {
     	return ! activo ;
+    }
+    
+    public Rectangulo2 rectangulo() {
+    	return rectangulo ;
     }
 }

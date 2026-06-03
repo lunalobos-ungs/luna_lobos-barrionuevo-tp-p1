@@ -13,7 +13,7 @@ public class Juego extends InterfaceJuego {
     // Variables y métodos propios de cada grupo
     // ...
     private final GeneradorId generadorId;
-    private final Contexto contexto;
+    private final Mundo mundo;
     private Princesa princesa;
     Juego() {
         // Inicializa el objeto entorno
@@ -24,21 +24,21 @@ public class Juego extends InterfaceJuego {
         generadorId = new GeneradorId();
         princesa = new Princesa(generadorId, entorno);
         //Elemento tierraFirme = new TierraFirme(generadorId, entorno);
-        contexto = new Mundo(entorno, princesa);
+        mundo = new Mundo(entorno, princesa);
 
         Islas fabrica = new Islas();
         var cantidadIslasBajas = 4;
         var cantidadIslasAltas = 2;
         var contador = 0;
         while(contador < cantidadIslasBajas){
-            var isla = fabrica.nuevaNivelBajo(generadorId, contexto);
-            contexto.agregar(isla);
+            var isla = fabrica.nuevaNivelBajo(generadorId, mundo);
+            mundo.agregar(isla);
             contador++;
         }
         contador = 0;
         while(contador < cantidadIslasAltas){
-            var isla = fabrica.nuevaNivelAlto(generadorId, contexto);
-            contexto.agregar(isla);
+            var isla = fabrica.nuevaNivelAlto(generadorId, mundo);
+            mundo.agregar(isla);
             contador++;
         }
 
@@ -73,16 +73,16 @@ public class Juego extends InterfaceJuego {
     public void tick() {
         // Procesamiento de un instante de tiempo
         // ...
-        contexto.purgar(); // eliminamos a aquellos que se salen del mundo
+        mundo.purgar(); // eliminamos a aquellos que se salen del mundo
 
         if(entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)){
-            princesa.disparar(contexto, entorno, generadorId);
+            princesa.disparar(mundo, entorno, generadorId);
         }
 
-        Iterator<Elemento> iterador = contexto.iterador();
+        Iterator<Elemento> iterador = mundo.iterador();
         while(iterador.hasNext()){
             Elemento elemento = iterador.next();
-            Elemento[] enColisionCon = contexto.enColisionCon(elemento);
+            Elemento[] enColisionCon = mundo.enColisionCon(elemento);
             for (int i = 0; i < enColisionCon.length; i++){
                 elemento.actuar(enColisionCon[i]);
             }

@@ -23,6 +23,9 @@ public class Isla implements Elemento {
     private Image tierra;
     private boolean activo = true;
     private Rectangulo espacio;
+    private Rectangulo2 rectangulo ;
+    
+    
     Isla(GeneradorId generadorId, Entorno entorno, int x, int y, int ancho) {
         this.id = generadorId.nuevoId();
         // x , y ; coordenadas en el plano
@@ -32,6 +35,7 @@ public class Isla implements Elemento {
         this.ancho = ancho;
         // alto de la isla en y; fijo
         alto = 20;
+        rectangulo = new Rectangulo2 (x, y, ancho, alto);
         tierraOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("tierra.png"))).getImage();
         tierra = tierraOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
         espacio = Rectangulos.crearRectangulo(x(), y(), ancho()*1.5, alto()*10);
@@ -196,5 +200,8 @@ public class Isla implements Elemento {
      */
     public Rectangulo espacio(){
         return espacio;
+    }
+    public Rectangulo2 rectangulo() {
+    	return rectangulo ;
     }
 }
