@@ -1,10 +1,9 @@
 package juego;
+
 import java.awt.Image;
 import java.util.Objects;
-
 import javax.swing.ImageIcon;
-
-import  entorno.Entorno; 
+import entorno.Entorno;
 
 public class EnemigoExtra implements Elemento {
 	private double x;
