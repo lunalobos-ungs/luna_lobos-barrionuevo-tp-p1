@@ -51,4 +51,10 @@ public interface Contexto {
      * límites del mundo.
      */
     void purgar();
+
+    /**
+     * Devuelve los límites del mundo.
+     * @return un {@link Rectangulo} que representa los límites del mundo.
+     */
+    Rectangulo limitesMundo();
 }

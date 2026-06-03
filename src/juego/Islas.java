@@ -1,13 +1,11 @@
 package juego;
 
-import entorno.Entorno;
-
 /**
  * La clase que se encarga de generar islas en el mapa de manera aleatoria.
  *
  * @author Noelia Barrionuevo y Miguel Angel Luna Lobos
  */
-public class FabricaIsla {
+public class Islas {
     private static final double proporcionAlto = 0.7;
     private static final double proporcionAlturaMinima = 0.0;
     private static final double altoIsla = 20.0;

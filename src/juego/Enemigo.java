@@ -42,8 +42,8 @@ public class Enemigo implements Elemento {
         this.y = y ;
         ancho = 40.0;
         alto = 40.0;
-        enemigoOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("enemigo.png"))).getImage();
-        enemigo = enemigoOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
+        enemigoOriginal = Imagenes.cargarImagen("enemigo.png");
+        enemigo = Imagenes.escalar(enemigoOriginal, ancho, alto);
         id = generadorId.nuevoId();
         velocidad = 1.0;
         velocidadCaidaLibre= 4.0;

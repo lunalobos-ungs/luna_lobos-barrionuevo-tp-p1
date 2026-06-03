@@ -2,10 +2,8 @@ package juego;
 
 import entorno.Entorno;
 
-import javax.swing.*;
 import java.awt.*;
 import java.time.Instant;
-import java.util.Objects;
 
 /**
  * Personaje principal del juego. Se mueve horizontalmente con las teclas de dirección,
@@ -22,23 +20,15 @@ public class Princesa implements Elemento {
     private double y;
     private double ancho;
     private double alto;
-
     private double angulo;
-
     private final int id;
-
     private final double velocidad;
-
     private double velocidadCaidaLibre;
-
     private final double velocidadSalto;
-
     private boolean enSalto;
-
     private double aceleracionGravitatoria;
     private Instant marcaTemporalDeCaida;
-    private boolean activo = true ;
-
+    private boolean activo;
     private boolean xNoCrece;
     private boolean xNoDecrece;
 
@@ -50,22 +40,29 @@ public class Princesa implements Elemento {
      * @param entorno     el entorno del juego
      */
     public Princesa(GeneradorId generadorId, Entorno entorno) {
+        // El DNI de la princesa
+        id = generadorId.nuevoId();
+        // Propiedades del rectángulo de la princesa
         x = entorno.ancho() / 2.0;
         y = 0;
         ancho = 100.0;
         alto = 100.0;
-        princesaOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("princesa.png"))).getImage();
-        princesa = princesaOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
-        id = generadorId.nuevoId();
-        velocidad = 3.0;
-        velocidadCaidaLibre = 5.0;
-        velocidadSalto = 8.0;
-        enSalto = false;
-        angulo = 0.0;
-        aceleracionGravitatoria = 10.0;
-        cayendo();
-        xNoCrece = false;
-        xNoDecrece = false;
+        // Imagenes de la princesa
+        princesaOriginal = Imagenes.cargarImagen("princesa.png");
+        princesa = Imagenes.escalar(princesaOriginal, ancho, alto);
+        // Propiedades de vida de la princesa
+        activo = true; // tal vez aca nos falta un contador de vidas
+
+        // Propiedades dinámicas de la princesa
+        xNoCrece = false; // booleano que indica que no se puede avanzar hacia la derecha
+        xNoDecrece = false; // booleano que indica que no se puede avanzar hacia la izquierda
+        velocidad = 3.0; // la velocidad de movimientos laterales
+        velocidadSalto = 7.0; // la velocidad que alcanza la princesa tras saltar
+        enSalto = false; // indica si la princesa está en un salto
+        angulo = 0.0; // el ángulo en el que se mueve la princesa
+        aceleracionGravitatoria = 10.0; // la constante g de este mundo
+        velocidadCaidaLibre = 0.0; // la velocidad en caída libre, comienza en cero
+        marcaTemporalDeCaida = Instant.now(); // iniciamos con la princesa en caída libre
     }
 
     @Override
@@ -88,24 +85,22 @@ public class Princesa implements Elemento {
         return x;
     }
 
+    // cambiada para mejorar la jugabilidad
     @Override
     public double y() {
-        return y;
+        return y + alto * 0.05;
     }
 
+    // cambiada para mejorar la jugabilidad
     @Override
     public double ancho() {
-        return ancho * 0.55;
+        return ancho * 0.45;
     }
 
+    // cambiada para mejorar la jugabilidad
     @Override
     public double alto() {
         return alto * 0.80;
-    }
-
-    public void setAncho(double ancho) {
-        this.ancho = ancho;
-        this.princesa = princesaOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
     }
 
     @Override
@@ -186,7 +181,7 @@ public class Princesa implements Elemento {
 
     @Override
     public void actuar(Elemento elemento) {
-        // la princesa no actua sobre otros elementos directamente
+        // la princesa no actúa sobre otros elementos directamente
     }
 
     @Override
@@ -228,11 +223,9 @@ public class Princesa implements Elemento {
                 chocarTecho();
                 break;
             case "chocaste con un muro desde tu derecha":
-                System.out.println(mensaje);
                 chocarMuroPorDerecha();
                 break;
             case "chocaste con un muro desde tu izquierda":
-                System.out.println(mensaje);
                 chocarMuroPorIzquierda();
                 break;
             default:
@@ -275,18 +268,18 @@ public class Princesa implements Elemento {
     }
 
     public void disparar(Contexto contexto, Entorno entorno, GeneradorId generadorId) {
-        double mouseX = entorno.mouseX();
-        double mouseY = entorno.mouseY();
-        double distanciaX = mouseX - x;
-        double distanciaY = mouseY - y;
-        double distancia = Math.sqrt(Math.pow(distanciaX, 2.0) + Math.pow(distanciaY, 2.0));
-        double cos = (distanciaX) / distancia;
-        double sin = (distanciaY) / distancia;
-        Elemento proyectil = new ProyectilPrincesa(x, y, cos, sin, generadorId);
+        final var mouseX = entorno.mouseX();
+        final var mouseY = entorno.mouseY();
+        final var distanciaX = mouseX - x;
+        final var distanciaY = mouseY - y;
+        final var distancia = Math.sqrt(Math.pow(distanciaX, 2.0) + Math.pow(distanciaY, 2.0));
+        final var cos = (distanciaX) / distancia;
+        final var sin = (distanciaY) / distancia;
+        final var proyectil = new ProyectilPrincesa(x, y, cos, sin, generadorId);
         contexto.agregar(proyectil);
     }
-    
-    public boolean debeEliminarse () {
-    	return ! activo ;
+
+    public boolean debeEliminarse() {
+        return !activo;
     }
 }

@@ -5,7 +5,7 @@ import entorno.Entorno;
 /**
  * Todos los elementos que se renderizan deberán implementar esta interfaz.
  *
- * @author Miguel Angel Luna Lobos
+ * @author Miguel Angel Luna Lobos y Noelia Barrionuevo
  */
 public interface Elemento extends Rectangulo{
 
@@ -92,9 +92,8 @@ public interface Elemento extends Rectangulo{
       
     }
     
-    /*
-     *  se agrega para determinar si un elemento debe ser eliminado 
-     *  como en el caso de los enemigos , proyectiles, princesa cuando pierde vidas
+    /**
+     *  Indica si por algún motivo debe ser eliminado.
      */
     boolean debeEliminarse ();
 }
