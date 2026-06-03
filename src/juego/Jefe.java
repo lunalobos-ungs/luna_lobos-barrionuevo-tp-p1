@@ -16,6 +16,7 @@ public class Jefe implements Elemento {
     private double angulo ;
     private final double velocidad;
     private boolean vivo=true;
+    private Rectangulo2 rectangulo ;
 
 	/*
 	 *  Probando codigo de enemigo extra  
@@ -31,7 +32,7 @@ public class Jefe implements Elemento {
         enemigoExtra = Imagenes.escalar(enemigoExtraOriginal, ancho, alto);
         id = generadorId.nuevoId();
         velocidad = 1.0;
-        
+        rectangulo= new Rectangulo2  (x,y, ancho, alto);
         
     }
     @Override
@@ -134,6 +135,8 @@ public class Jefe implements Elemento {
     	return ! vivo ;
 		
 	}
-    
+    public Rectangulo2 rectangulo() {
+    	return rectangulo ;
+    }
 
 }

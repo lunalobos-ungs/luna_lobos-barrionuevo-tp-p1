@@ -31,6 +31,7 @@ public class Princesa implements Elemento {
     private boolean activo;
     private boolean xNoCrece;
     private boolean xNoDecrece;
+    private Rectangulo2 rectangulo ;
 
     /**
      * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación
@@ -47,6 +48,7 @@ public class Princesa implements Elemento {
         y = 0;
         ancho = 100.0;
         alto = 100.0;
+        rectangulo = new Rectangulo2 (x, y, ancho ,alto);
         // Imagenes de la princesa
         princesaOriginal = Imagenes.cargarImagen("princesa.png");
         princesa = Imagenes.escalar(princesaOriginal, ancho, alto);
@@ -267,7 +269,7 @@ public class Princesa implements Elemento {
         velocidadCaidaLibre = 0.0;
     }
 
-    public void disparar(Contexto contexto, Entorno entorno, GeneradorId generadorId) {
+    public void disparar(Mundo mundo, Entorno entorno, GeneradorId generadorId) {
         final var mouseX = entorno.mouseX();
         final var mouseY = entorno.mouseY();
         final var distanciaX = mouseX - x;
@@ -276,10 +278,13 @@ public class Princesa implements Elemento {
         final var cos = (distanciaX) / distancia;
         final var sin = (distanciaY) / distancia;
         final var proyectil = new ProyectilPrincesa(x, y, cos, sin, generadorId);
-        contexto.agregar(proyectil);
+        mundo.agregar(proyectil);
     }
 
     public boolean debeEliminarse() {
         return !activo;
+    }
+    public Rectangulo2 rectangulo() {
+    	return rectangulo ;
     }
 }
