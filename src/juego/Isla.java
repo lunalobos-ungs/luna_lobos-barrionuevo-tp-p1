@@ -12,30 +12,41 @@ import java.util.Objects;
  *
  * @author Noelia Barrionuevo
  */
-public class Isla implements Elemento{
-	    private int id;
-	    private double x;
-	    private double y;
-	    private double ancho;
-	    private double alto;
-	    private final Image tierraOriginal;
-	    private Image tierra;
-	    private boolean activo = true ;
-	    
-	     Isla(GeneradorId generadorId, Entorno entorno, int x , int y, int  ancho) {
-	        this.id = generadorId.nuevoId(); 
-	        // x , y ; cordenadas en el plano 
-	        this.x= x ;
-	        this.y =y ;
-	        //ancho en x de la isla 
-	        this.ancho= ancho;
-	        // alto de la isla en y; fijo
-	        alto = 20;
-	        tierraOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("tierra.png"))).getImage();
-	        tierra = tierraOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
-	        
-	    }
+public class Isla implements Elemento {
 
+    private int id;
+    private double x;
+    private double y;
+    private double ancho;
+    private double alto;
+    private final Image tierraOriginal;
+    private Image tierra;
+    private boolean activo = true;
+    private Rectangulo espacio;
+    Isla(GeneradorId generadorId, Entorno entorno, int x, int y, int ancho) {
+        this.id = generadorId.nuevoId();
+        // x , y ; coordenadas en el plano
+        this.x = x;
+        this.y = y;
+        //ancho en x de la isla
+        this.ancho = ancho;
+        // alto de la isla en y; fijo
+        alto = 20;
+        tierraOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("tierra.png"))).getImage();
+        tierra = tierraOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
+        espacio = Rectangulos.crearRectangulo(x(), y(), ancho()*1.5, alto()*10);
+    }
+
+    Isla(GeneradorId generadorId, double x, double y, double ancho, double alto, double factorFronteraAncho, double factorFronteraAlto) {
+        this.id = generadorId.nuevoId();
+        this.x = x;
+        this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
+        tierraOriginal = Imagenes.cargarImagen("tierra.png");
+        tierra = Imagenes.escalar(tierraOriginal, ancho, alto);
+        espacio = Rectangulos.crearRectangulo(x(), y(), ancho()*factorFronteraAncho, alto()*factorFronteraAlto);
+    }
 
     @Override
     public int id() {
@@ -91,7 +102,7 @@ public class Isla implements Elemento{
 
     @Override
     public void mover(Entorno entorno) {
-    	
+
     }
 
     /*
@@ -112,10 +123,10 @@ public class Isla implements Elemento{
         }
     }
 
-    private void actuarSobreCuerpo(Elemento elemento){
-        String tipoDeColision = Mundo.tipoDeColision(elemento, this);
+    private void actuarSobreCuerpo(Elemento elemento) {
+        String tipoDeColision = Rectangulos.tipoDeColision(elemento, this);
 
-        switch (tipoDeColision){
+        switch (tipoDeColision) {
             case "desde arriba":
                 elemento.recibirMensaje("estas en tierra firme");
                 break;
@@ -133,9 +144,9 @@ public class Isla implements Elemento{
         }
     }
 
-    private void actuarSobreProyectil(Elemento elemento){
-        String tipoDeColision = Mundo.tipoDeColision(elemento, this);
-        switch (tipoDeColision){
+    private void actuarSobreProyectil(Elemento elemento) {
+        String tipoDeColision = Rectangulos.tipoDeColision(elemento, this);
+        switch (tipoDeColision) {
             case "desde arriba":
                 elemento.recibirMensaje("rebotar desde arriba");
                 break;
@@ -155,25 +166,35 @@ public class Isla implements Elemento{
 
     @Override
     public void establecerAngulo(double angulo) {
-        throw new UnsupportedOperationException("método aún sin implementar");
+        throw new UnsupportedOperationException("la isla no trabaja con ángulo aún");
     }
 
     @Override
     public void establecerX(double x) {
-        throw new UnsupportedOperationException("método aún sin implementar");
+        throw new UnsupportedOperationException("las islas aún no se mueven");
     }
 
     @Override
     public void establecerY(double y) {
-        throw new UnsupportedOperationException("método aún sin implementar");
+        throw new UnsupportedOperationException("las islas aún no se mueven");
     }
 
     @Override
     public void recibirMensaje(String mensaje) {
         // las islas son inalterables
     }
-    
-    public boolean debeEliminarse () {
-    	return false ;
+
+    public boolean debeEliminarse() {
+        return false;
+    }
+
+    /**
+     * El rectangulo que devuelve este método es una especie de territorio de la isla y
+     * que va mas allá de los límites de la isla.
+     * La idea es que ninguna isla que se genere esté dentro del espacio de otra.
+     * @return
+     */
+    public Rectangulo espacio(){
+        return espacio;
     }
 }

@@ -44,8 +44,8 @@ public class ProyectilPrincesa implements Elemento {
         this.ancho = 15.0;
         this.alto = 15.0;
         this.velocidad = 8.0;
-        Image proyectilOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("proyectil.png"))).getImage();
-        this.proyectil = proyectilOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
+        Image proyectilOriginal = Imagenes.cargarImagen("proyectil_princesa.png");
+        this.proyectil = Imagenes.escalar(proyectilOriginal, ancho, alto);
     }
 
     @Override

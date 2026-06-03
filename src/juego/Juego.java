@@ -4,7 +4,6 @@ package juego;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
 
-import java.awt.*;
 import java.util.Iterator;
 
 public class Juego extends InterfaceJuego {
@@ -24,23 +23,26 @@ public class Juego extends InterfaceJuego {
         // ...
         generadorId = new GeneradorId();
         princesa = new Princesa(generadorId, entorno);
-        Elemento tierraFirme = new TierraFirme(generadorId, entorno);
-        contexto = new Mundo(entorno, princesa, tierraFirme);
-        
-      
-        FabricaIsla fabrica = new FabricaIsla ();
-        Isla isla1 = fabrica.isla1 (generadorId, entorno);
-        Isla isla2 = fabrica.isla2 (generadorId, entorno,  isla1);
-        Isla isla3 = fabrica.isla3 (generadorId, entorno,  isla1 ) ;
-        Isla isla4 = fabrica.isla4 ( generadorId, entorno, princesa) ;
-        contexto.agregar(isla1);
-        contexto.agregar(isla2);
-        contexto.agregar(isla3);
-        contexto.agregar(isla4);
-        
+        //Elemento tierraFirme = new TierraFirme(generadorId, entorno);
+        contexto = new Mundo(entorno, princesa);
+
+        Islas fabrica = new Islas();
+        var cantidadIslasBajas = 4;
+        var cantidadIslasAltas = 2;
+        var contador = 0;
+        while(contador < cantidadIslasBajas){
+            var isla = fabrica.nuevaNivelBajo(generadorId, contexto);
+            contexto.agregar(isla);
+            contador++;
+        }
+        contador = 0;
+        while(contador < cantidadIslasAltas){
+            var isla = fabrica.nuevaNivelAlto(generadorId, contexto);
+            contexto.agregar(isla);
+            contador++;
+        }
+
         /*
-         * 
-         */
         FabricaEnemigos fabricaEne = new FabricaEnemigos ();
         Enemigo enemigo1 = fabricaEne.enemigo1 (generadorId, entorno, isla1, isla2,  isla3, isla4 );
         Enemigo enemigo2 = fabricaEne.enemigo2 (generadorId, entorno, isla1,  isla2, isla3, isla4 );
@@ -49,14 +51,14 @@ public class Juego extends InterfaceJuego {
         
         FabricaEnemigos fabricaExtra = new FabricaEnemigos ();
         EnemigoExtra enemigoExtra1 = fabricaExtra.enemigoExtra (generadorId, entorno ) ;
-        
+
         contexto.agregar(enemigo1);
         contexto.agregar(enemigo2);
         contexto.agregar(enemigo3);
         contexto.agregar(enemigo4);
         
         contexto.agregar (enemigoExtra1);
-
+        */
         // Inicia el juego!
         this.entorno.iniciar();
 
@@ -71,26 +73,23 @@ public class Juego extends InterfaceJuego {
     public void tick() {
         // Procesamiento de un instante de tiempo
         // ...
-        entorno.dibujarRectangulo(entorno.ancho()/2.0, entorno.alto()/2.0, entorno.ancho(), entorno.alto(), 0, Color.WHITE);
-        contexto.purgar();
+        contexto.purgar(); // eliminamos a aquellos que se salen del mundo
+
         if(entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)){
             princesa.disparar(contexto, entorno, generadorId);
         }
+
         Iterator<Elemento> iterador = contexto.iterador();
         while(iterador.hasNext()){
             Elemento elemento = iterador.next();
             Elemento[] enColisionCon = contexto.enColisionCon(elemento);
-            elemento.dibujar(entorno);
-            if(enColisionCon.length > 0){
-                for(int i = 0; i < enColisionCon.length; i++){
-                    elemento.actuar(enColisionCon[i]);
-                }
+            for (int i = 0; i < enColisionCon.length; i++){
+                elemento.actuar(enColisionCon[i]);
             }
             elemento.mover(entorno);
+            elemento.dibujar(entorno);
         }
-
     }
-
 
     @SuppressWarnings("unused")
     public static void main(String[] args) {

@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.swing.ImageIcon;
 import entorno.Entorno;
 
-public class EnemigoExtra implements Elemento {
+public class Jefe implements Elemento {
 	private double x;
 	private double y;
 	private double ancho;
@@ -22,13 +22,13 @@ public class EnemigoExtra implements Elemento {
 	 *  Podria aparecer por izquierda y derecha siempre para que la princesa tenga que saltar
 	 *  entre isla e isla no se quede siempre sobre tierra firme  
 	 */
-    EnemigoExtra (GeneradorId generadorId, Entorno entorno, double x , double y  ){
+    Jefe(GeneradorId generadorId, Entorno entorno, double x , double y  ){
         this.x = x;
         this.y = y ;
         ancho = 100.0;
         alto = 40.0;
-        enemigoExtraOriginal = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("enemigoExtra.png"))).getImage();
-        enemigoExtra = enemigoExtraOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
+        enemigoExtraOriginal = Imagenes.cargarImagen("jefe.png");
+        enemigoExtra = Imagenes.escalar(enemigoExtraOriginal, ancho, alto);
         id = generadorId.nuevoId();
         velocidad = 1.0;
         

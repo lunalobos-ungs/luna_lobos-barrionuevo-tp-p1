@@ -7,92 +7,12 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * Implementación de {@link Contexto} que gestiona todos los elementos activos del juego.
+ * Implementación de Contexto que gestiona todos los elementos activos del juego.
  * Mantiene un arreglo ordenado por ID y provee detección de colisiones rectangulares.
  *
- * @author Miguel Angel Luna Lobos
+ * @author Miguel Angel Luna Lobos y Noelia Barrionuevo
  */
 public class Mundo implements Contexto {
-
-    private static boolean enColision(Rectangulo r1, Rectangulo r2) {
-        final double x1 = r1.x();
-        final double x2 = r2.x();
-        final double y1 = r1.y();
-        final double y2 = r2.y();
-        final double bordeIzquierdo1 = r1.bordeIzquierdo();
-        final double bordeDerecho1 = r1.bordeDerecho();
-        final double bordeSuperior1 = r1.bordeSuperior();
-        final double bordeInferior1 = r1.bordeInferior();
-        final double bordeIzquierdo2 = r2.bordeIzquierdo();
-        final double bordeDerecho2 = r2.bordeDerecho();
-        final double bordeSuperior2 = r2.bordeSuperior();
-        final double bordeInferior2 = r2.bordeInferior();
-        return ((bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2) || (bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2))
-                && ((bordeSuperior1 <= bordeInferior2 && y1 >= y2) || (bordeInferior1 >= bordeSuperior2 && y1 <= y2));
-    }
-
-    /**
-     * Determina la dirección desde la que {@code r1} llega a colisionar con {@code r2}.
-     *
-     * @param r1 el rectángulo cuya dirección de llegada se determina
-     * @param r2 el rectángulo impactado
-     * @return {@code "desde arriba"}, {@code "desde abajo"}, {@code "desde la izquierda"}
-     * o {@code "desde la derecha"}
-     * @throws UnsupportedOperationException si los rectángulos no están en colisión
-     */
-    public static String tipoDeColision(Rectangulo r1, Rectangulo r2) {
-        final double x1 = r1.x();
-        final double x2 = r2.x();
-        final double y1 = r1.y();
-        final double y2 = r2.y();
-        final double bordeIzquierdo1 = r1.bordeIzquierdo();
-        final double bordeDerecho1 = r1.bordeDerecho();
-        final double bordeSuperior1 = r1.bordeSuperior();
-        final double bordeInferior1 = r1.bordeInferior();
-        final double bordeIzquierdo2 = r2.bordeIzquierdo();
-        final double bordeDerecho2 = r2.bordeDerecho();
-        final double bordeSuperior2 = r2.bordeSuperior();
-        final double bordeInferior2 = r2.bordeInferior();
-
-        double deltaY = 0.0;
-        double deltaX = 0.0;
-        boolean desdeArriba = bordeInferior1 >= bordeSuperior2 && y1 <= y2;
-        boolean desdeAbajo = bordeSuperior1 <= bordeInferior2 && y1 >= y2;
-        boolean desdeLaDerecha = bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2;
-        boolean desdeLaIzquierda = bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2;
-
-        if (desdeArriba) {
-            deltaY = Math.min(bordeInferior1 - bordeSuperior2, r1.alto());
-        }
-
-        if (desdeAbajo) {
-            deltaY = Math.min(bordeInferior2 - bordeSuperior1, r1.alto());
-        }
-
-        if (desdeLaDerecha) {
-            deltaX = Math.min(bordeDerecho1 - bordeIzquierdo2, r1.ancho());
-        }
-
-        if (desdeLaIzquierda) {
-            deltaX = Math.min(bordeDerecho2 - bordeIzquierdo1, r1.ancho());
-        }
-
-        if (deltaY >= deltaX) { // lateral
-            if (desdeLaDerecha) {
-                return "desde la derecha";
-            } else if (desdeLaIzquierda) {
-                return "desde la izquierda";
-            }
-        } else { // vertical
-            if (desdeArriba) {
-                return "desde arriba";
-            } else if (desdeAbajo) {
-                return "desde abajo";
-            }
-        }
-
-        throw new UnsupportedOperationException("no hay colisión");
-    }
 
     /**
      * Puede haber nulos solo después del índice largo - 1.
@@ -111,7 +31,7 @@ public class Mundo implements Contexto {
         double alto = entorno.alto();
         elementos = new Elemento[10];
         largo = 0;
-        limitesMundo = new RectanguloSimple(ancho / 2.0, alto / 2.0, ancho, alto);
+        limitesMundo = Rectangulos.crearRectangulo(ancho / 2.0, alto / 2.0, ancho, alto);
     }
 
     /**
@@ -136,11 +56,33 @@ public class Mundo implements Contexto {
 
     @Override
     public Elemento[] enColisionCon(Elemento elemento) {
+        if(elemento.tipo().equals("fronteraIsla")){
+            return enColisionIsla(elemento);
+        }
         final Elemento[] almacenador = new Elemento[largo];
         int contador = 0;
         for (int i = 0; i < largo; i++) {
             Elemento elemento_ = elementos[i];
-            if (elemento.id() != elemento_.id() && enColision(elemento, elemento_)) {
+            if (elemento.id() != elemento_.id() && Rectangulos.enColision(elemento, elemento_)) {
+                almacenador[contador++] = elemento_;
+            }
+        }
+        final Elemento[] salida = new Elemento[contador];
+        System.arraycopy(almacenador, 0, salida, 0, contador);
+        return salida;
+    }
+
+    // método especial para las colisiones entre islas
+    // no deberían haber una vez iniciado el juego
+    private Elemento[] enColisionIsla(Elemento elemento){
+        final Elemento[] almacenador = new Elemento[largo];
+        int contador = 0;
+        for (int i = 0; i < largo; i++) {
+            Elemento elemento_ = elementos[i];
+            if(elemento_.tipo().equals("isla")){
+                elemento_ = Elementos.aPseudoElemento(elemento_, "fronteraIsla", ((Isla) elemento_).espacio());
+            }
+            if (elemento.id() != elemento_.id() && Rectangulos.enColision(elemento, elemento_)) {
                 almacenador[contador++] = elemento_;
             }
         }
@@ -225,17 +167,16 @@ public class Mundo implements Contexto {
     }
 
     @Override
-    
     /*
      * 1° elimina elementos que salgan de la pantalla
      * 2° eliminar enemigos que tienen como estado "muerto"
-     * 3° eliminar enemigo cuando toda la princesa 
+     * 3° eliminar enemigo cuando toca la princesa
      */
     public void purgar() {
         int i = 0;
         while (i < largo) {
             Elemento elemento = elementos[i];
-            if (!enColision(elemento, limitesMundo)|| elemento.debeEliminarse()) {
+            if (!Rectangulos.enColision(elemento, limitesMundo)|| elemento.debeEliminarse()) {
                 quitar(elemento);
              }
             else {
@@ -243,13 +184,16 @@ public class Mundo implements Contexto {
             }
         }
     }
+
+    @Override
+    public Rectangulo limitesMundo() {
+        return limitesMundo;
+    }
 }
 
 
 /**
- * Iterador de instancia fija sobre un arreglo de elementos.
- * Toma una copia del arreglo al momento de la creación para evitar interferencias
- * con modificaciones realizadas durante la iteración.
+ * Iterador de elementos. Toma una copia del arreglo al momento de la creación.
  */
 class IteradorElementos implements Iterator<Elemento> {
     int indice;

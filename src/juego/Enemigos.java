@@ -2,7 +2,7 @@ package juego;
 
 import entorno.Entorno;
 
-public class FabricaEnemigos {
+public class Enemigos {
 	
 	
 	/*
@@ -81,9 +81,9 @@ public class FabricaEnemigos {
 	 * Sugerencia : Crear un random que me arroje unicamnete dos posiciones de x,  
 	 * para que aparezca unicamnete por margen derecho o margen izquierdo 
 	 */
-	public EnemigoExtra enemigoExtra (GeneradorId generadorId, Entorno entorno) {
+	public Jefe enemigoExtra (GeneradorId generadorId, Entorno entorno) {
 		int x = 20 ;
 		int y= 520 ;
-		return new EnemigoExtra (generadorId, entorno, x, y);
+		return new Jefe(generadorId, entorno, x, y);
 	}
 }
