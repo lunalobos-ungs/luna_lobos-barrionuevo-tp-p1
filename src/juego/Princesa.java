@@ -31,7 +31,6 @@ public class Princesa {
     private boolean activo;
     private boolean xNoCrece;
     private boolean xNoDecrece;
-    private final Rectangulo rectangulo;
 
     /**
      * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación
@@ -48,7 +47,6 @@ public class Princesa {
         y = 0;
         ancho = 100.0;
         alto = 100.0;
-        rectangulo = new Rectangulo(x, y, ancho ,alto);
         // Imagenes de la princesa
         princesaOriginal = Imagenes.cargarImagen("princesa.png");
         princesa = Imagenes.escalar(princesaOriginal, ancho, alto);
@@ -279,6 +277,6 @@ public class Princesa {
         return !activo;
     }
     public Rectangulo rectangulo() {
-    	return rectangulo ;
+    	return new Rectangulo (x,y,ancho,alto) ;
     }
 }

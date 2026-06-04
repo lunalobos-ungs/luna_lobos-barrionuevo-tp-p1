@@ -33,14 +33,12 @@ public class Enemigo {
     private double angulo;
     private Instant marcaTemporalDeCaida;
     private boolean vivo = true ;
-    private Rectangulo rectangulo ;
     
     Enemigo (GeneradorId generadorId, Entorno entorno, double x , double y, double angulo  ){
         this.x = x;
         this.y = y ;
         ancho = 40.0;
         alto = 40.0;
-        rectangulo = new Rectangulo(x,y,ancho,alto);
         enemigoOriginal = Imagenes.cargarImagen("enemigo.png");
         enemigo = Imagenes.escalar(enemigoOriginal, ancho, alto);
         id = generadorId.nuevoId();
@@ -137,6 +135,6 @@ public class Enemigo {
     	return ! vivo ;
     }
     public Rectangulo rectangulo() {
-    	return rectangulo ;
+    	return new Rectangulo (x,y,ancho,alto) ;
     }
 }

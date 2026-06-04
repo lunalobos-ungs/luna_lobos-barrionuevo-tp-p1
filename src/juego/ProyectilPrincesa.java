@@ -22,7 +22,7 @@ public class ProyectilPrincesa {
     private final Image proyectil;
     private final double velocidad;
     private boolean activo = true;
-    private Rectangulo rectangulo;
+
 
     /**
      * Crea un proyectil en la posición indicada con la dirección definida por las
@@ -42,7 +42,7 @@ public class ProyectilPrincesa {
         this.cos = cos;
         this.ancho = 15.0;
         this.alto = 15.0;
-        rectangulo = new Rectangulo(x, y, ancho, alto);
+
         this.velocidad = 8.0;
         Image proyectilOriginal = Imagenes.cargarImagen("proyectil_princesa.png");
         this.proyectil = Imagenes.escalar(proyectilOriginal, ancho, alto);
@@ -138,6 +138,6 @@ public class ProyectilPrincesa {
     }
 
     public Rectangulo rectangulo() {
-        return rectangulo;
+        return new Rectangulo (x,y,ancho,alto);
     }
 }

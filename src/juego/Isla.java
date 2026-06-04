@@ -20,7 +20,7 @@ public class Isla {
     private final Image tierraOriginal;
     private Image tierra;
     private boolean activo = true;
-    private Rectangulo rectangulo ;
+
 
 
     Isla(GeneradorId generadorId, double x, double y, double ancho, double alto) {
@@ -29,7 +29,6 @@ public class Isla {
         this.y = y;
         this.ancho = ancho;
         this.alto = alto;
-        rectangulo = new Rectangulo(x, y, ancho, alto);
         tierraOriginal = Imagenes.cargarImagen("tierra.png");
         tierra = Imagenes.escalar(tierraOriginal, ancho, alto);
     }
@@ -134,7 +133,7 @@ public class Isla {
     }
 
     public void actuarSobreProyectilPrincesa(ProyectilPrincesa proyectil) {
-        String tipoDeColision = Rectangulos.tipoDeColision(proyectil.rectangulo(), this.rectangulo);
+        String tipoDeColision = Rectangulos.tipoDeColision(proyectil.rectangulo(), this.rectangulo());
         switch (tipoDeColision) {
             case "desde arriba":
                 proyectil.recibirMensaje("rebotar desde arriba");
@@ -178,6 +177,6 @@ public class Isla {
 
 
     public Rectangulo rectangulo() {
-    	return rectangulo ;
+    	return new Rectangulo(x,y,ancho,alto) ;
     }
 }

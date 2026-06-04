@@ -15,7 +15,7 @@ public class Jefe{
     private double angulo ;
     private final double velocidad;
     private boolean vivo=true;
-    private Rectangulo rectangulo ;
+
 
 	/*
 	 *  Probando codigo de enemigo extra  
@@ -31,7 +31,7 @@ public class Jefe{
         enemigoExtra = Imagenes.escalar(enemigoExtraOriginal, ancho, alto);
         id = generadorId.nuevoId();
         velocidad = 1.0;
-        rectangulo= new Rectangulo(x,y, ancho, alto);
+
         
     }
 
@@ -121,7 +121,7 @@ public class Jefe{
 		
 	}
     public Rectangulo rectangulo() {
-    	return rectangulo ;
+    	return new Rectangulo (x,y,ancho,alto) ;
     }
 
 }
