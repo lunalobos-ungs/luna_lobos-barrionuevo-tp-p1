@@ -51,8 +51,6 @@ public class Mundo {
     public ProyectilPrincesa proyectilPrincesa(){
         return proyectilPrincesa;
     }
-
-
     public Isla[] islasEnColision(Rectangulo rectangulo, String tipo){
         if (tipo.equals("fronteraIsla")) {
             var frontera = rectangulo.escalar(Islas.factorFronteraAncho, Islas.factorFronteraAlto);
@@ -223,7 +221,6 @@ public class Mundo {
             proyectilPrincesa = null;
         }
     }
-
     public void establecerProyectilPrincesa(ProyectilPrincesa proyectilPrincesa){
         this.proyectilPrincesa = proyectilPrincesa;
     }

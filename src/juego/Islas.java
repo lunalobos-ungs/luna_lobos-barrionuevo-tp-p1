@@ -50,7 +50,7 @@ public class Islas {
         final var xMin = 0.0 + ancho / 2.0;
         final var xMax = anchoMundo - ancho/2.0;
         final var x = Aleatorio.decimalRandom(xMin, xMax);
-        return new Isla(generadorId, x, y, ancho, altoIsla, factorFronteraAncho, factorFronteraAlto);
+        return new Isla(generadorId, x, y, ancho, altoIsla);
     }
 
     private static double alturaAleatoria(int niveles, double yMax, double yMin) {
@@ -72,7 +72,7 @@ public class Islas {
         final var xMin = 0.0 + ancho / 2.0;
         final var xMax = anchoMundo - ancho/2.0;
         final var x = Aleatorio.decimalRandom(xMin, xMax);
-        return new Isla(generadorId, x, y, ancho, altoIsla, factorFronteraAncho, factorFronteraAlto);
+        return new Isla(generadorId, x, y, ancho, altoIsla);
     }
 
 

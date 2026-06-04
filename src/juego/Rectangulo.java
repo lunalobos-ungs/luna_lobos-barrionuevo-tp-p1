@@ -5,10 +5,10 @@ import entorno.Entorno;
 import java.awt.*;
 
 public class Rectangulo {
-    private double x;
-    private double y;
-    private double ancho;
-    private double alto;
+    private final double x;
+    private final double y;
+    private final double ancho;
+    private final double alto;
 
     public Rectangulo(double x, double y, double ancho, double alto) {
         super();

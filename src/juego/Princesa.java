@@ -31,7 +31,7 @@ public class Princesa {
     private boolean activo;
     private boolean xNoCrece;
     private boolean xNoDecrece;
-    private Rectangulo rectangulo ;
+    private final Rectangulo rectangulo;
 
     /**
      * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación

@@ -125,7 +125,6 @@ public class Juego extends InterfaceJuego {
             }
             isla.dibujar(entorno);
         }
-
     }
 
     private void colisionesJefe(){

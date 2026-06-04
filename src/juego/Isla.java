@@ -23,7 +23,7 @@ public class Isla {
     private Rectangulo rectangulo ;
 
 
-    Isla(GeneradorId generadorId, double x, double y, double ancho, double alto, double factorFronteraAncho, double factorFronteraAlto) {
+    Isla(GeneradorId generadorId, double x, double y, double ancho, double alto) {
         this.id = generadorId.nuevoId();
         this.x = x;
         this.y = y;
