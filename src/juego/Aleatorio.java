@@ -1,9 +1,13 @@
 package juego;
 
+import java.util.Random;
+
 /**
  * Clase con métodos utilitarios para número aleatorios.
  */
 public class Aleatorio {
+
+    private static  Random random = new Random();
 
     /**
      * Devuelve un número decimal aleatorio entre los límites especificados.
@@ -16,6 +20,14 @@ public class Aleatorio {
             throw new IllegalArgumentException("max debe ser mayor a min");
         }
         final var rango = max - min;
-        return Math.random() * rango + min;
+        return random.nextDouble() * rango + min;
+    }
+
+    public static int enteroRandom(int min, int max){
+        if(min > max){
+            throw new IllegalArgumentException("max debe ser mayor a min");
+        }
+        final var rango = max - min;
+        return random.nextInt(rango) + min;
     }
 }

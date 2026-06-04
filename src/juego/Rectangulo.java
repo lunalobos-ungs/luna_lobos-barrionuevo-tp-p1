@@ -4,96 +4,76 @@ import entorno.Entorno;
 
 import java.awt.*;
 
-/**
- * Modela un rectángulo centrado en un punto (x, y) con un ancho y alto dados.
- * Los bordes se calculan como desplazamientos desde el centro.
- *
- * @author Miguel Angel Luna Lobos
- */
-public interface Rectangulo {
+public class Rectangulo {
+    private double x;
+    private double y;
+    private double ancho;
+    private double alto;
 
-    /**
-     * @return la coordenada x del centro
-     */
-    double x();
+    public Rectangulo(double x, double y, double ancho, double alto) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
+    }
 
-    /**
-     * @return la coordenada y del centro
-     */
-    double y();
+    public double x() {
+        return x;
+    }
 
-    /**
-     * @return el ancho del rectángulo
-     */
-    double ancho();
+    public double y() {
+        return y;
+    }
 
-    /**
-     * @return el alto del rectángulo
-     */
-    double alto();
+    public double ancho() {
+        return ancho;
+    }
 
-    /**
-     * Establece la coordenada x del centro.
-     *
-     * @param x la nueva coordenada x
-     */
-    void establecerX(double x);
-
-    /**
-     * Establece la coordenada y del centro.
-     *
-     * @param y la nueva coordenada y
-     */
-    void establecerY(double y);
-
-    /**
-     * Establece el ancho del rectángulo.
-     *
-     * @param ancho el nuevo ancho del elemento
-     */
-    void establecerAncho(double ancho);
-
-    /**
-     * Establece el alto del rectángulo.
-     *
-     * @param alto el nuevo alto del elemento
-     */
-    void establecerAlto(double alto);
+    public double alto() {
+        return alto;
+    }
 
     /**
      * @return la coordenada y del borde superior (y - alto / 2)
      */
-    default double bordeSuperior() {
+    double bordeSuperior() {
         return y() - alto() / 2.0;
     }
 
     /**
      * @return la coordenada y del borde inferior (y + alto / 2)
      */
-    default double bordeInferior() {
+    double bordeInferior() {
         return y() + alto() / 2.0;
     }
 
     /**
      * @return la coordenada x del borde derecho (x + ancho / 2)
      */
-    default double bordeDerecho() {
+    double bordeDerecho() {
         return x() + ancho() / 2.0;
     }
 
     /**
      * @return la coordenada x del borde izquierdo (x - ancho / 2)
      */
-    default double bordeIzquierdo() {
+    double bordeIzquierdo() {
         return x() - ancho() / 2.0;
     }
 
     /**
      * Dibuja el rectángulo con un color dado.
+     *
      * @param entorno el entorno
-     * @param color el color de relleno
+     * @param color   el color de relleno
      */
-    default void dibujarRectangulo(Entorno entorno, Color color){
+    void dibujarRectangulo(Entorno entorno, Color color) {
         entorno.dibujarRectangulo(x(), y(), ancho(), alto(), 0.0, color);
     }
+
+    public Rectangulo escalar(double proporcionX, double proporcionY) {
+        return new Rectangulo(x, y, ancho * proporcionX, alto * proporcionY);
+    }
+
 }

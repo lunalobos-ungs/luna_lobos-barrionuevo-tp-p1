@@ -12,7 +12,7 @@ import java.time.Instant;
  *
  * @author Miguel Angel Luna Lobos
  */
-public class Princesa implements Elemento {
+public class Princesa {
 
     private final Image princesaOriginal;
     private Image princesa;
@@ -31,7 +31,7 @@ public class Princesa implements Elemento {
     private boolean activo;
     private boolean xNoCrece;
     private boolean xNoDecrece;
-    private Rectangulo2 rectangulo ;
+    private Rectangulo rectangulo ;
 
     /**
      * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación
@@ -48,7 +48,7 @@ public class Princesa implements Elemento {
         y = 0;
         ancho = 100.0;
         alto = 100.0;
-        rectangulo = new Rectangulo2 (x, y, ancho ,alto);
+        rectangulo = new Rectangulo(x, y, ancho ,alto);
         // Imagenes de la princesa
         princesaOriginal = Imagenes.cargarImagen("princesa.png");
         princesa = Imagenes.escalar(princesaOriginal, ancho, alto);
@@ -67,50 +67,50 @@ public class Princesa implements Elemento {
         marcaTemporalDeCaida = Instant.now(); // iniciamos con la princesa en caída libre
     }
 
-    @Override
+
     public int id() {
         return id;
     }
 
-    @Override
+
     public String tipo() {
         return "princesa";
     }
 
-    @Override
+
     public double angulo() {
         return angulo;
     }
 
-    @Override
+
     public double x() {
         return x;
     }
 
     // cambiada para mejorar la jugabilidad
-    @Override
+
     public double y() {
         return y + alto * 0.05;
     }
 
     // cambiada para mejorar la jugabilidad
-    @Override
+
     public double ancho() {
         return ancho * 0.45;
     }
 
     // cambiada para mejorar la jugabilidad
-    @Override
+
     public double alto() {
         return alto * 0.80;
     }
 
-    @Override
+
     public void dibujar(Entorno entorno) {
         entorno.dibujarImagen(princesa, x + 5, y, 0, 1);
     }
 
-    @Override
+
     public void mover(Entorno entorno) {
         if (entorno.estaPresionada(entorno.TECLA_DERECHA)) {
             angulo = 0;
@@ -181,37 +181,31 @@ public class Princesa implements Elemento {
         aceleracionGravitatoria = 10.0;
     }
 
-    @Override
-    public void actuar(Elemento elemento) {
-        // la princesa no actúa sobre otros elementos directamente
-    }
-
-    @Override
     public void establecerAngulo(double angulo) {
         this.angulo = angulo;
     }
 
-    @Override
+
     public void establecerX(double x) {
         this.x = x;
     }
 
-    @Override
+
     public void establecerY(double y) {
         this.y = y;
     }
 
-    @Override
+
     public void establecerAncho(double ancho) {
         throw new UnsupportedOperationException("no se puede modificar las dimensiones de la princesa");
     }
 
-    @Override
+
     public void establecerAlto(double alto) {
         throw new UnsupportedOperationException("no se puede modificar las dimensiones de la princesa");
     }
 
-    @Override
+
     public void recibirMensaje(String mensaje) {
 
         switch (mensaje) {
@@ -278,13 +272,13 @@ public class Princesa implements Elemento {
         final var cos = (distanciaX) / distancia;
         final var sin = (distanciaY) / distancia;
         final var proyectil = new ProyectilPrincesa(x, y, cos, sin, generadorId);
-        mundo.agregar(proyectil);
+        mundo.establecerProyectilPrincesa(proyectil);
     }
 
     public boolean debeEliminarse() {
         return !activo;
     }
-    public Rectangulo2 rectangulo() {
+    public Rectangulo rectangulo() {
     	return rectangulo ;
     }
 }
