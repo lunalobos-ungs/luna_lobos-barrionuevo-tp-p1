@@ -2,9 +2,7 @@ package juego;
 
 import entorno.Entorno;
 
-import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 /**
  * Proyectil disparado por la princesa en dirección al cursor del mouse.
@@ -12,7 +10,7 @@ import java.util.Objects;
  *
  * @author Miguel Angel Luna Lobos
  */
-public class ProyectilPrincesa implements Elemento {
+public class ProyectilPrincesa {
 
     private final int id;
     private double x;
@@ -23,8 +21,8 @@ public class ProyectilPrincesa implements Elemento {
     private double cos;
     private final Image proyectil;
     private final double velocidad;
-    private boolean activo= true;
-    private Rectangulo2 rectangulo ;
+    private boolean activo = true;
+
 
     /**
      * Crea un proyectil en la posición indicada con la dirección definida por las
@@ -44,94 +42,79 @@ public class ProyectilPrincesa implements Elemento {
         this.cos = cos;
         this.ancho = 15.0;
         this.alto = 15.0;
-        rectangulo = new Rectangulo2 (x,y, ancho, alto );
+
         this.velocidad = 8.0;
         Image proyectilOriginal = Imagenes.cargarImagen("proyectil_princesa.png");
         this.proyectil = Imagenes.escalar(proyectilOriginal, ancho, alto);
     }
 
-    @Override
     public int id() {
         return id;
     }
 
-    @Override
     public String tipo() {
         return "proyectil";
     }
 
-    @Override
+
     public double angulo() {
         throw new UnsupportedOperationException("los proyectiles no almacenan su ángulo");
     }
 
-    @Override
+
     public double x() {
         return x;
     }
 
-    @Override
     public double y() {
         return y;
     }
 
-    @Override
+
     public double ancho() {
         return ancho;
     }
 
-    @Override
+
     public double alto() {
         return alto;
     }
 
-    @Override
+
     public void establecerAncho(double ancho) {
         this.ancho = ancho;
     }
 
-    @Override
+
     public void establecerAlto(double alto) {
         this.alto = alto;
     }
 
-    @Override
+
     public void dibujar(Entorno entorno) {
         entorno.dibujarImagen(proyectil, x, y, 0);
     }
 
-    @Override
     public void mover(Entorno entorno) {
         x += velocidad * cos;
         y += velocidad * sen;
     }
 
-    @Override
-    public void actuar(Elemento elemento) {
-        switch (elemento.tipo()) {
-            case "enemigo":
-            case "jefe":
-                elemento.recibirMensaje("morir");
-                break;
-        }
-    }
-
-    @Override
     public void establecerAngulo(double angulo) {
         throw new UnsupportedOperationException("no se puede cambiar el ángulo de un misil");
     }
 
-    @Override
+
     public void establecerX(double x) {
         throw new UnsupportedOperationException("no se puede cambiar las coordenadas de un misil");
     }
 
-    @Override
+
     public void establecerY(double y) {
         throw new UnsupportedOperationException("no se puede cambiar las coordenadas de un misil");
     }
 
-    @Override
+
     public void recibirMensaje(String mensaje) {
         switch (mensaje) {
             case "rebotar desde arriba":
@@ -148,13 +131,13 @@ public class ProyectilPrincesa implements Elemento {
                 throw new IllegalArgumentException("el proyectil no entiende el mensaje %s".formatted(mensaje));
         }
     }
-    
-    
-    public boolean debeEliminarse () {
-    	return ! activo ;
+
+
+    public boolean debeEliminarse() {
+        return !activo;
     }
-    
-    public Rectangulo2 rectangulo() {
-    	return rectangulo ;
+
+    public Rectangulo rectangulo() {
+        return new Rectangulo (x,y,ancho,alto);
     }
 }

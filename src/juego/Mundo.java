@@ -3,132 +3,137 @@ package juego;
 
 import entorno.Entorno;
 
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * Implementación de Contexto que gestiona todos los elementos activos del juego.
- * Mantiene un arreglo ordenado por ID y provee detección de colisiones rectangulares.
+ * Contiene los objetos que se van dibujando en pantalla.
  *
  * @author Miguel Angel Luna Lobos y Noelia Barrionuevo
  */
-public class Mundo  {
+public class Mundo {
 
-    /**
-     * Puede haber nulos solo después del índice largo - 1.
-     */
-    private Elemento[] elementos;
-    private int largo;
+    private final Princesa princesa;
+    private Enemigo[] enemigos;
+    private Isla[] islas;
+    private Jefe jefe;
+    private ProyectilPrincesa proyectilPrincesa;
+
+    private int largoEnemigos;
+
+    private int largoIslas;
+
     private final Rectangulo limitesMundo;
 
-    /**
-     * Crea un mundo vacío con los límites del entorno.
-     *
-     * @param entorno el entorno del juego
-     */
-    public Mundo(Entorno entorno) {
+    public Mundo(Entorno entorno, Princesa princesa, Jefe jefe) {
+        this.princesa = Objects.requireNonNull(princesa, "la princesa no puede ser null");
+        this.jefe = jefe;
         double ancho = entorno.ancho();
         double alto = entorno.alto();
-        elementos = new Elemento[10];
-        largo = 0;
-        limitesMundo = Rectangulos.crearRectangulo(ancho / 2.0, alto / 2.0, ancho, alto);
+        largoEnemigos = 0;
+        largoIslas = 0;
+        limitesMundo = new Rectangulo(ancho / 2.0, alto / 2.0, ancho, alto);
+        islas = new Isla[10];
+        enemigos = new Enemigo[10];
     }
 
-    /**
-     * Crea un mundo con los elementos iniciales provistos.
-     *
-     * @param entorno   el entorno del juego
-     * @param elementos los elementos iniciales; ninguno puede ser nulo
-     * @throws NullPointerException si alguno de los elementos es nulo
-     */
-    public Mundo(Entorno entorno, Elemento... elementos) {
-        double ancho = entorno.ancho();
-        double alto = entorno.alto();
-        limitesMundo = new RectanguloSimple(ancho / 2.0, alto / 2.0, ancho, alto);
-        this.elementos = new Elemento[Math.max(elementos.length, 10)];
-        for (int i = 0; i < elementos.length; i++) {
-            Objects.requireNonNull(elementos[i], "Los elementos provistos en este constructor no pueden ser nulos");
-            this.elementos[i] = elementos[i];
-        }
-        largo = elementos.length;
+    public Rectangulo limitesMundo(){
+        return limitesMundo;
     }
 
+    public Princesa princesa() {
+        return princesa;
+    }
 
-    public Elemento[] enColisionCon(Elemento elemento) {
-        if(elemento.tipo().equals("fronteraIsla")){
-            return enColisionIsla(elemento);
+    public Jefe jefe() {
+        return jefe;
+    }
+
+    public ProyectilPrincesa proyectilPrincesa(){
+        return proyectilPrincesa;
+    }
+    public Isla[] islasEnColision(Rectangulo rectangulo, String tipo){
+        if (tipo.equals("fronteraIsla")) {
+            var frontera = rectangulo.escalar(Islas.factorFronteraAncho, Islas.factorFronteraAlto);
+            return enColisionIsla(frontera);
         }
-        final Elemento[] almacenador = new Elemento[largo];
+        final Isla[] almacenador = new Isla[largoIslas];
         int contador = 0;
-        for (int i = 0; i < largo; i++) {
-            Elemento elemento_ = elementos[i];
-            if (elemento.id() != elemento_.id() && Rectangulos.enColision(elemento, elemento_)) {
-                almacenador[contador++] = elemento_;
+        for (int i = 0; i < largoIslas; i++) {
+            Isla isla_ = islas[i];
+            if (Rectangulos.enColision(rectangulo, isla_.rectangulo())) {
+                almacenador[contador++] = isla_;
             }
         }
-        final Elemento[] salida = new Elemento[contador];
+        final Isla[] salida = new Isla[contador];
         System.arraycopy(almacenador, 0, salida, 0, contador);
         return salida;
     }
 
-    // método especial para las colisiones entre islas
-    // no deberían haber una vez iniciado el juego
-    private Elemento[] enColisionIsla(Elemento elemento){
-        final Elemento[] almacenador = new Elemento[largo];
+    private Isla[] enColisionIsla(Rectangulo rectangulo) {
+        final Isla[] almacenador = new Isla[largoIslas];
         int contador = 0;
-        for (int i = 0; i < largo; i++) {
-            Elemento elemento_ = elementos[i];
-            if(elemento_.tipo().equals("isla")){
-                elemento_ = Elementos.aPseudoElemento(elemento_, "fronteraIsla", ((Isla) elemento_).espacio());
-            }
-            if (elemento.id() != elemento_.id() && Rectangulos.enColision(elemento, elemento_)) {
-                almacenador[contador++] = elemento_;
+        for (int i = 0; i < largoIslas; i++) {
+            var isla = islas[i];
+            var frontera = isla.rectangulo().escalar(Islas.factorFronteraAncho, Islas.factorFronteraAlto);
+            if (Rectangulos.enColision(rectangulo, frontera)) {
+                almacenador[contador++] = isla;
             }
         }
-        final Elemento[] salida = new Elemento[contador];
+        final Isla[] salida = new Isla[contador];
         System.arraycopy(almacenador, 0, salida, 0, contador);
         return salida;
     }
 
-    
-    public void agregar(Elemento elemento) {
-        if (largo == elementos.length) {
-            Elemento[] nuevoArray = new Elemento[elementos.length * 2];
-            System.arraycopy(elementos, 0, nuevoArray, 0, elementos.length);
-            elementos = nuevoArray;
+    public Enemigo[] enemigosEnColision(Rectangulo rectangulo){
+        final Enemigo[] almacenador = new Enemigo[largoEnemigos];
+        int contador = 0;
+        for (int i = 0; i < largoEnemigos; i++) {
+            Enemigo enemigo = enemigos[i];
+            if (Rectangulos.enColision(rectangulo, enemigo.rectangulo())) {
+                almacenador[contador++] = enemigo;
+            }
         }
-        elementos[largo++] = elemento;
+        final Enemigo[] salida = new Enemigo[contador];
+        System.arraycopy(almacenador, 0, salida, 0, contador);
+        return salida;
     }
 
-    
-    public void quitar(Elemento elemento) {
-        int indice = indiceDe(elemento);
+    public void agregarEnemigo(Enemigo enemigo) {
+        if (largoEnemigos == enemigos.length) {
+            Enemigo[] nuevoArray = new Enemigo[enemigos.length * 2];
+            System.arraycopy(enemigos, 0, nuevoArray, 0, enemigos.length);
+            enemigos = nuevoArray;
+        }
+        enemigos[largoEnemigos++] = enemigo;
+    }
+
+    public void agregarIsla(Isla isla) {
+        if (largoIslas == islas.length) {
+            Isla[] nuevoArray = new Isla[enemigos.length * 2];
+            System.arraycopy(islas, 0, nuevoArray, 0, enemigos.length);
+            islas = nuevoArray;
+        }
+        islas[largoIslas++] = isla;
+    }
+
+    public void quitarEnemigo(Enemigo enemigo) {
+        int indice = indiceDeEnemigo(enemigo);
         if (indice >= 0) {
-            for (int i = indice; i < largo - 1; i++) {
-                elementos[i] = elementos[i + 1];
+            for (int i = indice; i < largoEnemigos - 1; i++) {
+                enemigos[i] = enemigos[i + 1];
             }
-            elementos[largo - 1] = null;
-            largo--;
+            enemigos[largoEnemigos - 1] = null;
+            largoEnemigos--;
         }
     }
 
-    /**
-     * Busca el elemento en el array elementos por su id usando
-     * el algoritmo de búsqueda binaria. Devuelve el índice del
-     * elemento o un número negativo si no está presente en el
-     * array elementos.
-     *
-     * @param elemento el elemento a buscar
-     * @return el índice del elemento buscado o un número
-     * negativo si no está presente
-     */
-    private int indiceDe(Elemento elemento) {
+    private int indiceDeEnemigo(Enemigo enemigo) {
         int indiceMinimo = 0;
-        int indiceMaximo = largo - 1;
+        int indiceMaximo = largoEnemigos - 1;
         while (indiceMinimo <= indiceMaximo) {
             int indiceIntermedio = (indiceMinimo + indiceMaximo) / 2;
-            Elemento elementoIntermedio = elementos[indiceIntermedio];
-            int comparacion = compararElementos(elementoIntermedio, elemento);
+            Enemigo elementoIntermedio = enemigos[indiceIntermedio];
+            int comparacion = compararEnemigos(elementoIntermedio, enemigo);
 
             if (comparacion < 0) {
                 indiceMinimo = indiceIntermedio + 1;
@@ -141,84 +146,89 @@ public class Mundo  {
         return -(indiceMinimo + 1);
     }
 
-    /**
-     * Compara dos elementos según su id. Devuelve -1 si el id
-     * de elemento1 es menor que el id de elemento2.
-     *
-     * @param elemento1 el primer elemento
-     * @param elemento2 el segundo elemento
-     * @return un entero que puede -1, 0 o 1 según el resultado
-     * de la comparación
-     */
-    private int compararElementos(Elemento elemento1, Elemento elemento2) {
-        if (elemento1.id() < elemento2.id()) {
+    private int compararEnemigos(Enemigo enemigo1, Enemigo enemigo2) {
+        if (enemigo1.id() < enemigo2.id()) {
             return -1;
-        } else if (elemento1.id() == elemento2.id()) {
+        } else if (enemigo1.id() == enemigo2.id()) {
             return 0; // esta condición nunca debería ocurrir porque los ids son únicos
         } else {
             return 1;
         }
     }
 
-    
-    public Iterator<Elemento> iterador() {
-        return new IteradorElementos(elementos, largo);
+    public void quitarIsla(Isla isla) {
+        int indice = indiceDeIsla(isla);
+        if (indice >= 0) {
+            for (int i = indice; i < largoIslas - 1; i++) {
+                islas[i] = islas[i + 1];
+            }
+            islas[largoIslas - 1] = null;
+            largoIslas--;
+        }
     }
 
-    
+    private int indiceDeIsla(Isla isla) {
+        int indiceMinimo = 0;
+        int indiceMaximo = largoIslas - 1;
+        while (indiceMinimo <= indiceMaximo) {
+            int indiceIntermedio = (indiceMinimo + indiceMaximo) / 2;
+            Isla elementoIntermedio = islas[indiceIntermedio];
+            int comparacion = compararIslas(elementoIntermedio, isla);
+
+            if (comparacion < 0) {
+                indiceMinimo = indiceIntermedio + 1;
+            } else if (comparacion > 0) {
+                indiceMaximo = indiceIntermedio - 1;
+            } else {
+                return indiceIntermedio; // Encontrado (comparacion == 0)
+            }
+        }
+        return -(indiceMinimo + 1);
+    }
+
+    private int compararIslas(Isla isla1, Isla isla2) {
+        if (isla1.id() < isla2.id()) {
+            return -1;
+        } else if (isla1.id() == isla2.id()) {
+            return 0; // esta condición nunca debería ocurrir porque los ids son únicos
+        } else {
+            return 1;
+        }
+    }
+
     /*
      * 1° elimina elementos que salgan de la pantalla
      * 2° eliminar enemigos que tienen como estado "muerto"
      * 3° eliminar enemigo cuando toca la princesa
      */
     public void purgar() {
+
         int i = 0;
-        while (i < largo) {
-            Elemento elemento = elementos[i];
-            if (!Rectangulos.enColision(elemento, limitesMundo)|| elemento.debeEliminarse()) {
-                quitar(elemento);
-             }
-            else {
+        while (i < largoEnemigos) {
+            var enemigo = enemigos[i];
+            if (!Rectangulos.enColision(enemigo.rectangulo(), limitesMundo) || enemigo.debeEliminarse()) {
+                quitarEnemigo(enemigo);
+            } else {
                 i++;
             }
         }
+
+        if(jefe != null && (jefe.debeEliminarse() || !Rectangulos.enColision(jefe.rectangulo(), limitesMundo))){
+            jefe = null;
+        }
+
+        if(proyectilPrincesa != null && !Rectangulos.enColision(proyectilPrincesa.rectangulo(), limitesMundo)){
+            proyectilPrincesa = null;
+        }
+    }
+    public void establecerProyectilPrincesa(ProyectilPrincesa proyectilPrincesa){
+        this.proyectilPrincesa = proyectilPrincesa;
+    }
+    public IteradorIslas iteradorIslas(){
+        return new IteradorIslas(islas, largoIslas);
     }
 
-    
-    public Rectangulo limitesMundo() {
-        return limitesMundo;
-    }
-}
-
-
-/**
- * Iterador de elementos. Toma una copia del arreglo al momento de la creación.
- */
-class IteradorElementos implements Iterator<Elemento> {
-    int indice;
-    int largo;
-    Elemento[] elementos;
-
-    /**
-     * Crea un iterador sobre una copia del arreglo dado.
-     *
-     * @param elementos el arreglo de elementos a iterar
-     * @param largo     la cantidad de elementos válidos en el arreglo
-     */
-    public IteradorElementos(Elemento[] elementos, int largo) {
-        indice = 0;
-        this.largo = largo;
-        this.elementos = new Elemento[largo];
-        System.arraycopy(elementos, 0, this.elementos, 0, largo);
-    }
-
-    @Override
-    public boolean hasNext() {
-        return indice < largo;
-    }
-
-    @Override
-    public Elemento next() {
-        return elementos[indice++];
+    public IteradorEnemigos iteradorEnemigos(){
+        return new IteradorEnemigos(enemigos, largoEnemigos);
     }
 }
