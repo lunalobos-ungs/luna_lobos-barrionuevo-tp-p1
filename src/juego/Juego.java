@@ -25,8 +25,8 @@ public class Juego extends InterfaceJuego {
         var jefe = new Jefe(generadorId, entorno, 600, 700);
         mundo = new Mundo(entorno, princesa, jefe);
 
-        var cantidadIslasBajas = 3;
-        var cantidadIslasAltas = 2;
+        var cantidadIslasBajas = 6;
+        var cantidadIslasAltas = 7;
         var contador = 0;
         while(contador < cantidadIslasBajas){
             var isla = Islas.nuevaNivelBajo(generadorId, mundo);

@@ -277,6 +277,6 @@ public class Princesa {
         return !activo;
     }
     public Rectangulo rectangulo() {
-    	return new Rectangulo (x,y,ancho,alto) ;
+    	return new Rectangulo (x,y,ancho*0.47,alto*0.8) ;
     }
 }

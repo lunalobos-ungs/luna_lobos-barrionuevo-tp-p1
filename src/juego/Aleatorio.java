@@ -28,6 +28,7 @@ public class Aleatorio {
             throw new IllegalArgumentException("max debe ser mayor a min");
         }
         final var rango = max - min;
+        // max - min - 1 + min = max - 1
         return random.nextInt(rango) + min;
     }
 }

@@ -49,6 +49,21 @@ public class Enemigo {
         aceleracionGravitatoria = 10.0;
         //cayendo();
         }
+    Enemigo (GeneradorId generadorId,  double x , double y, double ancho, double alto, double angulo  ){
+        this.x = x;
+        this.y = y ;
+        this.ancho = ancho;
+        this.alto = alto;
+        enemigoOriginal = Imagenes.cargarImagen("enemigo.png");
+        enemigo = Imagenes.escalar(enemigoOriginal, ancho, alto);
+        id = generadorId.nuevoId();
+        velocidad = 1.0;
+        velocidadCaidaLibre= 0.0;
+        // luego el angulo se modifica entonces tendremos que hacer this.angulo
+        this.angulo = angulo ;
+        aceleracionGravitatoria = 10.0;
+        //cayendo();
+    }
 
     public int id() {
        return id;

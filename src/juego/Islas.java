@@ -8,15 +8,15 @@ import entorno.Entorno;
  * @author Noelia Barrionuevo y Miguel Angel Luna Lobos
  */
 public class Islas {
-    private static final double proporcionAlto = 0.7;
-    private static final double proporcionAlturaMinima = 0.0;
-    private static final double altoIsla = 20.0;
-    private static final double anchoMinimo = 100.0;
-    private static final double anchoMaximo = 300.0;
+    public static final double proporcionAlto = 0.7;
+    public static final double proporcionAlturaMinima = 0.0;
+    public static final double altoIsla = 20.0;
+    public static final double anchoMinimo = 100.0;
+    public static final double anchoMaximo = 300.0;
     public static final double factorFronteraAncho = 2.0;
-    public static final double factorFronteraAlto = 6.0;
+    public static final double factorFronteraAlto = 1.0;
 
-    public static final int nievelesBajos = 3;
+    public static final int nivelesBajos = 3;
     public static final int nivelesAltos = 6;
 
     private static final double anchoIslaNivelBajo = 100.0;
@@ -45,7 +45,7 @@ public class Islas {
         final var alturaMinima = proporcionAlturaMinima * altoMundo;
         final var yMax = altoMundo - alturaMinima - altoIsla / 2.0;
         final var yMin = altoMundo - alturaMinima - alto + altoIsla / 2.0;
-        final var y = alturaAleatoria(nievelesBajos, yMin, yMax);
+        final var y = alturaAleatoria(nivelesBajos, yMin, yMax);
         final var ancho = anchoIslaNivelBajo;
         final var xMin = 0.0 + ancho / 2.0;
         final var xMax = anchoMundo - ancho/2.0;
@@ -54,17 +54,20 @@ public class Islas {
     }
 
     private static double alturaAleatoria(int niveles, double yMax, double yMin) {
+        if(niveles < 2){
+            throw new IllegalArgumentException("niveles no puede ser inferior a 2");
+        }
         int indice = Aleatorio.enteroRandom(0, niveles);
         double rango = yMax - yMin;
-        return indice * rango / niveles + yMin;
+        return indice * rango / (niveles - 1) + yMin;
     }
 
     private static Isla islaAleatoriaNivelAlto(GeneradorId generadorId, Mundo mundo){
         System.out.println("generando isla de nivel alto");
         final var anchoMundo = mundo.limitesMundo().ancho();
         final var altoMundo = mundo.limitesMundo().alto();
-        final var alto = proporcionAlto * altoMundo *0.6;
-        final var alturaMinima = proporcionAlturaMinima * altoMundo + proporcionAlto * altoMundo / 2.0;
+        final var alto = proporcionAlto * altoMundo;
+        final var alturaMinima = proporcionAlturaMinima * altoMundo + alto / 2.0;
         final var yMax = altoMundo - alturaMinima - altoIsla / 2.0;
         final var yMin = altoMundo - alturaMinima - alto + altoIsla / 2.0;
         final var y = alturaAleatoria(nivelesAltos, yMin, yMax);
