@@ -14,12 +14,14 @@ import java.time.Instant;
  */
 public class Princesa {
 
+    private static final double ladoCorazon = 30.0;
+
     private final Image princesaOriginal;
-    private Image princesa;
+    private final Image princesa;
     private double x;
     private double y;
-    private double ancho;
-    private double alto;
+    private final double ancho;
+    private final double alto;
     private double angulo;
     private final int id;
     private final double velocidad;
@@ -28,9 +30,15 @@ public class Princesa {
     private boolean enSalto;
     private double aceleracionGravitatoria;
     private Instant marcaTemporalDeCaida;
-    private boolean activo;
+
     private boolean xNoCrece;
     private boolean xNoDecrece;
+
+    private int vidas;
+
+    private Image corazonOriginal;
+
+    private Image corazon;
 
     /**
      * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación
@@ -50,9 +58,10 @@ public class Princesa {
         // Imagenes de la princesa
         princesaOriginal = Imagenes.cargarImagen("princesa.png");
         princesa = Imagenes.escalar(princesaOriginal, ancho, alto);
+        corazonOriginal = Imagenes.cargarImagen("corazon.png");
+        corazon = Imagenes.escalar(corazonOriginal, ladoCorazon, ladoCorazon);
         // Propiedades de vida de la princesa
-        activo = true; // tal vez aca nos falta un contador de vidas
-
+        vidas = 10;
         // Propiedades dinámicas de la princesa
         xNoCrece = false; // booleano que indica que no se puede avanzar hacia la derecha
         xNoDecrece = false; // booleano que indica que no se puede avanzar hacia la izquierda
@@ -105,7 +114,19 @@ public class Princesa {
 
 
     public void dibujar(Entorno entorno) {
-        entorno.dibujarImagen(princesa, x + 5, y, 0, 1);
+        var espacio = 5.0;
+        for (var i = 0; i < vidas; i++) {
+            double l = ladoCorazon * (i + 0.5) + (i + 1) * 5.0;
+            entorno.dibujarImagen(
+                    corazon,
+                    l, espacio + ladoCorazon / 2.0,
+                    0,
+                    1
+            );
+        }
+        final var dx = entorno.ancho() / 2.0;
+        final var dy = entorno.alto() / 2.0;
+        entorno.dibujarImagen(princesa, dx, dy, 0, 1);
     }
 
 
@@ -207,8 +228,8 @@ public class Princesa {
     public void recibirMensaje(String mensaje) {
 
         switch (mensaje) {
-            case "morir": // :C
-                cayendo();
+            case "una vida menos": // :C
+                vidas--;
                 break;
             case "estas en tierra firme":
                 enTierraFirme();
@@ -262,8 +283,8 @@ public class Princesa {
     }
 
     public void disparar(Mundo mundo, Entorno entorno, GeneradorId generadorId) {
-        final var mouseX = entorno.mouseX();
-        final var mouseY = entorno.mouseY();
+        final var mouseX = entorno.mouseX() + x - entorno.ancho() / 2.0;
+        final var mouseY = entorno.mouseY() + y - entorno.alto() / 2.0;
         final var distanciaX = mouseX - x;
         final var distanciaY = mouseY - y;
         final var distancia = Math.sqrt(Math.pow(distanciaX, 2.0) + Math.pow(distanciaY, 2.0));
@@ -274,9 +295,10 @@ public class Princesa {
     }
 
     public boolean debeEliminarse() {
-        return !activo;
+        return false;
     }
+
     public Rectangulo rectangulo() {
-    	return new Rectangulo (x,y,ancho*0.47,alto*0.8) ;
+        return new Rectangulo(x(), y(), ancho(), alto());
     }
 }

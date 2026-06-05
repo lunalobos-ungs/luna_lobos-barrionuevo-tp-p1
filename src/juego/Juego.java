@@ -4,7 +4,7 @@ package juego;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
 
-import java.util.Iterator;
+import java.awt.*;
 
 public class Juego extends InterfaceJuego {
     // El objeto Entorno que controla el tiempo y otros
@@ -14,6 +14,7 @@ public class Juego extends InterfaceJuego {
     // ...
     private final GeneradorId generadorId;
     private final Mundo mundo;
+
     Juego() {
         // Inicializa el objeto entorno
         this.entorno = new Entorno(this, "Super Elizabeth Sis", 800, 600);
@@ -25,41 +26,23 @@ public class Juego extends InterfaceJuego {
         var jefe = new Jefe(generadorId, entorno, 600, 700);
         mundo = new Mundo(entorno, princesa, jefe);
 
-        var cantidadIslasBajas = 6;
-        var cantidadIslasAltas = 7;
+        var cantidadIslasBajas = Islas.proporcionIslasBajas * mundo.limitesMundo().area();
+        var cantidadIslasAltas = Islas.proporcionIslasAltas * mundo.limitesMundo().area();
         var contador = 0;
-        while(contador < cantidadIslasBajas){
+        while (contador < cantidadIslasBajas) {
             var isla = Islas.nuevaNivelBajo(generadorId, mundo);
             mundo.agregarIsla(isla);
             contador++;
         }
         contador = 0;
-        while(contador < cantidadIslasAltas){
+        while (contador < cantidadIslasAltas) {
             var isla = Islas.nuevaNivelAlto(generadorId, mundo);
             mundo.agregarIsla(isla);
             contador++;
         }
 
-        /*
-        FabricaEnemigos fabricaEne = new FabricaEnemigos ();
-        Enemigo enemigo1 = fabricaEne.enemigo1 (generadorId, entorno, isla1, isla2,  isla3, isla4 );
-        Enemigo enemigo2 = fabricaEne.enemigo2 (generadorId, entorno, isla1,  isla2, isla3, isla4 );
-        Enemigo enemigo3 = fabricaEne.enemigo3 (generadorId, entorno, isla1,  isla2, isla3, isla4 , enemigo1);
-        Enemigo enemigo4 = fabricaEne.enemigo4 (generadorId, entorno, isla1, isla2, isla3, isla4, enemigo2);
-        
-        FabricaEnemigos fabricaExtra = new FabricaEnemigos ();
-        EnemigoExtra enemigoExtra1 = fabricaExtra.enemigoExtra (generadorId, entorno ) ;
-
-        contexto.agregar(enemigo1);
-        contexto.agregar(enemigo2);
-        contexto.agregar(enemigo3);
-        contexto.agregar(enemigo4);
-        
-        contexto.agregar (enemigoExtra1);
-        */
         // Inicia el juego!
         this.entorno.iniciar();
-
     }
 
     /**
@@ -71,9 +54,29 @@ public class Juego extends InterfaceJuego {
     public void tick() {
         // Procesamiento de un instante de tiempo
         // ...
+
+        if (mundo.faltanEnemigos()) {
+            var opcion = Aleatorio.enteroRandom(0,2);
+            Enemigo enemigo;
+            switch (opcion){
+                case 0:
+                    enemigo = Enemigos.nuevoEnemigoDerecha(generadorId, mundo, entorno);
+                    break;
+                case 1:
+                    enemigo = Enemigos.nuevoEnemigoIzquierda(generadorId, mundo, entorno);
+                    break;
+                default:
+                    throw new RuntimeException("error desconocido");
+            }
+
+            if (enemigo != null) {
+                mundo.agregarEnemigo(enemigo);
+            }
+        }
+
         mundo.purgar(); // eliminamos a aquellos que se salen del mundo
 
-        if(entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO) && mundo.proyectilPrincesa() == null){
+        if (entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO) && mundo.proyectilPrincesa() == null) {
             mundo.princesa().disparar(mundo, entorno, generadorId);
         }
 
@@ -93,81 +96,79 @@ public class Juego extends InterfaceJuego {
         colisionesPrincesa();
     }
 
-    private void colisionesEnemigos(){
+    private void colisionesEnemigos() {
         var iterador = mundo.iteradorEnemigos();
         var princesa = mundo.princesa();
-        while(iterador.tieneOtro()){
+        while (iterador.tieneOtro()) {
             var enemigo = iterador.proximo();
-            if(Rectangulos.enColision(enemigo.rectangulo(), princesa.rectangulo())){
+            if (Rectangulos.enColision(enemigo.rectangulo(), princesa.rectangulo())) {
                 princesa.recibirMensaje("una vida menos");
             }
             enemigo.mover(entorno);
-            enemigo.dibujar(entorno);
+            enemigo.dibujar(entorno, mundo);
         }
     }
 
-    private void colisionesIslas(){
+    private void colisionesIslas() {
         var iterador = mundo.iteradorIslas();
         var princesa = mundo.princesa();
         var jefe = mundo.jefe();
         var proyectil = mundo.proyectilPrincesa();
-        while(iterador.tieneOtro()){
+        while (iterador.tieneOtro()) {
             var isla = iterador.proximo();
-            if(Rectangulos.enColision(isla.rectangulo(), princesa.rectangulo())){
-                System.out.println("colision con isla");
+            if (Rectangulos.enColision(isla.rectangulo(), princesa.rectangulo())) {
                 isla.actuarSobrePrincesa(princesa);
             }
-            if(jefe != null && Rectangulos.enColision(isla.rectangulo(), jefe.rectangulo())){
+            if (jefe != null && Rectangulos.enColision(isla.rectangulo(), jefe.rectangulo())) {
                 isla.actuarSobreJefe(jefe);
             }
-            if(proyectil != null && Rectangulos.enColision(isla.rectangulo(), proyectil.rectangulo())){
+            if (proyectil != null && Rectangulos.enColision(isla.rectangulo(), proyectil.rectangulo())) {
                 isla.actuarSobreProyectilPrincesa(proyectil);
             }
-            isla.dibujar(entorno);
+            isla.dibujar(entorno, mundo);
         }
     }
 
-    private void colisionesJefe(){
+    private void colisionesJefe() {
         var jefe = mundo.jefe();
-        if(jefe == null){
+        if (jefe == null) {
             return;
         }
+
         var princesa = mundo.princesa();
-        if(Rectangulos.enColision(jefe.rectangulo(), princesa.rectangulo())){
+        if (Rectangulos.enColision(jefe.rectangulo(), princesa.rectangulo())) {
             princesa.recibirMensaje("una vida menos");
         }
         jefe.mover(entorno);
         jefe.dibujar(entorno);
     }
 
-    private void colisionesProyectilPrincesa(){
+    private void colisionesProyectilPrincesa() {
         var proyectil = mundo.proyectilPrincesa();
-        if(proyectil == null){
+        if (proyectil == null) {
             return;
         }
         var jefe = mundo.jefe();
-        if(jefe != null && Rectangulos.enColision(jefe.rectangulo(), proyectil.rectangulo())){
+        if (jefe != null && Rectangulos.enColision(jefe.rectangulo(), proyectil.rectangulo())) {
             jefe.recibirMensaje("una vida menos");
         }
         var enemigosEnColision = mundo.enemigosEnColision(proyectil.rectangulo());
-        for(var i = 0; i < enemigosEnColision.length; i++){
+        for (var i = 0; i < enemigosEnColision.length; i++) {
             enemigosEnColision[i].recibirMensaje("morir");
         }
         proyectil.mover(entorno);
-        proyectil.dibujar(entorno);
+        proyectil.dibujar(entorno, mundo);
     }
 
-    private void colisionesPrincesa(){
+    private void colisionesPrincesa() {
         var princesa = mundo.princesa();
         var enemigosEnColision = mundo.enemigosEnColision(princesa.rectangulo());
-        for (int i = 0; i < enemigosEnColision.length; i++){
+        for (int i = 0; i < enemigosEnColision.length; i++) {
             enemigosEnColision[i].recibirMensaje("morir");
         }
         princesa.mover(entorno);
         princesa.dibujar(entorno);
     }
-
-
 
     @SuppressWarnings("unused")
     public static void main(String[] args) {

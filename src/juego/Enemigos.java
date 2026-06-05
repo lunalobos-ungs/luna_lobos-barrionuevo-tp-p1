@@ -6,6 +6,8 @@ public class Enemigos {
     private static final double altoEnemigo = 40.0;
     private static final double anchoEnemigo = 40.0;
 
+    public static final int minimoEnemigos = Islas.niveles;
+
     /*
      * Hay que tener en cuenta que no ocupe ninguna posicion de la isla
      * cuando hacemos el random para la posicion hay que chequear que no haya una isla en esa Y
@@ -88,25 +90,51 @@ public class Enemigos {
         return new Jefe(generadorId, entorno, x, y);
     }
 
-    public static Enemigo enemigoAleatorioNielBajo(GeneradorId generadorId, Mundo mundo, double x, double angulo) {
+    public static Enemigo nuevoEnemigoDerecha(GeneradorId generadorId, Mundo mundo, Entorno entorno) {
+        var princesa = mundo.princesa();
+        var enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
+        var intentos = 0;
+        while (mundo.enemigosEnColision(enemigo.rectangulo()).length > 0) {
+            enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
+            if (intentos++ == 100) {
+                System.out.println("advertencia, no se pudo generar un enemigo");
+                return null;
+            }
+        }
+        return enemigo;
+    }
+
+    public static Enemigo nuevoEnemigoIzquierda(GeneradorId generadorId, Mundo mundo, Entorno entorno) {
+        var princesa = mundo.princesa();
+        var enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() - entorno.ancho() / 2.0,  0.0);
+        var intentos = 0;
+        while (mundo.enemigosEnColision(enemigo.rectangulo()).length > 0) {
+            enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() - entorno.ancho() / 2.0, 0.0);
+            if (intentos++ == 100) {
+                System.out.println("advertencia, no se pudo generar un enemigo");
+                return null;
+            }
+        }
+        return enemigo;
+    }
+
+    public static Enemigo enemigoAleatorio(GeneradorId generadorId, Mundo mundo, double x, double angulo) {
         final var altoMundo = mundo.limitesMundo().alto();
         final var alto = Islas.proporcionAlto * altoMundo;
-        final var alturaMinima = Islas.proporcionAlturaMinima * altoMundo + alto / 2.0;
-        final var yMax = altoMundo - alturaMinima - Islas.altoIsla / 2.0;
-        final var yMin = altoMundo - alturaMinima - alto + altoEnemigo / 2.0;
-        final var y = alturaAleatoria(Islas.nivelesBajos, yMin, yMax);
-        return new Enemigo(generadorId, x, y, anchoEnemigo, alto, angulo);
+        final var alturaMinima = Islas.proporcionAlturaMinima * altoMundo;
+        final var yMax = altoMundo - alturaMinima;
+        final var yMin = altoMundo - alturaMinima - alto;
+        final var y = alturaAleatoria(Islas.niveles, yMin, yMax);
+        return new Enemigo(generadorId, x, y, anchoEnemigo, altoEnemigo, angulo);
     }
 
     private static double alturaAleatoria(int n, double yMin, double yMax) {
         if (n < 2) {
             throw new IllegalArgumentException("n no puede ser inferior a 2");
         }
-        var q = Aleatorio.enteroRandom(0, n - 2);
+        var q = Aleatorio.enteroRandom(0, n - 1);
         var indice = 2 * q + 1;
         var rango = yMax - yMin;
-        return indice * rango / (n - 1) + yMin;
-
-
+        return indice * rango / (2 * (n - 1)) + yMin;
     }
 }

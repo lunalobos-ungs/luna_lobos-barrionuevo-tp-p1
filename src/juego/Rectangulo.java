@@ -76,4 +76,7 @@ public class Rectangulo {
         return new Rectangulo(x, y, ancho * proporcionX, alto * proporcionY);
     }
 
+    public double area(){
+        return ancho() * alto();
+    }
 }

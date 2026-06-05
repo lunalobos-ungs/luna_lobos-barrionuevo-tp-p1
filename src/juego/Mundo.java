@@ -12,6 +12,8 @@ import java.util.Objects;
  */
 public class Mundo {
 
+    private static final double proporcionAnchoMundo = 30.0;
+    private static final double proporcionAltoMundo = 2.0;
     private final Princesa princesa;
     private Enemigo[] enemigos;
     private Isla[] islas;
@@ -24,20 +26,29 @@ public class Mundo {
 
     private final Rectangulo limitesMundo;
 
+    private final Rectangulo pantalla;
+
     public Mundo(Entorno entorno, Princesa princesa, Jefe jefe) {
         this.princesa = Objects.requireNonNull(princesa, "la princesa no puede ser null");
         this.jefe = jefe;
-        double ancho = entorno.ancho();
-        double alto = entorno.alto();
+        var anchoPantalla = entorno.ancho();
+        var altoPantalla = entorno.alto();
         largoEnemigos = 0;
         largoIslas = 0;
-        limitesMundo = new Rectangulo(ancho / 2.0, alto / 2.0, ancho, alto);
+        var anchoMundo = anchoPantalla * proporcionAnchoMundo;
+        var altoMundo = altoPantalla * proporcionAltoMundo;
+        limitesMundo = new Rectangulo(anchoMundo / 2.0, altoMundo / 2.0, anchoMundo, altoMundo);
+        pantalla = new Rectangulo(anchoPantalla / 2.0, altoPantalla / 2.0, anchoPantalla, altoPantalla);
         islas = new Isla[10];
         enemigos = new Enemigo[10];
     }
 
     public Rectangulo limitesMundo(){
         return limitesMundo;
+    }
+
+    public Rectangulo limitesPantalla() {
+        return new Rectangulo(princesa.x(), princesa.y(), pantalla.ancho(), pantalla.alto());
     }
 
     public Princesa princesa() {
@@ -109,8 +120,8 @@ public class Mundo {
 
     public void agregarIsla(Isla isla) {
         if (largoIslas == islas.length) {
-            Isla[] nuevoArray = new Isla[enemigos.length * 2];
-            System.arraycopy(islas, 0, nuevoArray, 0, enemigos.length);
+            Isla[] nuevoArray = new Isla[islas.length * 2];
+            System.arraycopy(islas, 0, nuevoArray, 0, islas.length);
             islas = nuevoArray;
         }
         islas[largoIslas++] = isla;
@@ -206,7 +217,8 @@ public class Mundo {
         int i = 0;
         while (i < largoEnemigos) {
             var enemigo = enemigos[i];
-            if (!Rectangulos.enColision(enemigo.rectangulo(), limitesMundo) || enemigo.debeEliminarse()) {
+            if (!Rectangulos.enColision(enemigo.rectangulo(), limitesPantalla()) || enemigo.debeEliminarse()) {
+                System.out.println("purgando enemigo");
                 quitarEnemigo(enemigo);
             } else {
                 i++;
@@ -214,10 +226,12 @@ public class Mundo {
         }
 
         if(jefe != null && (jefe.debeEliminarse() || !Rectangulos.enColision(jefe.rectangulo(), limitesMundo))){
+            System.out.println("purgando jefe");
             jefe = null;
         }
 
-        if(proyectilPrincesa != null && !Rectangulos.enColision(proyectilPrincesa.rectangulo(), limitesMundo)){
+        if(proyectilPrincesa != null && !Rectangulos.enColision(proyectilPrincesa.rectangulo(), limitesPantalla())){
+            System.out.println("purgando proyectil princesa");
             proyectilPrincesa = null;
         }
     }
@@ -230,5 +244,9 @@ public class Mundo {
 
     public IteradorEnemigos iteradorEnemigos(){
         return new IteradorEnemigos(enemigos, largoEnemigos);
+    }
+
+    public boolean faltanEnemigos() {
+        return largoEnemigos < Enemigos.minimoEnemigos;
     }
 }
