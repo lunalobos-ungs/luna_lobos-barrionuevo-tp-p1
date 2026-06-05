@@ -91,7 +91,12 @@ public class ProyectilPrincesa {
     }
 
 
-    public void dibujar(Entorno entorno) {
+    public void dibujar(Entorno entorno, Mundo mundo) {
+        final var princesa = mundo.princesa();
+        final var dx = entorno.ancho()/2.0;
+        final var dy = entorno.alto()/2.0;
+        final var x = this.x - princesa.x() + dx;
+        final var y = this.y - princesa.y() + dy;
         entorno.dibujarImagen(proyectil, x, y, 0);
     }
 
