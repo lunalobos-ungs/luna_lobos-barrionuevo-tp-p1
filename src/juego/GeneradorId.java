@@ -2,9 +2,7 @@ package juego;
 
 /**
  * Generador de identificadores únicos e incrementales para los elementos del juego.
- * Cada llamada a {@link #nuevoId()} devuelve un valor mayor al anterior, comenzando en cero.
- * Esto permite no romper a clase Mundo que require que los elementos estén ordenados por id
- * de menor a mayor.
+ * Cada llamada a nuevoId() devuelve un valor mayor al anterior, comenzando en cero.
  *
  * @author Miguel Angel Luna Lobos
  */

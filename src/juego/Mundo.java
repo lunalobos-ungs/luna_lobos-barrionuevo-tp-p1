@@ -1,8 +1,6 @@
 package juego;
 
 
-import entorno.Entorno;
-
 import java.util.Objects;
 
 /**
@@ -11,57 +9,110 @@ import java.util.Objects;
  * @author Miguel Angel Luna Lobos y Noelia Barrionuevo
  */
 public class Mundo {
-
-    private static final double proporcionAnchoMundo = 30.0;
-    private static final double proporcionAltoMundo = 2.0;
+    public static final double proporcionAnchoMundo = 30.0;
+    public static final double proporcionAltoMundo = 2.0;
     private final Princesa princesa;
     private Enemigo[] enemigos;
     private Isla[] islas;
     private Jefe jefe;
     private ProyectilPrincesa proyectilPrincesa;
-
+    private final Castillo castillo;
     private int largoEnemigos;
-
     private int largoIslas;
-
     private final Rectangulo limitesMundo;
+    private final Rectangulo limitesPantalla;
+    private final Fondo fondo;
 
-    private final Rectangulo pantalla;
+    /**
+     * Crea una nueva instancia de Mundo.
+     * @param limitesPantalla el rectángulo que indica los límites de la pantalla
+     * @param limitesMundo el rectángulo que indica los límites del mundo
+     * @param princesa la princesa
+     * @param jefe el jefe
+     * @param fondo el fondo
+     * @param castillo el castillo
+     */
+    public Mundo(
+            Rectangulo limitesPantalla,
+            Rectangulo limitesMundo,
+            Princesa princesa,
+            Jefe jefe,
+            Fondo fondo,
+            Castillo castillo
+    ) {
 
-    public Mundo(Entorno entorno, Princesa princesa, Jefe jefe) {
-        this.princesa = Objects.requireNonNull(princesa, "la princesa no puede ser null");
+        this.limitesPantalla = Objects.requireNonNull(limitesPantalla, "limitesPantalla no puede ser null");
+        this.limitesMundo = Objects.requireNonNull(limitesMundo, "limitesMundo no puede ser null");
+        this.princesa = Objects.requireNonNull(princesa, "princesa no puede ser null");
         this.jefe = jefe;
-        var anchoPantalla = entorno.ancho();
-        var altoPantalla = entorno.alto();
-        largoEnemigos = 0;
-        largoIslas = 0;
-        var anchoMundo = anchoPantalla * proporcionAnchoMundo;
-        var altoMundo = altoPantalla * proporcionAltoMundo;
-        limitesMundo = new Rectangulo(anchoMundo / 2.0, altoMundo / 2.0, anchoMundo, altoMundo);
-        pantalla = new Rectangulo(anchoPantalla / 2.0, altoPantalla / 2.0, anchoPantalla, altoPantalla);
+        this.fondo = Objects.requireNonNull(fondo, "fondo no puede ser null");
+        this.castillo = Objects.requireNonNull(castillo, "castillo no puede ser null");;
         islas = new Isla[10];
         enemigos = new Enemigo[10];
+        largoEnemigos = 0;
+        largoIslas = 0;
     }
 
+    /**
+     * Los límites del mundo.
+     * @return un rectángulo que representa los límites del mundo
+     */
     public Rectangulo limitesMundo(){
         return limitesMundo;
     }
 
+    /**
+     * Los límites de la pantalla.
+     * @return un rectángulo que representa los límites de la pantalla.
+     */
     public Rectangulo limitesPantalla() {
-        return new Rectangulo(princesa.x(), princesa.y(), pantalla.ancho(), pantalla.alto());
+        return new Rectangulo(princesa.x(), princesa.y(), limitesPantalla.ancho(), limitesPantalla.alto());
     }
 
+    /**
+     * El fondo del juego.
+     * @return el fondo
+     */
+    public Fondo fondo(){
+        return fondo;
+    }
+
+    /**
+     * La princesa.
+     * @return la princesa
+     */
     public Princesa princesa() {
         return princesa;
     }
 
+    /**
+     * El castillo.
+     * @return el castillo
+     */
+    public Castillo castillo() { return castillo; }
+
+    /**
+     * El jefe.
+     * @return el jefe o null si no existe
+     */
     public Jefe jefe() {
         return jefe;
     }
 
+    /**
+     * El proyectil que disparó la princesa. Puede ser null.
+     * @return el proyectil disparado por la princesa, o null si no existe
+     */
     public ProyectilPrincesa proyectilPrincesa(){
         return proyectilPrincesa;
     }
+
+    /**
+     * Devuelve un array con las islas en colisión con el rectángulo provisto.
+     * @param rectangulo el rectángulo de colisión
+     * @param tipo el tipo de elemento
+     * @return un array que lista las islas en colisión con el rectángulo argumento
+     */
     public Isla[] islasEnColision(Rectangulo rectangulo, String tipo){
         if (tipo.equals("fronteraIsla")) {
             var frontera = rectangulo.escalar(Islas.factorFronteraAncho, Islas.factorFronteraAlto);
@@ -95,6 +146,11 @@ public class Mundo {
         return salida;
     }
 
+    /**
+     * Devuelve un array con los enemigos en colisión con el rectángulo provisto.
+     * @param rectangulo el rectángulo de colisión
+     * @return un array que lista los enemigos en colisión con el rectángulo argumento
+     */
     public Enemigo[] enemigosEnColision(Rectangulo rectangulo){
         final Enemigo[] almacenador = new Enemigo[largoEnemigos];
         int contador = 0;
@@ -109,6 +165,10 @@ public class Mundo {
         return salida;
     }
 
+    /**
+     * Agrega un enemigo.
+     * @param enemigo el enemigo a agregar
+     */
     public void agregarEnemigo(Enemigo enemigo) {
         if (largoEnemigos == enemigos.length) {
             Enemigo[] nuevoArray = new Enemigo[enemigos.length * 2];
@@ -118,6 +178,10 @@ public class Mundo {
         enemigos[largoEnemigos++] = enemigo;
     }
 
+    /**
+     * Agrega una isla
+     * @param isla la isla agregar
+     */
     public void agregarIsla(Isla isla) {
         if (largoIslas == islas.length) {
             Isla[] nuevoArray = new Isla[islas.length * 2];
@@ -127,6 +191,10 @@ public class Mundo {
         islas[largoIslas++] = isla;
     }
 
+    /**
+     * Quita un enemigo.
+     * @param enemigo el enemigo a quitar
+     */
     public void quitarEnemigo(Enemigo enemigo) {
         int indice = indiceDeEnemigo(enemigo);
         if (indice >= 0) {
@@ -167,58 +235,15 @@ public class Mundo {
         }
     }
 
-    public void quitarIsla(Isla isla) {
-        int indice = indiceDeIsla(isla);
-        if (indice >= 0) {
-            for (int i = indice; i < largoIslas - 1; i++) {
-                islas[i] = islas[i + 1];
-            }
-            islas[largoIslas - 1] = null;
-            largoIslas--;
-        }
-    }
-
-    private int indiceDeIsla(Isla isla) {
-        int indiceMinimo = 0;
-        int indiceMaximo = largoIslas - 1;
-        while (indiceMinimo <= indiceMaximo) {
-            int indiceIntermedio = (indiceMinimo + indiceMaximo) / 2;
-            Isla elementoIntermedio = islas[indiceIntermedio];
-            int comparacion = compararIslas(elementoIntermedio, isla);
-
-            if (comparacion < 0) {
-                indiceMinimo = indiceIntermedio + 1;
-            } else if (comparacion > 0) {
-                indiceMaximo = indiceIntermedio - 1;
-            } else {
-                return indiceIntermedio; // Encontrado (comparacion == 0)
-            }
-        }
-        return -(indiceMinimo + 1);
-    }
-
-    private int compararIslas(Isla isla1, Isla isla2) {
-        if (isla1.id() < isla2.id()) {
-            return -1;
-        } else if (isla1.id() == isla2.id()) {
-            return 0; // esta condición nunca debería ocurrir porque los ids son únicos
-        } else {
-            return 1;
-        }
-    }
-
-    /*
-     * 1° elimina elementos que salgan de la pantalla
-     * 2° eliminar enemigos que tienen como estado "muerto"
-     * 3° eliminar enemigo cuando toca la princesa
+    /**
+     * Se ocupa de eliminar a los enemigos que se salén de la pantalla así como de eliminar a los que
+     * deben morir por otras razones.
      */
     public void purgar() {
-
         int i = 0;
         while (i < largoEnemigos) {
             var enemigo = enemigos[i];
             if (!Rectangulos.enColision(enemigo.rectangulo(), limitesPantalla()) || enemigo.debeEliminarse()) {
-                System.out.println("purgando enemigo");
                 quitarEnemigo(enemigo);
             } else {
                 i++;
@@ -226,26 +251,42 @@ public class Mundo {
         }
 
         if(jefe != null && (jefe.debeEliminarse() || !Rectangulos.enColision(jefe.rectangulo(), limitesMundo))){
-            System.out.println("purgando jefe");
             jefe = null;
         }
 
         if(proyectilPrincesa != null && !Rectangulos.enColision(proyectilPrincesa.rectangulo(), limitesPantalla())){
-            System.out.println("purgando proyectil princesa");
             proyectilPrincesa = null;
         }
     }
+
+    /**
+     * Establece el proyectil de la princesa.
+     * @param proyectilPrincesa el proyectil de la princesa
+     */
     public void establecerProyectilPrincesa(ProyectilPrincesa proyectilPrincesa){
         this.proyectilPrincesa = proyectilPrincesa;
     }
+
+    /**
+     * Devuelve un iterador de islas.
+     * @return un iterador que recorre todas las islas del mundo
+     */
     public IteradorIslas iteradorIslas(){
         return new IteradorIslas(islas, largoIslas);
     }
 
+    /**
+     * Devuelve un iterador de enemigos.
+     * @return un iterador que recorre todos los enemigos del mundo
+     */
     public IteradorEnemigos iteradorEnemigos(){
         return new IteradorEnemigos(enemigos, largoEnemigos);
     }
 
+    /**
+     * Indica si faltan enemigos.
+     * @return true si se deben generar más enemigos.
+     */
     public boolean faltanEnemigos() {
         return largoEnemigos < Enemigos.minimoEnemigos;
     }

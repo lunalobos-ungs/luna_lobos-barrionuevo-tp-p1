@@ -76,6 +76,10 @@ public class Rectangulo {
         return new Rectangulo(x, y, ancho * proporcionX, alto * proporcionY);
     }
 
+    /**
+     * Devuelve el área del rectángulo.
+     * @return el área del rectángulo
+     */
     public double area(){
         return ancho() * alto();
     }

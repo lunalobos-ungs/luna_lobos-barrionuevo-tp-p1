@@ -2,94 +2,28 @@ package juego;
 
 import entorno.Entorno;
 
+import java.awt.*;
+
+/**
+ * Clase con métodos utilitarios relacionados con enemigos.
+ *
+ * @author Miguel Angel Luna Lobos
+ */
 public class Enemigos {
     private static final double altoEnemigo = 40.0;
     private static final double anchoEnemigo = 40.0;
 
-    public static final int minimoEnemigos = Islas.niveles;
+    public static final int minimoEnemigos = Islas.niveles / 2;
 
-    /*
-     * Hay que tener en cuenta que no ocupe ninguna posicion de la isla
-     * cuando hacemos el random para la posicion hay que chequear que no haya una isla en esa Y
+    private static final Image imagenEnemigo = Imagenes.cargarYEscalar("enemigo.png", anchoEnemigo, altoEnemigo);
+
+    /**
+     * Crea un nuevo enemigo que ingresa en pantalla por la derecha.
+     * @param generadorId el generador de identificadores únicos
+     * @param mundo el mundo
+     * @param entorno el entorno
+     * @return un nuevo enemigo por derecha
      */
-    public int generarPosicion(Isla isla1, Isla isla2, Isla isla3, Isla isla4) {
-        // considero un margen por el alto/grosor de la isla
-        // hago por 500*0,9 porq es lo maximo que quiero que valga la posicion
-        // del enemigo para que este por sobre la tierra firme .
-        int margen = 40;
-        int y;
-        y = (int) (Math.random() * 500);
-        while
-        (Math.abs(y - isla1.y()) < margen || Math.abs(y - isla2.y()) < margen ||
-                Math.abs(y - isla3.y()) < margen || Math.abs(y - isla4.y()) < margen) {
-            y = (int) (Math.random() * 500);
-        }
-        return y;
-
-    }
-
-    /*
-     * Enemigo 1 , lo voy a posicionar del lado izquierdo
-     */
-    public Enemigo enemigo1(GeneradorId generadorId, Entorno entorno, Isla isla1, Isla isla2, Isla isla3, Isla isla4) {
-        int x = 25;
-        int posicion1 = generarPosicion(isla1, isla2, isla3, isla4);
-        return new Enemigo(generadorId, entorno, x, posicion1, 0);
-
-    }
-    /*
-     * Enemigo 2 se va a crear en el margen del lado derecho por eso usamos como angulo Math.PI= -1
-     */
-
-    public Enemigo enemigo2(GeneradorId generadorId, Entorno entorno, Isla isla1, Isla isla2, Isla isla3, Isla isla4) {
-        int x = 760;
-        int posicion2 = generarPosicion(isla1, isla2, isla3, isla4);
-        return new Enemigo(generadorId, entorno, x, posicion2, Math.PI);
-    }
-
-    /*
-     * Enemigo3 se va a crear y posicionar del lado derecho
-     * no puede tener la misma posicion con enemigo 1
-     * con el while lo que hacemos es que se repita la operacion hasta que se produza
-     * una posicion valida
-     */
-    public Enemigo enemigo3(GeneradorId generadorId, Entorno entorno,
-                            Isla isla1, Isla isla2, Isla isla3, Isla isla4, Enemigo enemigo1) {
-        int x = 25;
-        int posicion3 = generarPosicion(isla1, isla2, isla3, isla4);
-
-        while (posicion3 == enemigo1.y()) {
-            posicion3 = generarPosicion(isla1, isla2, isla3, isla4);
-        }
-
-        return new Enemigo(generadorId, entorno, x, posicion3, 0);
-    }
-
-    /*
-     * Se toma en consideracion no repetir posicion de enemigo2
-     */
-    public Enemigo enemigo4(GeneradorId generadorId, Entorno entorno,
-                            Isla isla1, Isla isla2, Isla isla3, Isla isla4, Enemigo enemigo2) {
-        int x = 760;
-        int posicion3 = generarPosicion(isla1, isla2, isla3, isla4);
-
-        while (posicion3 == enemigo2.y()) {
-            posicion3 = generarPosicion(isla1, isla2, isla3, isla4);
-        }
-
-        return new Enemigo(generadorId, entorno, x, posicion3, Math.PI);
-    }
-
-    /*
-     * Sugerencia : Crear un random que me arroje unicamnete dos posiciones de x,
-     * para que aparezca unicamnete por margen derecho o margen izquierdo
-     */
-    public Jefe enemigoExtra(GeneradorId generadorId, Entorno entorno) {
-        int x = 20;
-        int y = 520;
-        return new Jefe(generadorId, entorno, x, y);
-    }
-
     public static Enemigo nuevoEnemigoDerecha(GeneradorId generadorId, Mundo mundo, Entorno entorno) {
         var princesa = mundo.princesa();
         var enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
@@ -104,6 +38,13 @@ public class Enemigos {
         return enemigo;
     }
 
+    /**
+     * Crea un nuevo enemigo que ingresa en pantalla por la derecha.
+     * @param generadorId el generador de identificadores únicos
+     * @param mundo el mundo
+     * @param entorno el entorno
+     * @return un nuevo enemigo por izquierda
+     */
     public static Enemigo nuevoEnemigoIzquierda(GeneradorId generadorId, Mundo mundo, Entorno entorno) {
         var princesa = mundo.princesa();
         var enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() - entorno.ancho() / 2.0,  0.0);
@@ -118,14 +59,15 @@ public class Enemigos {
         return enemigo;
     }
 
-    public static Enemigo enemigoAleatorio(GeneradorId generadorId, Mundo mundo, double x, double angulo) {
+    private static Enemigo enemigoAleatorio(GeneradorId generadorId, Mundo mundo, double x, double angulo) {
         final var altoMundo = mundo.limitesMundo().alto();
         final var alto = Islas.proporcionAlto * altoMundo;
         final var alturaMinima = Islas.proporcionAlturaMinima * altoMundo;
         final var yMax = altoMundo - alturaMinima;
         final var yMin = altoMundo - alturaMinima - alto;
         final var y = alturaAleatoria(Islas.niveles, yMin, yMax);
-        return new Enemigo(generadorId, x, y, anchoEnemigo, altoEnemigo, angulo);
+
+        return new Enemigo(generadorId, x, y, anchoEnemigo, altoEnemigo, angulo, imagenEnemigo);
     }
 
     private static double alturaAleatoria(int n, double yMin, double yMax) {

@@ -5,6 +5,7 @@ import entorno.Entorno;
 import entorno.InterfaceJuego;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class Juego extends InterfaceJuego {
     // El objeto Entorno que controla el tiempo y otros
@@ -14,7 +15,9 @@ public class Juego extends InterfaceJuego {
     // ...
     private final GeneradorId generadorId;
     private final Mundo mundo;
-    private final FondoJuego fondo;
+
+    private boolean victoria;
+    private boolean derrota;
 
     Juego() {
         // Inicializa el objeto entorno
@@ -24,26 +27,64 @@ public class Juego extends InterfaceJuego {
         // ...
 
         generadorId = new GeneradorId();
-        fondo = new FondoJuego (400,300);
-        var princesa = new Princesa(generadorId, entorno);
-        var jefe = new Jefe(generadorId, entorno, 600, 700);
-        mundo = new Mundo(entorno, princesa, jefe);
+        victoria = false;
+        derrota = false;
+        final var anchoPantalla = entorno.ancho();
+        final var altoPantalla = entorno.alto();
+        final var anchoMundo = anchoPantalla * Mundo.proporcionAnchoMundo;
+        final var altoMundo = altoPantalla * Mundo.proporcionAltoMundo;
+        final var limitesPantalla = new Rectangulo(anchoPantalla / 2.0, altoPantalla / 2.0, anchoPantalla, altoPantalla);
+        final var limitesMundo = new Rectangulo(anchoMundo / 2.0, altoMundo / 2.0, anchoMundo, altoMundo);
+        final var imagenPrincesa = Imagenes.cargarYEscalar("princesa.png", Princesa.anchoPrincesa, Princesa.altoPrincesa);
+        final var imagenCorazon = Imagenes.cargarYEscalar("corazon.png", Princesa.ladoCorazon, Princesa.ladoCorazon);
+        final var princesa = new Princesa(0.0, 0.0, Princesa.anchoPrincesa, Princesa.altoPrincesa, imagenPrincesa, imagenCorazon);
+        //var jefe = new Jefe(generadorId, entorno, 600, 700);
+        final var imagenFondo = Imagenes.cargarYEscalar("fondo.png", anchoPantalla, altoPantalla);
+        final var fondo = new Fondo(anchoPantalla / 2.0, altoPantalla / 2.0, imagenFondo);
+        final var imagenCastillo = Imagenes.cargarYEscalar("castillo.png", Islas.anchoMinimo, Islas.anchoMinimo);
+        final var castillo = new Castillo(0.0, 0.0, Islas.anchoMinimo, Islas.anchoMinimo, imagenCastillo);
+        mundo = new Mundo(limitesPantalla, limitesMundo, princesa, null, fondo, castillo);
 
         var cantidadIslasBajas = Islas.proporcionIslasBajas * mundo.limitesMundo().area();
         var cantidadIslasAltas = Islas.proporcionIslasAltas * mundo.limitesMundo().area();
         var contador = 0;
         while (contador < cantidadIslasBajas) {
-            var isla = Islas.nuevaNivelBajo(generadorId, mundo);
+            var isla = Islas.nuevaNivelBajo(mundo);
+            if (isla == null) {
+                break;
+            }
             mundo.agregarIsla(isla);
             contador++;
         }
         contador = 0;
+        var xMin = mundo.limitesMundo().ancho();
+        var xMax = 0.0;
+        var yMin = mundo.limitesMundo().alto();
+        Isla primeraIsla = null;
+        Isla ultimaIsla = null;
         while (contador < cantidadIslasAltas) {
-            var isla = Islas.nuevaNivelAlto(generadorId, mundo);
+            var isla = Islas.nuevaNivelAlto(mundo);
+
+            if (isla == null) {
+                break;
+            }
+            if (isla.x() < xMin) {
+                xMin = isla.x();
+                primeraIsla = isla;
+            }
+            if (isla.x() > xMax && isla.y() <= yMin) {
+                xMax = isla.x();
+                yMin = isla.y();
+                ultimaIsla = isla;
+            }
+
             mundo.agregarIsla(isla);
             contador++;
         }
-
+        Objects.requireNonNull(primeraIsla, "no se ha encontrado una isla en la cual colocar a la princesa");
+        Objects.requireNonNull(ultimaIsla, "no se ha encontrado una isla en la cual colocar al castillo");
+        mundo.princesa().trasladar(primeraIsla.x(), primeraIsla.y() - Islas.altoIsla / 2.0 - mundo.princesa().alto() / 2.0);
+        mundo.castillo().trasladar(ultimaIsla.x(), ultimaIsla.y() - Islas.altoIsla / 2.0 - mundo.castillo().alto() / 2.0);
         // Inicia el juego!
         this.entorno.iniciar();
     }
@@ -57,11 +98,37 @@ public class Juego extends InterfaceJuego {
     public void tick() {
         // Procesamiento de un instante de tiempo
         // ...
-        fondo.dibujar(entorno);
+        mundo.fondo().dibujar(entorno);
+        if (victoria) {
+            dibujarEnemigos();
+            colisionesIslas();
+            colisionesJefe();
+            colisionesProyectilPrincesa();
+            colisionesCastillo();
+            var x = mundo.princesa().x();
+            var y = mundo.princesa().y();
+            mundo.princesa().trasladar(x, y);
+            entorno.cambiarFont("Arial", 72, Color.BLUE);
+            entorno.escribirTexto("¡Ganaste!", entorno.ancho() / 2.0 - 160, entorno.alto() / 2.0);
+            return;
+        }
+        if (derrota) {
+            dibujarEnemigos();
+            colisionesIslas();
+            colisionesJefe();
+            colisionesProyectilPrincesa();
+            colisionesCastillo();
+            var x = mundo.princesa().x();
+            var y = mundo.princesa().y();
+            mundo.princesa().trasladar(x, y);
+            entorno.cambiarFont("Arial", 72, Color.RED);
+            entorno.escribirTexto("Perdiste", entorno.ancho() / 2.0 - 150, entorno.alto() / 2.0);
+            return;
+        }
         if (mundo.faltanEnemigos()) {
-            var opcion = Aleatorio.enteroRandom(0,2);
+            var opcion = Aleatorio.enteroRandom(0, 2);
             Enemigo enemigo;
-            switch (opcion){
+            switch (opcion) {
                 case 0:
                     enemigo = Enemigos.nuevoEnemigoDerecha(generadorId, mundo, entorno);
                     break;
@@ -76,38 +143,23 @@ public class Juego extends InterfaceJuego {
                 mundo.agregarEnemigo(enemigo);
             }
         }
-
         mundo.purgar(); // eliminamos a aquellos que se salen del mundo
-
         if (entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO) && mundo.proyectilPrincesa() == null) {
-            mundo.princesa().disparar(mundo, entorno, generadorId);
+            mundo.princesa().disparar(mundo, entorno);
         }
-
-        // ver colisiones de los enemigos
-        colisionesEnemigos();
-
-        // ver colisiones de las islas
         colisionesIslas();
-
-        // ver colisiones del jefe
         colisionesJefe();
-
-        // ver colisiones de proyectil
         colisionesProyectilPrincesa();
-
-        // ver colisiones de la princesa
+        dibujarEnemigos();
+        colisionesCastillo();
         colisionesPrincesa();
     }
 
-    private void colisionesEnemigos() {
+    private void dibujarEnemigos() {
         var iterador = mundo.iteradorEnemigos();
-        var princesa = mundo.princesa();
         while (iterador.tieneOtro()) {
             var enemigo = iterador.proximo();
-            if (Rectangulos.enColision(enemigo.rectangulo(), princesa.rectangulo())) {
-                princesa.recibirMensaje("una vida menos");
-            }
-            enemigo.mover(entorno);
+            enemigo.mover();
             enemigo.dibujar(entorno, mundo);
         }
     }
@@ -143,7 +195,7 @@ public class Juego extends InterfaceJuego {
             princesa.recibirMensaje("una vida menos");
         }
         jefe.mover(entorno);
-        jefe.dibujar(entorno);
+        jefe.dibujar(entorno, mundo);
     }
 
     private void colisionesProyectilPrincesa() {
@@ -159,18 +211,34 @@ public class Juego extends InterfaceJuego {
         for (var i = 0; i < enemigosEnColision.length; i++) {
             enemigosEnColision[i].recibirMensaje("morir");
         }
-        proyectil.mover(entorno);
+        proyectil.mover();
         proyectil.dibujar(entorno, mundo);
     }
 
     private void colisionesPrincesa() {
         var princesa = mundo.princesa();
+        if (princesa.vidas() <= 0) {
+            derrota = true;
+        }
+        if (princesa.y() > mundo.limitesMundo().alto()) {
+            derrota = true;
+        }
         var enemigosEnColision = mundo.enemigosEnColision(princesa.rectangulo());
         for (int i = 0; i < enemigosEnColision.length; i++) {
             enemigosEnColision[i].recibirMensaje("morir");
+            princesa.recibirMensaje("una vida menos");
         }
         princesa.mover(entorno);
         princesa.dibujar(entorno);
+    }
+
+    private void colisionesCastillo() {
+        var princesa = mundo.princesa();
+        var castillo = mundo.castillo();
+        if (Rectangulos.enColision(princesa.rectangulo(), castillo.rectangulo())) {
+            victoria = true;
+        }
+        mundo.castillo().dibujar(entorno, mundo);
     }
 
     @SuppressWarnings("unused")
