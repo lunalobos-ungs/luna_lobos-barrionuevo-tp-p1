@@ -14,6 +14,7 @@ public class Juego extends InterfaceJuego {
     // ...
     private final GeneradorId generadorId;
     private final Mundo mundo;
+    private final FondoJuego fondo;
 
     Juego() {
         // Inicializa el objeto entorno
@@ -21,7 +22,9 @@ public class Juego extends InterfaceJuego {
 
         // Inicializar lo que haga falta para el juego
         // ...
+
         generadorId = new GeneradorId();
+        fondo = new FondoJuego (400,300);
         var princesa = new Princesa(generadorId, entorno);
         var jefe = new Jefe(generadorId, entorno, 600, 700);
         mundo = new Mundo(entorno, princesa, jefe);
@@ -54,7 +57,7 @@ public class Juego extends InterfaceJuego {
     public void tick() {
         // Procesamiento de un instante de tiempo
         // ...
-
+        fondo.dibujar(entorno);
         if (mundo.faltanEnemigos()) {
             var opcion = Aleatorio.enteroRandom(0,2);
             Enemigo enemigo;

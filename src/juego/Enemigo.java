@@ -26,7 +26,7 @@ public class Enemigo {
     private Image enemigo;
     private final int id;
     private final double velocidad;
-    // los vos a implementar cuando el enemigo muera quiero que caiga con caida libre al suelo y luego desaparezca
+    // los voy a implementar cuando el enemigo muera quiero que caiga con caida libre al suelo y luego desaparezca
 
     private double velocidadCaidaLibre;
     private double aceleracionGravitatoria;
