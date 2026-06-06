@@ -5,96 +5,58 @@ import entorno.Entorno;
 import java.awt.*;
 
 /**
- * Representa una isla flotante del juego. Implementación provisional;
- * la mayoría de sus métodos aún no están implementados.
+ * Representa una isla flotante del juego.
  *
  * @author Noelia Barrionuevo
+ * @author Miguel Angel Luna Lobos
  */
 public class Isla {
+    private final double x;
+    private final double y;
+    private final double ancho;
+    private final double alto;
+    private final Image isla;
 
-    private int id;
-    private double x;
-    private double y;
-    private double ancho;
-    private double alto;
-    private final Image tierraOriginal;
-    private Image tierra;
-    private boolean activo = true;
-
-
-
-    Isla(GeneradorId generadorId, double x, double y, double ancho, double alto) {
-        this.id = generadorId.nuevoId();
+    Isla(double x, double y, double ancho, double alto, Image isla) {
         this.x = x;
         this.y = y;
         this.ancho = ancho;
         this.alto = alto;
-        tierraOriginal = Imagenes.cargarImagen("tierra.png");
-        tierra = Imagenes.escalar(tierraOriginal, ancho, alto);
+        this.isla = isla;
     }
 
-
-    public int id() {
-        return id;
-    }
-
-
-    public String tipo() {
-        return "isla";
-    }
-
-
-    public double angulo() {
-        return 0;
-    }
-
-
+    /**
+     * La coordenada x.
+     * @return la coordenada x
+     */
     public double x() {
         return x;
     }
 
-
+    /**
+     * La coordenada y.
+     * @return la coordenada y
+     */
     public double y() {
         return y;
     }
 
-
-    public double ancho() {
-        return ancho;
-    }
-
-
-    public double alto() {
-        return alto;
-    }
-
-
-    public void establecerAncho(double ancho) {
-        this.ancho = ancho;
-        tierra = tierraOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
-    }
-
-
-    public void establecerAlto(double alto) {
-        this.alto = alto;
-        tierra = tierraOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
-    }
-
-
+    /**
+     * Dibuja la isla.
+     * @param entorno el entorno
+     * @param mundo el mundo
+     */
     public void dibujar(Entorno entorno, Mundo mundo) {
-        final var princesa = mundo.princesa();
-        final var dx = entorno.ancho()/2.0;
-        final var dy = entorno.alto()/2.0;
-        final var x = this.x - princesa.x() + dx;
-        final var y = this.y - princesa.y() + dy;
-        entorno.dibujarImagen(tierra, x, y, 0);
+        final var coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
+        final var x = coordenadasRelativas.x();
+        final var y = coordenadasRelativas.y();
+        entorno.dibujarImagen(isla, x, y, 0);
     }
 
-
-    public void mover(Entorno entorno) {
-
-    }
-
+    /**
+     * Actúa sobre el jefe.
+     * @param jefe el jefe
+     */
     public void actuarSobreJefe(Jefe jefe) {
         String tipoDeColision = Rectangulos.tipoDeColision(jefe.rectangulo(), this.rectangulo());
 
@@ -116,11 +78,16 @@ public class Isla {
         }
     }
 
+    /**
+     * Actúa sobre la princesa.
+     * @param princesa la princesa
+     */
     public void actuarSobrePrincesa(Princesa princesa) {
         String tipoDeColision = Rectangulos.tipoDeColision(princesa.rectangulo(), this.rectangulo());
 
         switch (tipoDeColision) {
             case "desde arriba":
+                princesa.trasladar(princesa.x(), y() - alto / 2.0 - princesa.alto() / 2.0);
                 princesa.recibirMensaje("estas en tierra firme");
                 break;
             case "desde abajo":
@@ -137,6 +104,10 @@ public class Isla {
         }
     }
 
+    /**
+     * Actúa sobre un proyectil de la princesa.
+     * @param proyectil el proyectil
+     */
     public void actuarSobreProyectilPrincesa(ProyectilPrincesa proyectil) {
         String tipoDeColision = Rectangulos.tipoDeColision(proyectil.rectangulo(), this.rectangulo());
         switch (tipoDeColision) {
@@ -157,30 +128,10 @@ public class Isla {
         }
     }
 
-    public void establecerAngulo(double angulo) {
-        throw new UnsupportedOperationException("la isla no trabaja con ángulo aún");
-    }
-
-
-    public void establecerX(double x) {
-        throw new UnsupportedOperationException("las islas aún no se mueven");
-    }
-
-
-    public void establecerY(double y) {
-        throw new UnsupportedOperationException("las islas aún no se mueven");
-    }
-
-
-    public void recibirMensaje(String mensaje) {
-        // las islas son inalterables
-    }
-
-    public boolean debeEliminarse() {
-        return false;
-    }
-
-
+    /**
+     * El rectángulo de colisión de la isla.
+     * @return el rectángulo de colisión de la isla
+     */
     public Rectangulo rectangulo() {
     	return new Rectangulo(x,y,ancho,alto) ;
     }

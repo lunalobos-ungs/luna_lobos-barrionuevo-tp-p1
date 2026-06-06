@@ -4,10 +4,12 @@ import java.util.Random;
 
 /**
  * Clase con métodos utilitarios para número aleatorios.
+ *
+ * @author Miguel Angel Luna Lobos
  */
 public class Aleatorio {
 
-    private static  Random random = new Random();
+    private static final Random random = new Random();
 
     /**
      * Devuelve un número decimal aleatorio entre los límites especificados.
@@ -23,6 +25,13 @@ public class Aleatorio {
         return random.nextDouble() * rango + min;
     }
 
+    /**
+     * Devuelve un entero aleatorio que desde min inclusive hasta max (no inclusive).
+     *
+     * @param min el valor mínimo (incluido)
+     * @param max el máximo (excluido)
+     * @return
+     */
     public static int enteroRandom(int min, int max){
         if(min > max){
             throw new IllegalArgumentException("max debe ser mayor a min");

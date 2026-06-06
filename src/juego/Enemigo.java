@@ -6,155 +6,93 @@ import java.awt.*;
 import java.time.Instant;
 
 /**
- * Representa los enemigos del juego;
- * Aparecen los enemigos por derecha e izquiera de forma aleatoria
- * avanzan al lado opuesto al que aparecen
- * pueden superponerce entre si
- * no pueden atravesar las islas
- * cuando llegan al borde de la pantalla se vuelven null
- * siempre debe tener una cantidad minima de enemigos vivos en pantalla
- * colision con princesa
- * colision con proyectiles
+ * Representa a un enemigo del juego.
  *
+ * @author Noelia Barrionuevo
+ * @author Miguel Angel Luna Lobos
  */
 public class Enemigo {
     private double x;
-    private double y;
-    private double ancho;
-    private double alto;
-    private final Image enemigoOriginal;
-    private Image enemigo;
+    private final double y;
+    private final double ancho;
+    private final double alto;
+    private final Image enemigo;
     private final int id;
     private final double velocidad;
-    // los voy a implementar cuando el enemigo muera quiero que caiga con caida libre al suelo y luego desaparezca
-
-    private double velocidadCaidaLibre;
-    private double aceleracionGravitatoria;
-    private double angulo;
-    private Instant marcaTemporalDeCaida;
+    private final double angulo;
     private boolean vivo = true;
 
-    Enemigo(GeneradorId generadorId, Entorno entorno, double x, double y, double angulo) {
-        this.x = x;
-        this.y = y;
-        ancho = 40.0;
-        alto = 40.0;
-        enemigoOriginal = Imagenes.cargarImagen("enemigo.png");
-        enemigo = Imagenes.escalar(enemigoOriginal, ancho, alto);
-        id = generadorId.nuevoId();
-        velocidad = 1.0;
-        velocidadCaidaLibre = 4.0;
-        // luego el angulo se modifica entonces tendremos que hacer this.angulo
-        this.angulo = angulo;
-        aceleracionGravitatoria = 10.0;
-        //cayendo();
-    }
-
-    Enemigo(GeneradorId generadorId, double x, double y, double ancho, double alto, double angulo) {
+    /**
+     * Crea un nuevo enemigo.
+     * @param generadorId el generador de identificadores únicos
+     * @param x la coordenada x
+     * @param y la coordenada y
+     * @param ancho el ancho
+     * @param alto el alto
+     * @param angulo el ángulo
+     * @param enemigo la imagen del enemigo
+     */
+    Enemigo(GeneradorId generadorId, double x, double y, double ancho, double alto, double angulo, Image enemigo) {
         this.x = x;
         this.y = y;
         this.ancho = ancho;
         this.alto = alto;
-        enemigoOriginal = Imagenes.cargarImagen("enemigo.png");
-        enemigo = Imagenes.escalar(enemigoOriginal, ancho, alto);
+        this.enemigo = enemigo;
+
         id = generadorId.nuevoId();
         velocidad = 1.0;
-        velocidadCaidaLibre = 0.0;
-        // luego el angulo se modifica entonces tendremos que hacer this.angulo
         this.angulo = angulo;
-        aceleracionGravitatoria = 10.0;
-        //cayendo();
     }
 
+    /**
+     * El identificador del enemigo.
+     * @return el identificador del enemigo
+     */
     public int id() {
         return id;
     }
 
-
-    public String tipo() {
-        return "enemigo";
-    }
-
-
-    public double angulo() {
-        return 0;
-        // luego modificar y hacer return angulo;
-    }
-
-
-    public double x() {
-        return x;
-    }
-
-
-    public double y() {
-        return y;
-    }
-
-
-    public double ancho() {
-        return ancho;
-    }
-
-
-    public double alto() {
-        return alto;
-    }
-
-    public void establecerAncho(double ancho) {
-        this.ancho = ancho;
-        enemigo = enemigoOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
-    }
-
-    public void establecerAlto(double alto) {
-        this.alto = alto;
-        enemigo = enemigoOriginal.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
-    }
-
-    // 0 represennta en angulo que luego tendra que ser cambiado para considerar colision y muerte en caida libre
-
+    /**
+     * Dibuja al enemigo.
+     * @param entorno el entorno
+     * @param mundo el mundo
+     */
     public void dibujar(Entorno entorno, Mundo mundo) {
-        final var princesa = mundo.princesa();
-        final var dx = entorno.ancho()/2.0;
-        final var dy = entorno.alto()/2.0;
-        final var x = this.x - princesa.x() + dx;
-        final var y = this.y - princesa.y() + dy;
+        final var coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
+        final var x = coordenadasRelativas.x();
+        final var y = coordenadasRelativas.y();
         entorno.dibujarImagen(enemigo, x, y, 0);
     }
 
-    public void mover(Entorno entorno) {
-        if (angulo == 0) {
-            x = x + velocidad;
-        } else {
-            x = x - velocidad;
-        }
+    /**
+     * Mueve al enemigo.
+     */
+    public void mover() {
+        x = x + velocidad * Math.cos(angulo);
     }
 
-
-    public void establecerAngulo(double angulo) {
-        throw new UnsupportedOperationException("método aún sin implementar");
-    }
-
-    public void establecerX(double x) {
-        throw new UnsupportedOperationException("método aún sin implementar");
-    }
-
-
-    public void establecerY(double y) {
-        throw new UnsupportedOperationException("método aún sin implementar");
-    }
-
-
+    /**
+     * Recibe un mensaje.
+     * @param mensaje
+     */
     public void recibirMensaje(String mensaje) {
         if (mensaje.equals("morir")) {
             vivo = false;
         }
     }
 
+    /**
+     * Indica si este enemigo debe eliminarse.
+     * @return true si debe eliminarse, false de lo contrario
+     */
     public boolean debeEliminarse() {
         return !vivo;
     }
 
+    /**
+     * El rectángulo de colisión del enemigo.
+     * @return el rectángulo de colisión del enemigo
+     */
     public Rectangulo rectangulo() {
         return new Rectangulo(x, y, ancho, alto);
     }

@@ -13,60 +13,49 @@ import java.time.Instant;
  * @author Miguel Angel Luna Lobos
  */
 public class Princesa {
-
-    private static final double ladoCorazon = 30.0;
-
-    private final Image princesaOriginal;
+    public static final double altoPrincesa = 100;
+    public static final double anchoPrincesa = 100;
+    public static final double ladoCorazon = 30.0;
     private final Image princesa;
+    private final Image corazon;
     private double x;
     private double y;
     private final double ancho;
     private final double alto;
     private double angulo;
-    private final int id;
     private final double velocidad;
     private double velocidadCaidaLibre;
     private final double velocidadSalto;
     private boolean enSalto;
     private double aceleracionGravitatoria;
     private Instant marcaTemporalDeCaida;
-
     private boolean xNoCrece;
     private boolean xNoDecrece;
-
     private int vidas;
-
-    private Image corazonOriginal;
-
-    private Image corazon;
 
     /**
      * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación
      * de caída libre.
      *
-     * @param generadorId generador de IDs para asignar un identificador único
-     * @param entorno     el entorno del juego
+     * @param x la coordenada x
+     * @param y la coordenada y
+     * @param ancho el ancho
+     * @param alto el alto
+     * @param princesa la imagen de la princesa
+     * @param corazon la imagen del corazón
      */
-    public Princesa(GeneradorId generadorId, Entorno entorno) {
-        // El DNI de la princesa
-        id = generadorId.nuevoId();
-        // Propiedades del rectángulo de la princesa
-        x = entorno.ancho() / 2.0;
-        y = 0;
-        ancho = 100.0;
-        alto = 100.0;
-        // Imagenes de la princesa
-        princesaOriginal = Imagenes.cargarImagen("princesa.png");
-        princesa = Imagenes.escalar(princesaOriginal, ancho, alto);
-        corazonOriginal = Imagenes.cargarImagen("corazon.png");
-        corazon = Imagenes.escalar(corazonOriginal, ladoCorazon, ladoCorazon);
-        // Propiedades de vida de la princesa
+    public Princesa(double x, double y, double ancho, double alto, Image princesa, Image corazon) {
+        this.x = x;
+        this.y = y;
+        this.alto = alto;
+        this.ancho = ancho;
+        this.princesa = princesa;
+        this.corazon = corazon;
         vidas = 10;
-        // Propiedades dinámicas de la princesa
         xNoCrece = false; // booleano que indica que no se puede avanzar hacia la derecha
         xNoDecrece = false; // booleano que indica que no se puede avanzar hacia la izquierda
         velocidad = 3.0; // la velocidad de movimientos laterales
-        velocidadSalto = 7.0; // la velocidad que alcanza la princesa tras saltar
+        velocidadSalto = 7.5; // la velocidad que alcanza la princesa tras saltar
         enSalto = false; // indica si la princesa está en un salto
         angulo = 0.0; // el ángulo en el que se mueve la princesa
         aceleracionGravitatoria = 10.0; // la constante g de este mundo
@@ -74,40 +63,44 @@ public class Princesa {
         marcaTemporalDeCaida = Instant.now(); // iniciamos con la princesa en caída libre
     }
 
-
-    public int id() {
-        return id;
+    public int vidas() {
+        return vidas;
     }
 
-
-    public String tipo() {
-        return "princesa";
+    public void trasladar(double x, double y) {
+        this.x = x;
+        this.y = y;
+        marcaTemporalDeCaida = Instant.now();
     }
 
-
-    public double angulo() {
-        return angulo;
-    }
-
-
+    /**
+     * La coordenada x.
+     * @return la coordenada x
+     */
     public double x() {
         return x;
     }
 
-    // cambiada para mejorar la jugabilidad
-
+    /**
+     * La coordenada y.
+     * @return la coordenada y
+     */
     public double y() {
         return y + alto * 0.05;
     }
 
-    // cambiada para mejorar la jugabilidad
-
+    /**
+     * El ancho.
+     * @return el ancho
+     */
     public double ancho() {
         return ancho * 0.45;
     }
 
-    // cambiada para mejorar la jugabilidad
-
+    /**
+     * El alto.
+     * @return el alto
+     */
     public double alto() {
         return alto * 0.80;
     }
@@ -129,7 +122,10 @@ public class Princesa {
         entorno.dibujarImagen(princesa, dx, dy, 0, 1);
     }
 
-
+    /**
+     * Ejecuta el movimiento de la princesa.
+     * @param entorno el entorno
+     */
     public void mover(Entorno entorno) {
         if (entorno.estaPresionada(entorno.TECLA_DERECHA)) {
             angulo = 0;
@@ -200,31 +196,10 @@ public class Princesa {
         aceleracionGravitatoria = 10.0;
     }
 
-    public void establecerAngulo(double angulo) {
-        this.angulo = angulo;
-    }
-
-
-    public void establecerX(double x) {
-        this.x = x;
-    }
-
-
-    public void establecerY(double y) {
-        this.y = y;
-    }
-
-
-    public void establecerAncho(double ancho) {
-        throw new UnsupportedOperationException("no se puede modificar las dimensiones de la princesa");
-    }
-
-
-    public void establecerAlto(double alto) {
-        throw new UnsupportedOperationException("no se puede modificar las dimensiones de la princesa");
-    }
-
-
+    /**
+     * Recibe mensajes.
+     * @param mensaje el mensaje
+     */
     public void recibirMensaje(String mensaje) {
 
         switch (mensaje) {
@@ -262,19 +237,11 @@ public class Princesa {
         xNoCrece = true;
     }
 
-    /**
-     * Inicializa el estado de caída libre reseteando la velocidad y registrando
-     * el instante actual como marca de inicio de caída.
-     */
     private void cayendo() {
         marcaTemporalDeCaida = Instant.now();
         velocidadCaidaLibre = 0.0;
     }
 
-    /**
-     * Establece el estado de la princesa cuando toca tierra firme: detiene la
-     * gravedad, cancela el salto y resetea la velocidad de caída.
-     */
     private void enTierraFirme() {
         aceleracionGravitatoria = 0.0;
         enSalto = false;
@@ -282,7 +249,12 @@ public class Princesa {
         velocidadCaidaLibre = 0.0;
     }
 
-    public void disparar(Mundo mundo, Entorno entorno, GeneradorId generadorId) {
+    /**
+     * Dispara un proyectil.
+     * @param mundo el mundo
+     * @param entorno el entorno
+     */
+    public void disparar(Mundo mundo, Entorno entorno) {
         final var mouseX = entorno.mouseX() + x - entorno.ancho() / 2.0;
         final var mouseY = entorno.mouseY() + y - entorno.alto() / 2.0;
         final var distanciaX = mouseX - x;
@@ -290,14 +262,14 @@ public class Princesa {
         final var distancia = Math.sqrt(Math.pow(distanciaX, 2.0) + Math.pow(distanciaY, 2.0));
         final var cos = (distanciaX) / distancia;
         final var sin = (distanciaY) / distancia;
-        final var proyectil = new ProyectilPrincesa(x, y, cos, sin, generadorId);
+        final var proyectil = new ProyectilPrincesa(x, y, cos, sin);
         mundo.establecerProyectilPrincesa(proyectil);
     }
 
-    public boolean debeEliminarse() {
-        return false;
-    }
-
+    /**
+     * El rectángulo de colisión
+     * @return el rectángulo de colisión
+     */
     public Rectangulo rectangulo() {
         return new Rectangulo(x(), y(), ancho(), alto());
     }

@@ -6,8 +6,21 @@ import java.util.Objects;
 
 /**
  * Clase con métodos utilitarios de imágenes.
+ *
+ * @author Miguel Angel Luna Lobos
  */
 public class Imagenes {
+
+    /**
+     * Carga una imagen y le da las dimensiones especificadas.
+     * @param nombreArchivo el nombre del archivo
+     * @param ancho el ancho
+     * @param alto el alto
+     * @return un objeto Image con la imagen provista y las dimensiones indicadas
+     */
+    public static Image cargarYEscalar(String nombreArchivo, double ancho, double alto){
+        return escalar(cargar(nombreArchivo), ancho, alto);
+    }
 
     /**
      * Método para cargar imágenes que se encuentran en la carpeta src/juego (al mismo nivel que las clases).
@@ -16,7 +29,7 @@ public class Imagenes {
      * @return un objeto Image con la imagen provista
      * @throws NullPointerException si el archivo no existe
      */
-    public static Image cargarImagen(String nombreArchivo){
+    public static Image cargar(String nombreArchivo){
         var url = (Imagenes.class).getResource(nombreArchivo);
         Objects.requireNonNull(url, "el %s archivo no existe".formatted(nombreArchivo));
         return new ImageIcon(url).getImage();
