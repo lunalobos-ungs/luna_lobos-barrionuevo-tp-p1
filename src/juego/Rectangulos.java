@@ -13,7 +13,7 @@ public class Rectangulos {
      * @param r2 el rectángulo impactado
      * @return {@code "desde arriba"}, {@code "desde abajo"}, {@code "desde la izquierda"}
      * o {@code "desde la derecha"}
-     * @throws UnsupportedOperationException si los rectángulos no están en colisión
+     * @throws IllegalArgumentException si los rectángulos no están en colisión
      */
     public static String tipoDeColision(Rectangulo r1, Rectangulo r2) {
         final double x1 = r1.x();
@@ -66,7 +66,7 @@ public class Rectangulos {
             }
         }
 
-        throw new UnsupportedOperationException("no hay colisión");
+        throw new IllegalArgumentException("no hay colisión");
     }
 
     /**

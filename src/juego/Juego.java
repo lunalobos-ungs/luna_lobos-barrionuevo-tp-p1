@@ -38,12 +38,14 @@ public class Juego extends InterfaceJuego {
         final var imagenPrincesa = Imagenes.cargarYEscalar("princesa.png", Princesa.anchoPrincesa, Princesa.altoPrincesa);
         final var imagenCorazon = Imagenes.cargarYEscalar("corazon.png", Princesa.ladoCorazon, Princesa.ladoCorazon);
         final var princesa = new Princesa(0.0, 0.0, Princesa.anchoPrincesa, Princesa.altoPrincesa, imagenPrincesa, imagenCorazon);
-        //var jefe = new Jefe(generadorId, entorno, 600, 700);
+        final var imagenJefeHaciaDerecha = Imagenes.cargarYEscalar("jefe_hacia_derecha.png", Jefe.anchoJefe, Jefe.altoJefe);
+        final var imagenJefeHaciaIzquierda = Imagenes.cargarYEscalar("jefe_hacia_izquierda.png", Jefe.anchoJefe, Jefe.altoJefe);
+        final var jefe = new Jefe( 0, 0, Jefe.anchoJefe, Jefe.altoJefe, imagenJefeHaciaDerecha, imagenJefeHaciaIzquierda);
         final var imagenFondo = Imagenes.cargarYEscalar("fondo.png", anchoPantalla, altoPantalla);
         final var fondo = new Fondo(anchoPantalla / 2.0, altoPantalla / 2.0, imagenFondo);
         final var imagenCastillo = Imagenes.cargarYEscalar("castillo.png", Islas.anchoMinimo, Islas.anchoMinimo);
         final var castillo = new Castillo(0.0, 0.0, Islas.anchoMinimo, Islas.anchoMinimo, imagenCastillo);
-        mundo = new Mundo(limitesPantalla, limitesMundo, princesa, null, fondo, castillo);
+        mundo = new Mundo(limitesPantalla, limitesMundo, princesa, jefe, fondo, castillo);
 
         var cantidadIslasBajas = Islas.proporcionIslasBajas * mundo.limitesMundo().area();
         var cantidadIslasAltas = Islas.proporcionIslasAltas * mundo.limitesMundo().area();
@@ -61,6 +63,7 @@ public class Juego extends InterfaceJuego {
         var xMax = 0.0;
         var yMin = mundo.limitesMundo().alto();
         Isla primeraIsla = null;
+        Isla anteUltimaIsla = null;
         Isla ultimaIsla = null;
         while (contador < cantidadIslasAltas) {
             var isla = Islas.nuevaNivelAlto(mundo);
@@ -75,6 +78,7 @@ public class Juego extends InterfaceJuego {
             if (isla.x() > xMax && isla.y() <= yMin) {
                 xMax = isla.x();
                 yMin = isla.y();
+                anteUltimaIsla = ultimaIsla;
                 ultimaIsla = isla;
             }
 
@@ -82,8 +86,10 @@ public class Juego extends InterfaceJuego {
             contador++;
         }
         Objects.requireNonNull(primeraIsla, "no se ha encontrado una isla en la cual colocar a la princesa");
-        Objects.requireNonNull(ultimaIsla, "no se ha encontrado una isla en la cual colocar al castillo");
+        Objects.requireNonNull(anteUltimaIsla, "no se ha encontrado una isla en la cual colocar al jefe");
+        Objects.requireNonNull(ultimaIsla, "no se ha encontrado una isla en la cual colocar el castillo");
         mundo.princesa().trasladar(primeraIsla.x(), primeraIsla.y() - Islas.altoIsla / 2.0 - mundo.princesa().alto() / 2.0);
+        mundo.jefe().establecerIsla(anteUltimaIsla);
         mundo.castillo().trasladar(ultimaIsla.x(), ultimaIsla.y() - Islas.altoIsla / 2.0 - mundo.castillo().alto() / 2.0);
         // Inicia el juego!
         this.entorno.iniciar();
@@ -167,15 +173,11 @@ public class Juego extends InterfaceJuego {
     private void colisionesIslas() {
         var iterador = mundo.iteradorIslas();
         var princesa = mundo.princesa();
-        var jefe = mundo.jefe();
         var proyectil = mundo.proyectilPrincesa();
         while (iterador.tieneOtro()) {
             var isla = iterador.proximo();
             if (Rectangulos.enColision(isla.rectangulo(), princesa.rectangulo())) {
                 isla.actuarSobrePrincesa(princesa);
-            }
-            if (jefe != null && Rectangulos.enColision(isla.rectangulo(), jefe.rectangulo())) {
-                isla.actuarSobreJefe(jefe);
             }
             if (proyectil != null && Rectangulos.enColision(isla.rectangulo(), proyectil.rectangulo())) {
                 isla.actuarSobreProyectilPrincesa(proyectil);
@@ -192,9 +194,9 @@ public class Juego extends InterfaceJuego {
 
         var princesa = mundo.princesa();
         if (Rectangulos.enColision(jefe.rectangulo(), princesa.rectangulo())) {
-            princesa.recibirMensaje("una vida menos");
+            princesa.recibirMensaje("morir");
         }
-        jefe.mover(entorno);
+        jefe.mover();
         jefe.dibujar(entorno, mundo);
     }
 
@@ -205,11 +207,23 @@ public class Juego extends InterfaceJuego {
         }
         var jefe = mundo.jefe();
         if (jefe != null && Rectangulos.enColision(jefe.rectangulo(), proyectil.rectangulo())) {
+            mundo.establecerProyectilPrincesa(null);
             jefe.recibirMensaje("una vida menos");
         }
+        proyectil = mundo.proyectilPrincesa();
+        if(proyectil == null){
+            return;
+        }
         var enemigosEnColision = mundo.enemigosEnColision(proyectil.rectangulo());
+        if(enemigosEnColision.length > 0){
+            mundo.establecerProyectilPrincesa(null);
+        }
         for (var i = 0; i < enemigosEnColision.length; i++) {
             enemigosEnColision[i].recibirMensaje("morir");
+        }
+        proyectil = mundo.proyectilPrincesa();
+        if(proyectil == null){
+            return;
         }
         proyectil.mover();
         proyectil.dibujar(entorno, mundo);
@@ -220,8 +234,8 @@ public class Juego extends InterfaceJuego {
         if (princesa.vidas() <= 0) {
             derrota = true;
         }
-        if (princesa.y() > mundo.limitesMundo().alto()) {
-            derrota = true;
+        if (princesa.y() > mundo.limitesMundo().alto()*2.5) {
+            princesaCaeAlVacio();
         }
         var enemigosEnColision = mundo.enemigosEnColision(princesa.rectangulo());
         for (int i = 0; i < enemigosEnColision.length; i++) {
@@ -230,6 +244,27 @@ public class Juego extends InterfaceJuego {
         }
         princesa.mover(entorno);
         princesa.dibujar(entorno);
+    }
+
+    private void princesaCaeAlVacio(){
+        var princesa = mundo.princesa();
+        princesa.recibirMensaje("una vida menos");
+        if(princesa.vidas() <= 0){
+            derrota = true;
+            return;
+        }
+        var iteradorIslas = mundo.iteradorIslas();
+        var islaMasCercana = iteradorIslas.proximo();
+        var deltaX = Math.abs(islaMasCercana.x() - princesa.x());
+        while(iteradorIslas.tieneOtro()){
+            var isla = iteradorIslas.proximo();
+            var nuevoDeltaX = Math.abs(isla.x() - princesa.x());
+            if(nuevoDeltaX <= deltaX){
+                deltaX = nuevoDeltaX;
+                islaMasCercana = isla;
+            }
+        }
+        princesa.trasladar(islaMasCercana.x(), islaMasCercana.y() - Islas.altoIsla / 2.0 - princesa.alto() / 2.0);
     }
 
     private void colisionesCastillo() {

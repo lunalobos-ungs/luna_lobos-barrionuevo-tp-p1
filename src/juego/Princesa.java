@@ -135,11 +135,11 @@ public class Princesa {
             angulo = Math.PI;
             movimientoLateral();
         }
-        if (entorno.sePresiono('a') && aceleracionGravitatoria <= 0.1) {
+        if ((entorno.sePresiono('a') || entorno.estaPresionada(entorno.TECLA_ARRIBA)) && aceleracionGravitatoria <= 0.1) {
             enSalto = true;
             cayendo();
         }
-        gravedad(entorno);
+        gravedad();
         if (enSalto) {
             movimiento(-Math.PI / 2, velocidadSalto);
         }
@@ -183,9 +183,8 @@ public class Princesa {
      * Aplica la simulación de gravedad: acumula velocidad de caída libre con el tiempo
      * y la anula cuando la princesa está en tierra firme.
      *
-     * @param entorno el entorno del juego
      */
-    private void gravedad(Entorno entorno) {
+    private void gravedad() {
         if (aceleracionGravitatoria <= 0.1) {
             marcaTemporalDeCaida = Instant.now();
         } else {
@@ -217,6 +216,9 @@ public class Princesa {
                 break;
             case "chocaste con un muro desde tu izquierda":
                 chocarMuroPorIzquierda();
+                break;
+            case "morir":
+                vidas = 0;
                 break;
             default:
                 throw new IllegalArgumentException("así no se le habla a la princesa -> mensaje: " + mensaje);

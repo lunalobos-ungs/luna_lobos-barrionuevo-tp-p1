@@ -9,7 +9,7 @@ import java.util.Objects;
  * @author Miguel Angel Luna Lobos y Noelia Barrionuevo
  */
 public class Mundo {
-    public static final double proporcionAnchoMundo = 30.0;
+    public static final double proporcionAnchoMundo = 8.0;
     public static final double proporcionAltoMundo = 2.0;
     private final Princesa princesa;
     private Enemigo[] enemigos;
@@ -250,7 +250,7 @@ public class Mundo {
             }
         }
 
-        if(jefe != null && (jefe.debeEliminarse() || !Rectangulos.enColision(jefe.rectangulo(), limitesMundo))){
+        if(jefe != null && jefe.vidas() <= 0){
             jefe = null;
         }
 
