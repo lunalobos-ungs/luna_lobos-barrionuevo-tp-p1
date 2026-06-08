@@ -8,23 +8,39 @@ import java.awt.*;
  * Representa al jefe.
  */
 public class Jefe {
+
+    public static final double altoJefe = 130;
+    public static final double anchoJefe = 120;
     private double x;
     private double y;
     private final double ancho;
     private final double alto;
-    private final Image jefe;
-    private double angulo;
+    private final Image jefeHaciaDerecha;
+    private final Image jefeHaciaIzquierda;
+    private Image jefe;
+    private double cos;
     private final double velocidad;
-    private boolean vivo = true;
+    private int vidas;
+    private Isla isla;
 
-    Jefe(double x, double y, double ancho, double alto, Image jefe) {
+    Jefe(double x, double y, double ancho, double alto, Image jefeHaciaDerecha, Image jefeHaciaIzquierda) {
         this.x = x;
         this.y = y;
         this.ancho = ancho;
         this.alto = alto;
-        this.jefe = jefe;
+        this.jefeHaciaDerecha = jefeHaciaDerecha;
+        this.jefeHaciaIzquierda = jefeHaciaIzquierda;
+        this.jefe = jefeHaciaIzquierda;
         velocidad = 1.0;
-        angulo = Math.PI / 2.0;
+        cos = Math.cos(Math.PI);
+        isla = null;
+        vidas = 10;
+    }
+
+    public void establecerIsla(Isla isla){
+        this.isla = isla;
+        this.x = isla.x();
+        this.y = isla.y() - alto / 2.0 - Islas.altoIsla / 2.0;
     }
 
     public double x() {
@@ -43,6 +59,10 @@ public class Jefe {
         return alto;
     }
 
+    public int vidas(){
+        return vidas;
+    }
+
     /**
      * Dibuja al jefe.
      *
@@ -53,15 +73,25 @@ public class Jefe {
         final var coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
         final var x = coordenadasRelativas.x();
         final var y = coordenadasRelativas.y();
+        final var rectanguloRojo = new Rectangulo(x, y - alto / 2.0, 100, 10);
+        double proporcion = vidas / 10.0;
+        double diferencia = rectanguloRojo.ancho() - proporcion * 100;
+        final var rectanguloNegro = new Rectangulo(x - diferencia / 2, y - alto / 2.0, 100 * proporcion, 10);
+        rectanguloRojo.dibujarRectangulo(entorno, Color.RED);
+        rectanguloNegro.dibujarRectangulo(entorno, Color.BLACK);
         entorno.dibujarImagen(jefe, x, y, 0);
     }
 
-    public void mover(Entorno entorno) {
-        if (angulo == 0) {
-            x = x + velocidad;
-        } else {
-            x = x - velocidad;
+    public void mover() {
+        if(x <= isla.rectangulo().bordeIzquierdo() || x >= isla.rectangulo().bordeDerecho()){
+            cos = -cos;
+            if(cos < 0){
+                jefe = jefeHaciaIzquierda;
+            } else {
+                jefe = jefeHaciaDerecha;
+            }
         }
+        x += velocidad * cos;
     }
 
     /**
@@ -70,17 +100,9 @@ public class Jefe {
      * @param mensaje el mensaje
      */
     public void recibirMensaje(String mensaje) {
-        if (mensaje.equals("morir")) {
-            vivo = false;
+        if (mensaje.equals("una vida menos")) {
+            vidas--;
         }
-    }
-
-    /**
-     * Indica si debe eliminarse.
-     * @return true si debe eliminarse, falso de lo contrario
-     */
-    public boolean debeEliminarse() {
-        return !vivo;
     }
 
     /**

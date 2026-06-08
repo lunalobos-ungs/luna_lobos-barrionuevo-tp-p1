@@ -30,7 +30,7 @@ public class Aleatorio {
      *
      * @param min el valor mínimo (incluido)
      * @param max el máximo (excluido)
-     * @return
+     * @return el entero aleatorio
      */
     public static int enteroRandom(int min, int max){
         if(min > max){

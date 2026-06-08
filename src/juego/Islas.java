@@ -15,7 +15,7 @@ public class Islas {
     public static final double anchoMaximo = 500.0;
     public static final double factorFronteraAncho = 2.0;
     public static final double factorFronteraAlto = 1.0;
-    public static final int niveles = 9;
+    public static final int niveles = 8;
     public static final double proporcionNivelesAltos = 0.6;
     private static final double anchoIslaNivelBajo = 200.0;
     public static final double proporcionIslasBajas = 10.0 / (800.0 * 600.0);

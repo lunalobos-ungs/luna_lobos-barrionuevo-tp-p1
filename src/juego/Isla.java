@@ -54,31 +54,6 @@ public class Isla {
     }
 
     /**
-     * Actúa sobre el jefe.
-     * @param jefe el jefe
-     */
-    public void actuarSobreJefe(Jefe jefe) {
-        String tipoDeColision = Rectangulos.tipoDeColision(jefe.rectangulo(), this.rectangulo());
-
-        switch (tipoDeColision) {
-            case "desde arriba":
-                jefe.recibirMensaje("estas en tierra firme");
-                break;
-            case "desde abajo":
-                jefe.recibirMensaje("chocaste con el techo");
-                break;
-            case "desde la derecha":
-                jefe.recibirMensaje("chocaste con un muro desde tu derecha");
-                break;
-            case "desde la izquierda":
-                jefe.recibirMensaje("chocaste con un muro desde tu izquierda");
-                break;
-            default:
-                throw new IllegalArgumentException("tipo de colisión %s no válido".formatted(tipoDeColision));
-        }
-    }
-
-    /**
      * Actúa sobre la princesa.
      * @param princesa la princesa
      */
