@@ -26,7 +26,7 @@ public class Jefe {
     private int vidas;
     private Isla isla;
 
-    Jefe(double x, double y, double ancho, double alto, Image jefeHaciaDerecha, Image jefeHaciaIzquierda) {
+    public Jefe(double x, double y, double ancho, double alto, Image jefeHaciaDerecha, Image jefeHaciaIzquierda) {
         this.x = x;
         this.y = y;
         this.ancho = ancho;
