@@ -6,6 +6,7 @@ import entorno.InterfaceJuego;
 
 import java.awt.*;
 import java.util.Objects;
+import entorno.Herramientas ;
 
 public class Juego extends InterfaceJuego {
     // El objeto Entorno que controla el tiempo y otros
@@ -209,6 +210,14 @@ public class Juego extends InterfaceJuego {
         if (jefe != null && Rectangulos.enColision(jefe.rectangulo(), proyectil.rectangulo())) {
             mundo.establecerProyectilPrincesa(null);
             jefe.recibirMensaje("una vida menos");
+            // El dragon emite sonido cuando un
+            //proyectil lo colisiona
+            try {
+                Herramientas.play("sonido/dragon.wav");
+            }
+            catch (Exception error){
+            System.out.println ("No se puede reproducir sonido de dragon");
+            }
         }
         proyectil = mundo.proyectilPrincesa();
         if(proyectil == null){
@@ -235,11 +244,23 @@ public class Juego extends InterfaceJuego {
             derrota = true;
         }
         if (princesa.y() > mundo.limitesMundo().alto()*2.5) {
+            //se agrega sonido cuando la princesa cae al vacio y pierde una vida
+            try{
+                Herramientas.play ("sonido/dragon2.wav");
+            }catch (Exception error){
+                System.out.println("Princesa cae al vacio no funciona el sonido");
+            }
             princesaCaeAlVacio();
         }
         var enemigosEnColision = mundo.enemigosEnColision(princesa.rectangulo());
         for (int i = 0; i < enemigosEnColision.length; i++) {
             enemigosEnColision[i].recibirMensaje("morir");
+            //la princesa emite sonido cuando le sacan vidas
+            try{
+                Herramientas.play ("sonido/PrincesaPierdeVidas.wav" );
+            } catch (Exception error){
+                System.out.println ("Sonido de pierde vidas con enemigo");
+            }
             princesa.recibirMensaje("una vida menos");
         }
         princesa.mover(entorno);
