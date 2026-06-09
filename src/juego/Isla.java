@@ -17,7 +17,7 @@ public class Isla {
     private final double alto;
     private final Image isla;
 
-    Isla(double x, double y, double ancho, double alto, Image isla) {
+    public Isla(double x, double y, double ancho, double alto, Image isla) {
         this.x = x;
         this.y = y;
         this.ancho = ancho;
