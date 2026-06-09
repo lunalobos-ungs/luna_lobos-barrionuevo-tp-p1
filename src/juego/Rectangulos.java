@@ -13,8 +13,8 @@ public class Rectangulos {
      *
      * @param r1 el rectángulo cuya dirección de llegada se determina
      * @param r2 el rectángulo impactado
-     * @return {@code "desde arriba"}, {@code "desde abajo"}, {@code "desde la izquierda"}
-     * o {@code "desde la derecha"}
+     * @return "desde arriba", "desde abajo", "desde la izquierda"
+     * o "desde la derecha"
      * @throws IllegalArgumentException si los rectángulos no están en colisión
      */
     public static String tipoDeColision(Rectangulo r1, Rectangulo r2) {
