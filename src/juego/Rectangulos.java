@@ -9,7 +9,7 @@ package juego;
 public class Rectangulos {
 
     /**
-     * Determina la dirección desde la que {@code r1} llega a colisionar con {@code r2}.
+     * Determina la dirección desde la que r1 llega a colisionar con r2.
      *
      * @param r1 el rectángulo cuya dirección de llegada se determina
      * @param r2 el rectángulo impactado
