@@ -4,6 +4,7 @@ import entorno.Entorno;
 
 import java.awt.*;
 import java.time.Instant;
+import entorno.Herramientas;
 
 /**
  * Personaje principal del juego. Se mueve horizontalmente con las teclas de dirección,
@@ -265,6 +266,14 @@ public class Princesa {
         final var cos = (distanciaX) / distancia;
         final var sin = (distanciaY) / distancia;
         final var proyectil = new ProyectilPrincesa(x, y, cos, sin);
+        // se agrega sonido cuando la princesa dispara
+        // se llamo a la clase de herramientas play
+        try {
+            Herramientas.play("sonido/sonidoPoder.wav");
+        }
+        catch (Exception error){
+            System.out.println ("No se puede reproducir sonido");
+        }
         mundo.establecerProyectilPrincesa(proyectil);
     }
 
