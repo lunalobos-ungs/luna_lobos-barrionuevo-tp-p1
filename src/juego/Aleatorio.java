@@ -26,7 +26,7 @@ public class Aleatorio {
     }
 
     /**
-     * Devuelve un entero aleatorio que desde min inclusive hasta max (no inclusive).
+     * Devuelve un entero aleatorio que va desde min inclusive hasta max (no inclusive).
      *
      * @param min el valor mínimo (incluido)
      * @param max el máximo (excluido)
