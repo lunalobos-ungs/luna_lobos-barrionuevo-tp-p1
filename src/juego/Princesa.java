@@ -6,9 +6,7 @@ import java.awt.*;
 import java.time.Instant;
 
 /**
- * Personaje principal del juego. Se mueve horizontalmente con las teclas de dirección,
- * salta con la tecla {@code 'a'} cuando está en tierra firme y cae por gravedad.
- * Dispara {@link ProyectilPrincesa} hacia el cursor al presionar el botón izquierdo del mouse.
+ * Personaje principal del juego.
  *
  * @author Miguel Angel Luna Lobos
  */

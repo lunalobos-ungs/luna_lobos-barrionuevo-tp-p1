@@ -2,6 +2,8 @@ package juego;
 
 /**
  * Clase creada para iterar sobre un array de enemigos.
+ *
+ * @author Miguel Angel Luna Lobos
  */
 public class IteradorEnemigos {
     private final Enemigo[] enemigos;
