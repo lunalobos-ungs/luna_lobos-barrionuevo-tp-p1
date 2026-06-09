@@ -4,6 +4,11 @@ import entorno.Entorno;
 
 import java.awt.*;
 
+/**
+ * Clase para trabajar con colisiones.
+ *
+ * @author Miguel Angel Luna Lobos
+ */
 public class Rectangulo {
     private final double x;
     private final double y;

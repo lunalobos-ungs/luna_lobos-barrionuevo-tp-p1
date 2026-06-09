@@ -6,6 +6,9 @@ import java.awt.*;
 
 /**
  * Representa al jefe.
+ *
+ * @author Noelia Barrionuevo
+ * @author Miguel Angel Luna Lobos
  */
 public class Jefe {
 

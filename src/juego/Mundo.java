@@ -6,7 +6,8 @@ import java.util.Objects;
 /**
  * Contiene los objetos que se van dibujando en pantalla.
  *
- * @author Miguel Angel Luna Lobos y Noelia Barrionuevo
+ * @author Miguel Angel Luna Lobos
+ * @author Noelia Barrionuevo
  */
 public class Mundo {
     public static final double proporcionAnchoMundo = 8.0;

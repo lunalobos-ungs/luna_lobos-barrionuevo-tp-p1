@@ -8,6 +8,7 @@ import java.awt.*;
  * Clase con métodos utilitarios relacionados con enemigos.
  *
  * @author Miguel Angel Luna Lobos
+ * @author Noelia Barrionuevo
  */
 public class Enemigos {
     private static final double altoEnemigo = 40.0;

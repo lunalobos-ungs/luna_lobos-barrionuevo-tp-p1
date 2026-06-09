@@ -3,6 +3,8 @@ package juego;
 
 /**
  * Clase para métodos utilitarios de rectángulos.
+ *
+ * @author Miguel Angel Luna Lobos
  */
 public class Rectangulos {
 

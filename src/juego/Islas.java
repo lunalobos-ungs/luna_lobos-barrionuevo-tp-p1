@@ -5,7 +5,8 @@ import java.awt.*;
 /**
  * La clase que se encarga de generar islas en el mapa de manera aleatoria.
  *
- * @author Noelia Barrionuevo y Miguel Angel Luna Lobos
+ * @author Noelia Barrionuevo
+ * @author Miguel Angel Luna Lobos
  */
 public class Islas {
     public static final double proporcionAlto = 0.8;

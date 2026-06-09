@@ -2,6 +2,8 @@ package juego;
 
 /**
  * Clase creada para iterar sobre un array de islas.
+ *
+ * @author Miguel Angel Luna Lobos
  */
 public class IteradorIslas {
     private final Isla[] islas;
