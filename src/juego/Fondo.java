@@ -21,7 +21,7 @@ public class Fondo {
      * @param y la coordenada y
      * @param fondo la imagen del fondo
      */
-    Fondo(double x, double y, Image fondo) {
+    public Fondo(double x, double y, Image fondo) {
         this.x = x;
         this.y = y;
         this.fondo = fondo;
