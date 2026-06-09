@@ -47,7 +47,7 @@ public class Mundo {
         this.princesa = Objects.requireNonNull(princesa, "princesa no puede ser null");
         this.jefe = jefe;
         this.fondo = Objects.requireNonNull(fondo, "fondo no puede ser null");
-        this.castillo = Objects.requireNonNull(castillo, "castillo no puede ser null");;
+        this.castillo = Objects.requireNonNull(castillo, "castillo no puede ser null");
         islas = new Isla[10];
         enemigos = new Enemigo[10];
         largoEnemigos = 0;
