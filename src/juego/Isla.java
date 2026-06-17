@@ -3,6 +3,7 @@ package juego;
 import entorno.Entorno;
 
 import java.awt.*;
+import java.util.Random;
 
 /**
  * Representa una isla flotante del juego.
@@ -26,6 +27,14 @@ public class Isla {
 
     private static Image crearImagenIsla(double ancho){
         return  Juego.cargarYEscalar("isla.png", ancho, altoIsla);
+    }
+
+    static double decimalRandom(double min, double max){
+        if(min > max){
+            throw new IllegalArgumentException("max debe ser mayor a min");
+        }
+        final var rango = max - min;
+        return Juego.random.nextDouble() * rango + min;
     }
 
     public static Isla nuevaNivelBajo(Mundo mundo) {
@@ -61,13 +70,13 @@ public class Isla {
         final var alturaMinima = proporcionAlturaMinima * altoMundo;
         final var yMax = altoMundo - alturaMinima;
         final var yMin = altoMundo - alturaMinima - alto;
-        final var indice = Aleatorio.enteroRandom((int) Math.floor(niveles * proporcionNivelesAltos), niveles);
+        final var indice = Juego.enteroRandom((int) Math.floor(niveles * proporcionNivelesAltos), niveles);
         final var rango = yMax - yMin;
         final var y = indice * rango / (niveles - 1) + yMin;
         final var ancho = anchoIslaNivelBajo;
         final var xMin = 0.0 + ancho / 2.0;
         final var xMax = anchoMundo - ancho / 2.0;
-        final var x = Aleatorio.decimalRandom(xMin, xMax);
+        final var x = decimalRandom(xMin, xMax);
         return new Isla(x, y, anchoIslaNivelBajo, altoIsla, crearImagenIsla(anchoIslaNivelBajo));
     }
 
@@ -78,13 +87,13 @@ public class Isla {
         final var alturaMinima = proporcionAlturaMinima * altoMundo;
         final var yMax = altoMundo - alturaMinima;
         final var yMin = altoMundo - alturaMinima - alto;
-        final var indice = Aleatorio.enteroRandom(0, (int) Math.floor(niveles * proporcionNivelesAltos));
+        final var indice = Juego.enteroRandom(0, (int) Math.floor(niveles * proporcionNivelesAltos));
         final var rango = yMax - yMin;
         final var y = indice * rango / (niveles - 1) + yMin;
-        final var ancho = Aleatorio.decimalRandom(anchoMinimo, anchoMaximo);
+        final var ancho = decimalRandom(anchoMinimo, anchoMaximo);
         final var xMin = 0.0 + ancho / 2.0;
         final var xMax = anchoMundo - ancho / 2.0;
-        final var x = Aleatorio.decimalRandom(xMin, xMax);
+        final var x = decimalRandom(xMin, xMax);
         return new Isla(x, y, ancho, altoIsla, crearImagenIsla(ancho));
     }
 

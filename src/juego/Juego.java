@@ -6,10 +6,24 @@ import entorno.InterfaceJuego;
 
 import java.awt.*;
 import java.util.Objects;
+import java.util.Random;
+
 import entorno.Herramientas ;
 
 public class Juego extends InterfaceJuego {
+    public static final Random random = new Random();
 
+    static int enteroRandom(int min, int max){
+        if(min > max){
+            throw new IllegalArgumentException("max debe ser mayor a min");
+        }
+        final var rango = max - min;
+        // max - min - 1 + min = max - 1
+        if(rango == 0) {
+            return min;
+        }
+        return random.nextInt(rango) + min;
+    }
     public static Image cargarYEscalar(String nombreArchivo, double ancho, double alto){
         Image imagen = Herramientas.cargarImagen("recursos/" + nombreArchivo);
         return imagen.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
@@ -139,7 +153,7 @@ public class Juego extends InterfaceJuego {
             return;
         }
         if (mundo.faltanEnemigos()) {
-            var opcion = Aleatorio.enteroRandom(0, 2);
+            var opcion = Juego.enteroRandom(0, 2);
             Enemigo enemigo;
             switch (opcion) {
                 case 0:
