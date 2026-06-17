@@ -289,6 +289,6 @@ public class Mundo {
      * @return true si se deben generar más enemigos.
      */
     public boolean faltanEnemigos() {
-        return largoEnemigos < Enemigos.minimoEnemigos;
+        return largoEnemigos < Enemigo.minimoEnemigos;
     }
 }
