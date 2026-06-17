@@ -14,7 +14,7 @@ public class Enemigos {
     private static final double altoEnemigo = 40.0;
     private static final double anchoEnemigo = 40.0;
 
-    public static final int minimoEnemigos = Islas.niveles / 2;
+    public static final int minimoEnemigos = Isla.niveles / 2;
 
     private static final Image imagenEnemigo = Imagenes.cargarYEscalar("enemigo.png", anchoEnemigo, altoEnemigo);
 
@@ -62,11 +62,11 @@ public class Enemigos {
 
     private static Enemigo enemigoAleatorio(GeneradorId generadorId, Mundo mundo, double x, double angulo) {
         final var altoMundo = mundo.limitesMundo().alto();
-        final var alto = Islas.proporcionAlto * altoMundo;
-        final var alturaMinima = Islas.proporcionAlturaMinima * altoMundo;
+        final var alto = Isla.proporcionAlto * altoMundo;
+        final var alturaMinima = Isla.proporcionAlturaMinima * altoMundo;
         final var yMax = altoMundo - alturaMinima;
         final var yMin = altoMundo - alturaMinima - alto;
-        final var y = alturaAleatoria(Islas.niveles, yMin, yMax);
+        final var y = alturaAleatoria(Isla.niveles, yMin, yMax);
 
         return new Enemigo(generadorId, x, y, anchoEnemigo, altoEnemigo, angulo, imagenEnemigo);
     }
