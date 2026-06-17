@@ -77,7 +77,7 @@ public class Enemigo {
         if (n < 2) {
             throw new IllegalArgumentException("n no puede ser inferior a 2");
         }
-        var q = Aleatorio.enteroRandom(0, n - 1);
+        var q = Juego.enteroRandom(0, n - 1);
         var indice = 2 * q + 1;
         var rango = yMax - yMin;
         return indice * rango / (2 * (n - 1)) + yMin;
