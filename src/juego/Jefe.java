@@ -43,7 +43,7 @@ public class Jefe {
     public void establecerIsla(Isla isla){
         this.isla = isla;
         this.x = isla.x();
-        this.y = isla.y() - alto / 2.0 - Islas.altoIsla / 2.0;
+        this.y = isla.y() - alto / 2.0 - Isla.altoIsla / 2.0;
     }
 
     public double x() {

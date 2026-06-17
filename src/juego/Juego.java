@@ -44,15 +44,15 @@ public class Juego extends InterfaceJuego {
         final var jefe = new Jefe( 0, 0, Jefe.anchoJefe, Jefe.altoJefe, imagenJefeHaciaDerecha, imagenJefeHaciaIzquierda);
         final var imagenFondo = Imagenes.cargarYEscalar("fondo.png", anchoPantalla, altoPantalla);
         final var fondo = new Fondo(anchoPantalla / 2.0, altoPantalla / 2.0, imagenFondo);
-        final var imagenCastillo = Imagenes.cargarYEscalar("castillo.png", Islas.anchoMinimo, Islas.anchoMinimo);
-        final var castillo = new Castillo(0.0, 0.0, Islas.anchoMinimo, Islas.anchoMinimo, imagenCastillo);
+        final var imagenCastillo = Imagenes.cargarYEscalar("castillo.png", Isla.anchoMinimo, Isla.anchoMinimo);
+        final var castillo = new Castillo(0.0, 0.0, Isla.anchoMinimo, Isla.anchoMinimo, imagenCastillo);
         mundo = new Mundo(limitesPantalla, limitesMundo, princesa, jefe, fondo, castillo);
 
-        var cantidadIslasBajas = Islas.proporcionIslasBajas * mundo.limitesMundo().area();
-        var cantidadIslasAltas = Islas.proporcionIslasAltas * mundo.limitesMundo().area();
+        var cantidadIslasBajas = Isla.proporcionIslasBajas * mundo.limitesMundo().area();
+        var cantidadIslasAltas = Isla.proporcionIslasAltas * mundo.limitesMundo().area();
         var contador = 0;
         while (contador < cantidadIslasBajas) {
-            var isla = Islas.nuevaNivelBajo(mundo);
+            var isla = Isla.nuevaNivelBajo(mundo);
             if (isla == null) {
                 break;
             }
@@ -67,7 +67,7 @@ public class Juego extends InterfaceJuego {
         Isla anteUltimaIsla = null;
         Isla ultimaIsla = null;
         while (contador < cantidadIslasAltas) {
-            var isla = Islas.nuevaNivelAlto(mundo);
+            var isla = Isla.nuevaNivelAlto(mundo);
 
             if (isla == null) {
                 break;
@@ -89,9 +89,9 @@ public class Juego extends InterfaceJuego {
         Objects.requireNonNull(primeraIsla, "no se ha encontrado una isla en la cual colocar a la princesa");
         Objects.requireNonNull(anteUltimaIsla, "no se ha encontrado una isla en la cual colocar al jefe");
         Objects.requireNonNull(ultimaIsla, "no se ha encontrado una isla en la cual colocar el castillo");
-        mundo.princesa().trasladar(primeraIsla.x(), primeraIsla.y() - Islas.altoIsla / 2.0 - mundo.princesa().alto() / 2.0);
+        mundo.princesa().trasladar(primeraIsla.x(), primeraIsla.y() - Isla.altoIsla / 2.0 - mundo.princesa().alto() / 2.0);
         mundo.jefe().establecerIsla(anteUltimaIsla);
-        mundo.castillo().trasladar(ultimaIsla.x(), ultimaIsla.y() - Islas.altoIsla / 2.0 - mundo.castillo().alto() / 2.0);
+        mundo.castillo().trasladar(ultimaIsla.x(), ultimaIsla.y() - Isla.altoIsla / 2.0 - mundo.castillo().alto() / 2.0);
         // Inicia el juego!
         this.entorno.iniciar();
     }
@@ -285,7 +285,7 @@ public class Juego extends InterfaceJuego {
                 islaMasCercana = isla;
             }
         }
-        princesa.trasladar(islaMasCercana.x(), islaMasCercana.y() - Islas.altoIsla / 2.0 - princesa.alto() / 2.0);
+        princesa.trasladar(islaMasCercana.x(), islaMasCercana.y() - Isla.altoIsla / 2.0 - princesa.alto() / 2.0);
     }
 
     private void colisionesCastillo() {

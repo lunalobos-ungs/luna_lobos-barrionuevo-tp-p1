@@ -116,7 +116,7 @@ public class Mundo {
      */
     public Isla[] islasEnColision(Rectangulo rectangulo, String tipo){
         if (tipo.equals("fronteraIsla")) {
-            var frontera = rectangulo.escalar(Islas.factorFronteraAncho, Islas.factorFronteraAlto);
+            var frontera = rectangulo.escalar(Isla.factorFronteraAncho, Isla.factorFronteraAlto);
             return enColisionIsla(frontera);
         }
         final Isla[] almacenador = new Isla[largoIslas];
@@ -137,7 +137,7 @@ public class Mundo {
         int contador = 0;
         for (int i = 0; i < largoIslas; i++) {
             var isla = islas[i];
-            var frontera = isla.rectangulo().escalar(Islas.factorFronteraAncho, Islas.factorFronteraAlto);
+            var frontera = isla.rectangulo().escalar(Isla.factorFronteraAncho, Isla.factorFronteraAlto);
             if (Rectangulos.enColision(rectangulo, frontera)) {
                 almacenador[contador++] = isla;
             }
