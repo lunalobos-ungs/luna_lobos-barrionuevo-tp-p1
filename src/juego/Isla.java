@@ -25,7 +25,7 @@ public class Isla {
     public static final double proporcionIslasAltas = 10.0 / (800.0 * 600.0);
 
     private static Image crearImagenIsla(double ancho){
-        return  Imagenes.cargarYEscalar("isla.png", ancho, altoIsla);
+        return  Juego.cargarYEscalar("isla.png", ancho, altoIsla);
     }
 
     public static Isla nuevaNivelBajo(Mundo mundo) {

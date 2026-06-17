@@ -37,8 +37,7 @@ public class ProyectilPrincesa {
         this.ancho = 15.0;
         this.alto = 15.0;
         this.velocidad = 8.0;
-        Image proyectilOriginal = Imagenes.cargar("proyectil_princesa.png");
-        this.proyectil = Imagenes.escalar(proyectilOriginal, ancho, alto);
+        this.proyectil = Juego.cargarYEscalar("proyectil_princesa.png", ancho, alto);
     }
 
     /**

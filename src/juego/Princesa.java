@@ -267,7 +267,7 @@ public class Princesa {
         // se agrega sonido cuando la princesa dispara
         // se llamo a la clase de herramientas play
         try {
-            Herramientas.play("sonido/sonidoPoder.wav");
+            Herramientas.play("recursos/sonidoPoder.wav");
         }
         catch (Exception error){
             System.out.println ("No se puede reproducir sonido");
