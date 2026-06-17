@@ -18,7 +18,7 @@ public class Enemigo {
 
     public static final int minimoEnemigos = Isla.niveles / 2;
 
-    private static final Image imagenEnemigo = Imagenes.cargarYEscalar("enemigo.png", anchoEnemigo, altoEnemigo);
+    private static final Image imagenEnemigo = Juego.cargarYEscalar("enemigo.png", anchoEnemigo, altoEnemigo);
 
     /**
      * Crea un nuevo enemigo que ingresa en pantalla por la derecha.

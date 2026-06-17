@@ -9,6 +9,12 @@ import java.util.Objects;
 import entorno.Herramientas ;
 
 public class Juego extends InterfaceJuego {
+
+    public static Image cargarYEscalar(String nombreArchivo, double ancho, double alto){
+        Image imagen = Herramientas.cargarImagen("recursos/" + nombreArchivo);
+        return imagen.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
+    }
+
     // El objeto Entorno que controla el tiempo y otros
     private final Entorno entorno;
 
@@ -36,15 +42,15 @@ public class Juego extends InterfaceJuego {
         final var altoMundo = altoPantalla * Mundo.proporcionAltoMundo;
         final var limitesPantalla = new Rectangulo(anchoPantalla / 2.0, altoPantalla / 2.0, anchoPantalla, altoPantalla);
         final var limitesMundo = new Rectangulo(anchoMundo / 2.0, altoMundo / 2.0, anchoMundo, altoMundo);
-        final var imagenPrincesa = Imagenes.cargarYEscalar("princesa.png", Princesa.anchoPrincesa, Princesa.altoPrincesa);
-        final var imagenCorazon = Imagenes.cargarYEscalar("corazon.png", Princesa.ladoCorazon, Princesa.ladoCorazon);
+        final var imagenPrincesa = cargarYEscalar("princesa.png", Princesa.anchoPrincesa, Princesa.altoPrincesa);
+        final var imagenCorazon = cargarYEscalar("corazon.png", Princesa.ladoCorazon, Princesa.ladoCorazon);
         final var princesa = new Princesa(0.0, 0.0, Princesa.anchoPrincesa, Princesa.altoPrincesa, imagenPrincesa, imagenCorazon);
-        final var imagenJefeHaciaDerecha = Imagenes.cargarYEscalar("jefe_hacia_derecha.png", Jefe.anchoJefe, Jefe.altoJefe);
-        final var imagenJefeHaciaIzquierda = Imagenes.cargarYEscalar("jefe_hacia_izquierda.png", Jefe.anchoJefe, Jefe.altoJefe);
+        final var imagenJefeHaciaDerecha = cargarYEscalar("jefe_hacia_derecha.png", Jefe.anchoJefe, Jefe.altoJefe);
+        final var imagenJefeHaciaIzquierda = cargarYEscalar("jefe_hacia_izquierda.png", Jefe.anchoJefe, Jefe.altoJefe);
         final var jefe = new Jefe( 0, 0, Jefe.anchoJefe, Jefe.altoJefe, imagenJefeHaciaDerecha, imagenJefeHaciaIzquierda);
-        final var imagenFondo = Imagenes.cargarYEscalar("fondo.png", anchoPantalla, altoPantalla);
+        final var imagenFondo = cargarYEscalar("fondo.png", anchoPantalla, altoPantalla);
         final var fondo = new Fondo(anchoPantalla / 2.0, altoPantalla / 2.0, imagenFondo);
-        final var imagenCastillo = Imagenes.cargarYEscalar("castillo.png", Isla.anchoMinimo, Isla.anchoMinimo);
+        final var imagenCastillo = cargarYEscalar("castillo.png", Isla.anchoMinimo, Isla.anchoMinimo);
         final var castillo = new Castillo(0.0, 0.0, Isla.anchoMinimo, Isla.anchoMinimo, imagenCastillo);
         mundo = new Mundo(limitesPantalla, limitesMundo, princesa, jefe, fondo, castillo);
 
@@ -213,7 +219,7 @@ public class Juego extends InterfaceJuego {
             // El dragon emite sonido cuando un
             //proyectil lo colisiona
             try {
-                Herramientas.play("sonido/dragon.wav");
+                Herramientas.play("recursos/dragon.wav");
             }
             catch (Exception error){
             System.out.println ("No se puede reproducir sonido de dragon");
@@ -246,7 +252,7 @@ public class Juego extends InterfaceJuego {
         if (princesa.y() > mundo.limitesMundo().alto()*2.5) {
             //se agrega sonido cuando la princesa cae al vacio y pierde una vida
             try{
-                Herramientas.play ("sonido/dragon2.wav");
+                Herramientas.play ("recursos/dragon2.wav");
             }catch (Exception error){
                 System.out.println("Princesa cae al vacio no funciona el sonido");
             }
@@ -257,7 +263,7 @@ public class Juego extends InterfaceJuego {
             enemigosEnColision[i].recibirMensaje("morir");
             //la princesa emite sonido cuando le sacan vidas
             try{
-                Herramientas.play ("sonido/PrincesaPierdeVidas.wav" );
+                Herramientas.play ("recursos/PrincesaPierdeVidas.wav");
             } catch (Exception error){
                 System.out.println ("Sonido de pierde vidas con enemigo");
             }
