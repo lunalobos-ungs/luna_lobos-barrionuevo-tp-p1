@@ -137,10 +137,10 @@ public class Juego extends InterfaceJuego {
             Enemigo enemigo;
             switch (opcion) {
                 case 0:
-                    enemigo = Enemigos.nuevoEnemigoDerecha(generadorId, mundo, entorno);
+                    enemigo = Enemigo.nuevoEnemigoDerecha(generadorId, mundo, entorno);
                     break;
                 case 1:
-                    enemigo = Enemigos.nuevoEnemigoIzquierda(generadorId, mundo, entorno);
+                    enemigo = Enemigo.nuevoEnemigoIzquierda(generadorId, mundo, entorno);
                     break;
                 default:
                     throw new RuntimeException("error desconocido");
