@@ -18,18 +18,18 @@ public class Rectangulos {
      * @throws IllegalArgumentException si los rectángulos no están en colisión
      */
     public static String tipoDeColision(Rectangulo r1, Rectangulo r2) {
-        final double x1 = r1.x();
-        final double x2 = r2.x();
-        final double y1 = r1.y();
-        final double y2 = r2.y();
-        final double bordeIzquierdo1 = r1.bordeIzquierdo();
-        final double bordeDerecho1 = r1.bordeDerecho();
-        final double bordeSuperior1 = r1.bordeSuperior();
-        final double bordeInferior1 = r1.bordeInferior();
-        final double bordeIzquierdo2 = r2.bordeIzquierdo();
-        final double bordeDerecho2 = r2.bordeDerecho();
-        final double bordeSuperior2 = r2.bordeSuperior();
-        final double bordeInferior2 = r2.bordeInferior();
+        double x1 = r1.x();
+        double x2 = r2.x();
+        double y1 = r1.y();
+        double y2 = r2.y();
+        double bordeIzquierdo1 = r1.bordeIzquierdo();
+        double bordeDerecho1 = r1.bordeDerecho();
+        double bordeSuperior1 = r1.bordeSuperior();
+        double bordeInferior1 = r1.bordeInferior();
+        double bordeIzquierdo2 = r2.bordeIzquierdo();
+        double bordeDerecho2 = r2.bordeDerecho();
+        double bordeSuperior2 = r2.bordeSuperior();
+        double bordeInferior2 = r2.bordeInferior();
 
         double deltaY = 0.0;
         double deltaX = 0.0;
@@ -78,18 +78,18 @@ public class Rectangulos {
      * @return true si están en colisión o false de lo contrario
      */
     public static boolean enColision(Rectangulo r1, Rectangulo r2) {
-        final double x1 = r1.x();
-        final double x2 = r2.x();
-        final double y1 = r1.y();
-        final double y2 = r2.y();
-        final double bordeIzquierdo1 = r1.bordeIzquierdo();
-        final double bordeDerecho1 = r1.bordeDerecho();
-        final double bordeSuperior1 = r1.bordeSuperior();
-        final double bordeInferior1 = r1.bordeInferior();
-        final double bordeIzquierdo2 = r2.bordeIzquierdo();
-        final double bordeDerecho2 = r2.bordeDerecho();
-        final double bordeSuperior2 = r2.bordeSuperior();
-        final double bordeInferior2 = r2.bordeInferior();
+        double x1 = r1.x();
+        double x2 = r2.x();
+        double y1 = r1.y();
+        double y2 = r2.y();
+        double bordeIzquierdo1 = r1.bordeIzquierdo();
+        double bordeDerecho1 = r1.bordeDerecho();
+        double bordeSuperior1 = r1.bordeSuperior();
+        double bordeInferior1 = r1.bordeInferior();
+        double bordeIzquierdo2 = r2.bordeIzquierdo();
+        double bordeDerecho2 = r2.bordeDerecho();
+        double bordeSuperior2 = r2.bordeSuperior();
+        double bordeInferior2 = r2.bordeInferior();
         return ((bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2) || (bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2))
                 && ((bordeSuperior1 <= bordeInferior2 && y1 >= y2) || (bordeInferior1 >= bordeSuperior2 && y1 <= y2));
     }

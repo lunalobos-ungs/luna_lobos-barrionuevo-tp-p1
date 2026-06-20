@@ -6,9 +6,9 @@ package juego;
  * @author Miguel Angel Luna Lobos
  */
 public class IteradorEnemigos {
-    private final Enemigo[] enemigos;
+    private Enemigo[] enemigos;
 
-    private final int largo;
+    private int largo;
     private int indice;
 
     /**

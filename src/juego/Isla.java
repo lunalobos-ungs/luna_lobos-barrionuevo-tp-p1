@@ -12,18 +12,18 @@ import java.util.Random;
  * @author Miguel Angel Luna Lobos
  */
 public class Isla {
-    public static final double proporcionAlto = 0.8;
-    public static final double proporcionAlturaMinima = 0.0;
-    public static final double altoIsla = 20.0;
-    public static final double anchoMinimo = 400.0;
-    public static final double anchoMaximo = 500.0;
-    public static final double factorFronteraAncho = 2.0;
-    public static final double factorFronteraAlto = 1.0;
-    public static final int niveles = 8;
-    public static final double proporcionNivelesAltos = 0.6;
-    private static final double anchoIslaNivelBajo = 200.0;
-    public static final double proporcionIslasBajas = 10.0 / (800.0 * 600.0);
-    public static final double proporcionIslasAltas = 10.0 / (800.0 * 600.0);
+    public static double proporcionAlto = 0.8;
+    public static double proporcionAlturaMinima = 0.0;
+    public static double altoIsla = 20.0;
+    public static double anchoMinimo = 400.0;
+    public static double anchoMaximo = 500.0;
+    public static double factorFronteraAncho = 2.0;
+    public static double factorFronteraAlto = 1.0;
+    public static int niveles = 8;
+    public static double proporcionNivelesAltos = 0.6;
+    private static double anchoIslaNivelBajo = 200.0;
+    public static double proporcionIslasBajas = 10.0 / (800.0 * 600.0);
+    public static double proporcionIslasAltas = 10.0 / (800.0 * 600.0);
 
     private static Image crearImagenIsla(double ancho){
         return  Juego.cargarYEscalar("isla.png", ancho, altoIsla);
@@ -33,13 +33,13 @@ public class Isla {
         if(min > max){
             throw new IllegalArgumentException("max debe ser mayor a min");
         }
-        final var rango = max - min;
+        double rango = max - min;
         return Juego.random.nextDouble() * rango + min;
     }
 
     public static Isla nuevaNivelBajo(Mundo mundo) {
-        var isla = islaAleatoriaNivelBajo(mundo);
-        var intentos = 0;
+        Isla isla = islaAleatoriaNivelBajo(mundo);
+        int intentos = 0;
         while (mundo.islasEnColision(isla.rectangulo(), "fronteraIsla").length > 0) {
             isla = islaAleatoriaNivelBajo(mundo);
             if (intentos++ == 1000) {
@@ -51,8 +51,8 @@ public class Isla {
     }
 
     public static Isla nuevaNivelAlto(Mundo mundo) {
-        var isla = islaAleatoriaNivelAlto(mundo);
-        var intentos = 0;
+        Isla isla = islaAleatoriaNivelAlto(mundo);
+        int intentos = 0;
         while (mundo.islasEnColision(isla.rectangulo(), "fronteraIsla").length > 0) {
             isla = islaAleatoriaNivelAlto(mundo);
             if (intentos++ == 1000) {
@@ -64,44 +64,44 @@ public class Isla {
     }
 
     private static Isla islaAleatoriaNivelBajo( Mundo mundo) {
-        final var anchoMundo = mundo.limitesMundo().ancho();
-        final var altoMundo = mundo.limitesMundo().alto();
-        final var alto = proporcionAlto * altoMundo;
-        final var alturaMinima = proporcionAlturaMinima * altoMundo;
-        final var yMax = altoMundo - alturaMinima;
-        final var yMin = altoMundo - alturaMinima - alto;
-        final var indice = Juego.enteroRandom((int) Math.floor(niveles * proporcionNivelesAltos), niveles);
-        final var rango = yMax - yMin;
-        final var y = indice * rango / (niveles - 1) + yMin;
-        final var ancho = anchoIslaNivelBajo;
-        final var xMin = 0.0 + ancho / 2.0;
-        final var xMax = anchoMundo - ancho / 2.0;
-        final var x = decimalRandom(xMin, xMax);
+        double anchoMundo = mundo.limitesMundo().ancho();
+        double altoMundo = mundo.limitesMundo().alto();
+        double alto = proporcionAlto * altoMundo;
+        double alturaMinima = proporcionAlturaMinima * altoMundo;
+        double yMax = altoMundo - alturaMinima;
+        double yMin = altoMundo - alturaMinima - alto;
+        int indice = Juego.enteroRandom((int) Math.floor(niveles * proporcionNivelesAltos), niveles);
+        double rango = yMax - yMin;
+        double y = indice * rango / (niveles - 1) + yMin;
+        double ancho = anchoIslaNivelBajo;
+        double xMin = 0.0 + ancho / 2.0;
+        double xMax = anchoMundo - ancho / 2.0;
+        double x = decimalRandom(xMin, xMax);
         return new Isla(x, y, anchoIslaNivelBajo, altoIsla, crearImagenIsla(anchoIslaNivelBajo));
     }
 
     private static Isla islaAleatoriaNivelAlto( Mundo mundo) {
-        final var anchoMundo = mundo.limitesMundo().ancho();
-        final var altoMundo = mundo.limitesMundo().alto();
-        final var alto = proporcionAlto * altoMundo;
-        final var alturaMinima = proporcionAlturaMinima * altoMundo;
-        final var yMax = altoMundo - alturaMinima;
-        final var yMin = altoMundo - alturaMinima - alto;
-        final var indice = Juego.enteroRandom(0, (int) Math.floor(niveles * proporcionNivelesAltos));
-        final var rango = yMax - yMin;
-        final var y = indice * rango / (niveles - 1) + yMin;
-        final var ancho = decimalRandom(anchoMinimo, anchoMaximo);
-        final var xMin = 0.0 + ancho / 2.0;
-        final var xMax = anchoMundo - ancho / 2.0;
-        final var x = decimalRandom(xMin, xMax);
+        double anchoMundo = mundo.limitesMundo().ancho();
+        double altoMundo = mundo.limitesMundo().alto();
+        double alto = proporcionAlto * altoMundo;
+        double alturaMinima = proporcionAlturaMinima * altoMundo;
+        double yMax = altoMundo - alturaMinima;
+        double yMin = altoMundo - alturaMinima - alto;
+        int indice = Juego.enteroRandom(0, (int) Math.floor(niveles * proporcionNivelesAltos));
+        double rango = yMax - yMin;
+        double y = indice * rango / (niveles - 1) + yMin;
+        double ancho = decimalRandom(anchoMinimo, anchoMaximo);
+        double xMin = 0.0 + ancho / 2.0;
+        double xMax = anchoMundo - ancho / 2.0;
+        double x = decimalRandom(xMin, xMax);
         return new Isla(x, y, ancho, altoIsla, crearImagenIsla(ancho));
     }
 
-    private final double x;
-    private final double y;
-    private final double ancho;
-    private final double alto;
-    private final Image isla;
+    private double x;
+    private double y;
+    private double ancho;
+    private double alto;
+    private Image isla;
 
     public Isla(double x, double y, double ancho, double alto, Image isla) {
         this.x = x;
@@ -133,9 +133,9 @@ public class Isla {
      * @param mundo el mundo
      */
     public void dibujar(Entorno entorno, Mundo mundo) {
-        final var coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
-        final var x = coordenadasRelativas.x();
-        final var y = coordenadasRelativas.y();
+        Coordenadas coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
+        double x = coordenadasRelativas.x();
+        double y = coordenadasRelativas.y();
         entorno.dibujarImagen(isla, x, y, 0);
     }
 

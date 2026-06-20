@@ -6,8 +6,8 @@ package juego;
  * @author Miguel Angel Luna Lobos
  */
 public class IteradorIslas {
-    private final Isla[] islas;
-    private final int largo;
+    private  Isla[] islas;
+    private  int largo;
     private int indice;
 
     /**

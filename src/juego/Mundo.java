@@ -10,19 +10,19 @@ import java.util.Objects;
  * @author Noelia Barrionuevo
  */
 public class Mundo {
-    public static final double proporcionAnchoMundo = 8.0;
-    public static final double proporcionAltoMundo = 2.0;
-    private final Princesa princesa;
+    public static double proporcionAnchoMundo = 8.0;
+    public static double proporcionAltoMundo = 2.0;
+    private Princesa princesa;
     private Enemigo[] enemigos;
     private Isla[] islas;
     private Jefe jefe;
     private ProyectilPrincesa proyectilPrincesa;
-    private final Castillo castillo;
+    private Castillo castillo;
     private int largoEnemigos;
     private int largoIslas;
-    private final Rectangulo limitesMundo;
-    private final Rectangulo limitesPantalla;
-    private final Fondo fondo;
+    private Rectangulo limitesMundo;
+    private Rectangulo limitesPantalla;
+    private Fondo fondo;
 
     /**
      * Crea una nueva instancia de Mundo.
@@ -116,10 +116,10 @@ public class Mundo {
      */
     public Isla[] islasEnColision(Rectangulo rectangulo, String tipo){
         if (tipo.equals("fronteraIsla")) {
-            var frontera = rectangulo.escalar(Isla.factorFronteraAncho, Isla.factorFronteraAlto);
+            Rectangulo frontera = rectangulo.escalar(Isla.factorFronteraAncho, Isla.factorFronteraAlto);
             return enColisionIsla(frontera);
         }
-        final Isla[] almacenador = new Isla[largoIslas];
+        Isla[] almacenador = new Isla[largoIslas];
         int contador = 0;
         for (int i = 0; i < largoIslas; i++) {
             Isla isla_ = islas[i];
@@ -127,22 +127,22 @@ public class Mundo {
                 almacenador[contador++] = isla_;
             }
         }
-        final Isla[] salida = new Isla[contador];
+        Isla[] salida = new Isla[contador];
         System.arraycopy(almacenador, 0, salida, 0, contador);
         return salida;
     }
 
     private Isla[] enColisionIsla(Rectangulo rectangulo) {
-        final Isla[] almacenador = new Isla[largoIslas];
+        Isla[] almacenador = new Isla[largoIslas];
         int contador = 0;
         for (int i = 0; i < largoIslas; i++) {
-            var isla = islas[i];
-            var frontera = isla.rectangulo().escalar(Isla.factorFronteraAncho, Isla.factorFronteraAlto);
+            Isla isla = islas[i];
+            Rectangulo frontera = isla.rectangulo().escalar(Isla.factorFronteraAncho, Isla.factorFronteraAlto);
             if (Rectangulos.enColision(rectangulo, frontera)) {
                 almacenador[contador++] = isla;
             }
         }
-        final Isla[] salida = new Isla[contador];
+        Isla[] salida = new Isla[contador];
         System.arraycopy(almacenador, 0, salida, 0, contador);
         return salida;
     }
@@ -153,7 +153,7 @@ public class Mundo {
      * @return un array que lista los enemigos en colisión con el rectángulo argumento
      */
     public Enemigo[] enemigosEnColision(Rectangulo rectangulo){
-        final Enemigo[] almacenador = new Enemigo[largoEnemigos];
+        Enemigo[] almacenador = new Enemigo[largoEnemigos];
         int contador = 0;
         for (int i = 0; i < largoEnemigos; i++) {
             Enemigo enemigo = enemigos[i];
@@ -161,7 +161,7 @@ public class Mundo {
                 almacenador[contador++] = enemigo;
             }
         }
-        final Enemigo[] salida = new Enemigo[contador];
+        Enemigo[] salida = new Enemigo[contador];
         System.arraycopy(almacenador, 0, salida, 0, contador);
         return salida;
     }
@@ -243,7 +243,7 @@ public class Mundo {
     public void purgar() {
         int i = 0;
         while (i < largoEnemigos) {
-            var enemigo = enemigos[i];
+            Enemigo enemigo = enemigos[i];
             if (!Rectangulos.enColision(enemigo.rectangulo(), limitesPantalla()) || enemigo.debeEliminarse()) {
                 quitarEnemigo(enemigo);
             } else {
