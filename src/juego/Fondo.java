@@ -11,9 +11,9 @@ import java.awt.*;
  * @author Noelia Barrionuevo
  */
 public class Fondo {
-    private final double x;
-    private final double y;
-    private final Image fondo;
+    private  double x;
+    private  double y;
+    private  Image fondo;
 
     /**
      * Crea un nuevo fondo.

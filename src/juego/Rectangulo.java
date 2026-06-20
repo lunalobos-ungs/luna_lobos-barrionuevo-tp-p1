@@ -10,10 +10,10 @@ import java.awt.*;
  * @author Miguel Angel Luna Lobos
  */
 public class Rectangulo {
-    private final double x;
-    private final double y;
-    private final double ancho;
-    private final double alto;
+    private double x;
+    private double y;
+    private double ancho;
+    private double alto;
 
     public Rectangulo(double x, double y, double ancho, double alto) {
         super();

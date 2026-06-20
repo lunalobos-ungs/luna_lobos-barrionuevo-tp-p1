@@ -13,12 +13,12 @@ import java.awt.*;
 public class ProyectilPrincesa {
     private double x;
     private double y;
-    private final double ancho;
-    private final double alto;
+    private double ancho;
+    private double alto;
     private double sen;
     private double cos;
-    private final Image proyectil;
-    private final double velocidad;
+    private Image proyectil;
+    private double velocidad;
 
     /**
      * Crea un proyectil en la posición indicada con la dirección definida por las
@@ -47,9 +47,9 @@ public class ProyectilPrincesa {
      * @param mundo   el mundo
      */
     public void dibujar(Entorno entorno, Mundo mundo) {
-        final var coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
-        final var x = coordenadasRelativas.x();
-        final var y = coordenadasRelativas.y();
+        Coordenadas coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
+        double x = coordenadasRelativas.x();
+        double y = coordenadasRelativas.y();
         entorno.dibujarImagen(proyectil, x, y, 0);
     }
 

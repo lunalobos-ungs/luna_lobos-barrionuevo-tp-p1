@@ -12,9 +12,9 @@ import java.awt.*;
 public class Castillo {
     private double x;
     private double y;
-    private final double ancho;
-    private final double alto;
-    private final Image castillo;
+    private double ancho;
+    private double alto;
+    private Image castillo;
 
     /**
      * Crea un nuevo castillo.
@@ -39,9 +39,9 @@ public class Castillo {
      * @param mundo el mundo
      */
     public void dibujar(Entorno entorno, Mundo mundo){
-        final var coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
-        final var x = coordenadasRelativas.x();
-        final var y = coordenadasRelativas.y();
+        Coordenadas coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
+        double x = coordenadasRelativas.x();
+        double y = coordenadasRelativas.y();
         entorno.dibujarImagen(castillo, x, y, 0);
     }
 

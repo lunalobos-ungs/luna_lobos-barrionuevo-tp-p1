@@ -11,13 +11,13 @@ import java.util.Random;
 import entorno.Herramientas ;
 
 public class Juego extends InterfaceJuego {
-    public static final Random random = new Random();
+    public static Random random = new Random();
 
     static int enteroRandom(int min, int max){
         if(min > max){
             throw new IllegalArgumentException("max debe ser mayor a min");
         }
-        final var rango = max - min;
+        int rango = max - min;
         // max - min - 1 + min = max - 1
         if(rango == 0) {
             return min;
@@ -30,12 +30,12 @@ public class Juego extends InterfaceJuego {
     }
 
     // El objeto Entorno que controla el tiempo y otros
-    private final Entorno entorno;
+    private Entorno entorno;
 
     // Variables y métodos propios de cada grupo
     // ...
-    private final GeneradorId generadorId;
-    private final Mundo mundo;
+    private GeneradorId generadorId;
+    private Mundo mundo;
 
     private boolean victoria;
     private boolean derrota;
@@ -50,29 +50,29 @@ public class Juego extends InterfaceJuego {
         generadorId = new GeneradorId();
         victoria = false;
         derrota = false;
-        final var anchoPantalla = entorno.ancho();
-        final var altoPantalla = entorno.alto();
-        final var anchoMundo = anchoPantalla * Mundo.proporcionAnchoMundo;
-        final var altoMundo = altoPantalla * Mundo.proporcionAltoMundo;
-        final var limitesPantalla = new Rectangulo(anchoPantalla / 2.0, altoPantalla / 2.0, anchoPantalla, altoPantalla);
-        final var limitesMundo = new Rectangulo(anchoMundo / 2.0, altoMundo / 2.0, anchoMundo, altoMundo);
-        final var imagenPrincesa = cargarYEscalar("princesa.png", Princesa.anchoPrincesa, Princesa.altoPrincesa);
-        final var imagenCorazon = cargarYEscalar("corazon.png", Princesa.ladoCorazon, Princesa.ladoCorazon);
-        final var princesa = new Princesa(0.0, 0.0, Princesa.anchoPrincesa, Princesa.altoPrincesa, imagenPrincesa, imagenCorazon);
-        final var imagenJefeHaciaDerecha = cargarYEscalar("jefe_hacia_derecha.png", Jefe.anchoJefe, Jefe.altoJefe);
-        final var imagenJefeHaciaIzquierda = cargarYEscalar("jefe_hacia_izquierda.png", Jefe.anchoJefe, Jefe.altoJefe);
-        final var jefe = new Jefe( 0, 0, Jefe.anchoJefe, Jefe.altoJefe, imagenJefeHaciaDerecha, imagenJefeHaciaIzquierda);
-        final var imagenFondo = cargarYEscalar("fondo.png", anchoPantalla, altoPantalla);
-        final var fondo = new Fondo(anchoPantalla / 2.0, altoPantalla / 2.0, imagenFondo);
-        final var imagenCastillo = cargarYEscalar("castillo.png", Isla.anchoMinimo, Isla.anchoMinimo);
-        final var castillo = new Castillo(0.0, 0.0, Isla.anchoMinimo, Isla.anchoMinimo, imagenCastillo);
+        double anchoPantalla = entorno.ancho();
+        double altoPantalla = entorno.alto();
+        double anchoMundo = anchoPantalla * Mundo.proporcionAnchoMundo;
+        double altoMundo = altoPantalla * Mundo.proporcionAltoMundo;
+        Rectangulo limitesPantalla = new Rectangulo(anchoPantalla / 2.0, altoPantalla / 2.0, anchoPantalla, altoPantalla);
+        Rectangulo limitesMundo = new Rectangulo(anchoMundo / 2.0, altoMundo / 2.0, anchoMundo, altoMundo);
+        Image imagenPrincesa = cargarYEscalar("princesa.png", Princesa.anchoPrincesa, Princesa.altoPrincesa);
+        Image imagenCorazon = cargarYEscalar("corazon.png", Princesa.ladoCorazon, Princesa.ladoCorazon);
+        Princesa princesa = new Princesa(0.0, 0.0, Princesa.anchoPrincesa, Princesa.altoPrincesa, imagenPrincesa, imagenCorazon);
+        Image imagenJefeHaciaDerecha = cargarYEscalar("jefe_hacia_derecha.png", Jefe.anchoJefe, Jefe.altoJefe);
+        Image imagenJefeHaciaIzquierda = cargarYEscalar("jefe_hacia_izquierda.png", Jefe.anchoJefe, Jefe.altoJefe);
+        Jefe jefe = new Jefe( 0, 0, Jefe.anchoJefe, Jefe.altoJefe, imagenJefeHaciaDerecha, imagenJefeHaciaIzquierda);
+        Image imagenFondo = cargarYEscalar("fondo.png", anchoPantalla, altoPantalla);
+        Fondo fondo = new Fondo(anchoPantalla / 2.0, altoPantalla / 2.0, imagenFondo);
+        Image imagenCastillo = cargarYEscalar("castillo.png", Isla.anchoMinimo, Isla.anchoMinimo);
+        Castillo castillo = new Castillo(0.0, 0.0, Isla.anchoMinimo, Isla.anchoMinimo, imagenCastillo);
         mundo = new Mundo(limitesPantalla, limitesMundo, princesa, jefe, fondo, castillo);
 
-        var cantidadIslasBajas = Isla.proporcionIslasBajas * mundo.limitesMundo().area();
-        var cantidadIslasAltas = Isla.proporcionIslasAltas * mundo.limitesMundo().area();
-        var contador = 0;
+        double cantidadIslasBajas = Isla.proporcionIslasBajas * mundo.limitesMundo().area();
+        double cantidadIslasAltas = Isla.proporcionIslasAltas * mundo.limitesMundo().area();
+        int contador = 0;
         while (contador < cantidadIslasBajas) {
-            var isla = Isla.nuevaNivelBajo(mundo);
+            Isla isla = Isla.nuevaNivelBajo(mundo);
             if (isla == null) {
                 break;
             }
@@ -80,14 +80,14 @@ public class Juego extends InterfaceJuego {
             contador++;
         }
         contador = 0;
-        var xMin = mundo.limitesMundo().ancho();
-        var xMax = 0.0;
-        var yMin = mundo.limitesMundo().alto();
+        double xMin = mundo.limitesMundo().ancho();
+        double xMax = 0.0;
+        double yMin = mundo.limitesMundo().alto();
         Isla primeraIsla = null;
         Isla anteUltimaIsla = null;
         Isla ultimaIsla = null;
         while (contador < cantidadIslasAltas) {
-            var isla = Isla.nuevaNivelAlto(mundo);
+            Isla isla = Isla.nuevaNivelAlto(mundo);
 
             if (isla == null) {
                 break;
@@ -132,8 +132,8 @@ public class Juego extends InterfaceJuego {
             colisionesJefe();
             colisionesProyectilPrincesa();
             colisionesCastillo();
-            var x = mundo.princesa().x();
-            var y = mundo.princesa().y();
+            double x = mundo.princesa().x();
+            double y = mundo.princesa().y();
             mundo.princesa().trasladar(x, y);
             entorno.cambiarFont("Arial", 72, Color.BLUE);
             entorno.escribirTexto("¡Ganaste!", entorno.ancho() / 2.0 - 160, entorno.alto() / 2.0);
@@ -145,15 +145,15 @@ public class Juego extends InterfaceJuego {
             colisionesJefe();
             colisionesProyectilPrincesa();
             colisionesCastillo();
-            var x = mundo.princesa().x();
-            var y = mundo.princesa().y();
+            double x = mundo.princesa().x();
+            double y = mundo.princesa().y();
             mundo.princesa().trasladar(x, y);
             entorno.cambiarFont("Arial", 72, Color.RED);
             entorno.escribirTexto("Perdiste", entorno.ancho() / 2.0 - 150, entorno.alto() / 2.0);
             return;
         }
         if (mundo.faltanEnemigos()) {
-            var opcion = Juego.enteroRandom(0, 2);
+            int opcion = Juego.enteroRandom(0, 2);
             Enemigo enemigo;
             switch (opcion) {
                 case 0:
@@ -183,20 +183,20 @@ public class Juego extends InterfaceJuego {
     }
 
     private void dibujarEnemigos() {
-        var iterador = mundo.iteradorEnemigos();
+        IteradorEnemigos iterador = mundo.iteradorEnemigos();
         while (iterador.tieneOtro()) {
-            var enemigo = iterador.proximo();
+            Enemigo enemigo = iterador.proximo();
             enemigo.mover();
             enemigo.dibujar(entorno, mundo);
         }
     }
 
     private void colisionesIslas() {
-        var iterador = mundo.iteradorIslas();
-        var princesa = mundo.princesa();
-        var proyectil = mundo.proyectilPrincesa();
+        IteradorIslas iterador = mundo.iteradorIslas();
+        Princesa princesa = mundo.princesa();
+        ProyectilPrincesa proyectil = mundo.proyectilPrincesa();
         while (iterador.tieneOtro()) {
-            var isla = iterador.proximo();
+            Isla isla = iterador.proximo();
             if (Rectangulos.enColision(isla.rectangulo(), princesa.rectangulo())) {
                 isla.actuarSobrePrincesa(princesa);
             }
@@ -208,12 +208,12 @@ public class Juego extends InterfaceJuego {
     }
 
     private void colisionesJefe() {
-        var jefe = mundo.jefe();
+        Jefe jefe = mundo.jefe();
         if (jefe == null) {
             return;
         }
 
-        var princesa = mundo.princesa();
+        Princesa princesa = mundo.princesa();
         if (Rectangulos.enColision(jefe.rectangulo(), princesa.rectangulo())) {
             princesa.recibirMensaje("morir");
         }
@@ -222,11 +222,11 @@ public class Juego extends InterfaceJuego {
     }
 
     private void colisionesProyectilPrincesa() {
-        var proyectil = mundo.proyectilPrincesa();
+        ProyectilPrincesa proyectil = mundo.proyectilPrincesa();
         if (proyectil == null) {
             return;
         }
-        var jefe = mundo.jefe();
+        Jefe jefe = mundo.jefe();
         if (jefe != null && Rectangulos.enColision(jefe.rectangulo(), proyectil.rectangulo())) {
             mundo.establecerProyectilPrincesa(null);
             jefe.recibirMensaje("una vida menos");
@@ -243,11 +243,11 @@ public class Juego extends InterfaceJuego {
         if(proyectil == null){
             return;
         }
-        var enemigosEnColision = mundo.enemigosEnColision(proyectil.rectangulo());
+        Enemigo[] enemigosEnColision = mundo.enemigosEnColision(proyectil.rectangulo());
         if(enemigosEnColision.length > 0){
             mundo.establecerProyectilPrincesa(null);
         }
-        for (var i = 0; i < enemigosEnColision.length; i++) {
+        for (int i = 0; i < enemigosEnColision.length; i++) {
             enemigosEnColision[i].recibirMensaje("morir");
         }
         proyectil = mundo.proyectilPrincesa();
@@ -259,7 +259,7 @@ public class Juego extends InterfaceJuego {
     }
 
     private void colisionesPrincesa() {
-        var princesa = mundo.princesa();
+        Princesa princesa = mundo.princesa();
         if (princesa.vidas() <= 0) {
             derrota = true;
         }
@@ -272,7 +272,7 @@ public class Juego extends InterfaceJuego {
             }
             princesaCaeAlVacio();
         }
-        var enemigosEnColision = mundo.enemigosEnColision(princesa.rectangulo());
+        Enemigo[] enemigosEnColision = mundo.enemigosEnColision(princesa.rectangulo());
         for (int i = 0; i < enemigosEnColision.length; i++) {
             enemigosEnColision[i].recibirMensaje("morir");
             //la princesa emite sonido cuando le sacan vidas
@@ -288,18 +288,18 @@ public class Juego extends InterfaceJuego {
     }
 
     private void princesaCaeAlVacio(){
-        var princesa = mundo.princesa();
+        Princesa princesa = mundo.princesa();
         princesa.recibirMensaje("una vida menos");
         if(princesa.vidas() <= 0){
             derrota = true;
             return;
         }
-        var iteradorIslas = mundo.iteradorIslas();
-        var islaMasCercana = iteradorIslas.proximo();
-        var deltaX = Math.abs(islaMasCercana.x() - princesa.x());
+        IteradorIslas iteradorIslas = mundo.iteradorIslas();
+        Isla islaMasCercana = iteradorIslas.proximo();
+        double deltaX = Math.abs(islaMasCercana.x() - princesa.x());
         while(iteradorIslas.tieneOtro()){
-            var isla = iteradorIslas.proximo();
-            var nuevoDeltaX = Math.abs(isla.x() - princesa.x());
+            Isla isla = iteradorIslas.proximo();
+            double nuevoDeltaX = Math.abs(isla.x() - princesa.x());
             if(nuevoDeltaX <= deltaX){
                 deltaX = nuevoDeltaX;
                 islaMasCercana = isla;
@@ -309,8 +309,8 @@ public class Juego extends InterfaceJuego {
     }
 
     private void colisionesCastillo() {
-        var princesa = mundo.princesa();
-        var castillo = mundo.castillo();
+        Princesa princesa = mundo.princesa();
+        Castillo castillo = mundo.castillo();
         if (Rectangulos.enColision(princesa.rectangulo(), castillo.rectangulo())) {
             victoria = true;
         }

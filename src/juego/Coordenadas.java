@@ -19,14 +19,14 @@ public class Coordenadas {
      * @return las coordenadas relativas a la princesa
      */
     public static Coordenadas transformar(double x, double y, Mundo mundo, Entorno entorno) {
-        final var rectanguloPrincesa = mundo.princesa().rectangulo();
-        final var dx = entorno.ancho() / 2.0;
-        final var dy = entorno.alto() / 2.0;
+        Rectangulo rectanguloPrincesa = mundo.princesa().rectangulo();
+        double dx = entorno.ancho() / 2.0;
+        double dy = entorno.alto() / 2.0;
         return new Coordenadas(x - rectanguloPrincesa.x() + dx, y - rectanguloPrincesa.y() + dy);
     }
 
-    private final double x;
-    private final double y;
+    private  double x;
+    private  double y;
 
     public Coordenadas(double x, double y) {
         this.x = x;

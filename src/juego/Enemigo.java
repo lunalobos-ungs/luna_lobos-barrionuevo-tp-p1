@@ -13,12 +13,12 @@ import java.time.Instant;
  */
 public class Enemigo {
 
-    private static final double altoEnemigo = 40.0;
-    private static final double anchoEnemigo = 40.0;
+    private static double altoEnemigo = 40.0;
+    private static double anchoEnemigo = 40.0;
 
-    public static final int minimoEnemigos = Isla.niveles / 2;
+    public static int minimoEnemigos = Isla.niveles / 2;
 
-    private static final Image imagenEnemigo = Juego.cargarYEscalar("enemigo.png", anchoEnemigo, altoEnemigo);
+    private static Image imagenEnemigo = Juego.cargarYEscalar("enemigo.png", anchoEnemigo, altoEnemigo);
 
     /**
      * Crea un nuevo enemigo que ingresa en pantalla por la derecha.
@@ -28,9 +28,9 @@ public class Enemigo {
      * @return un nuevo enemigo por derecha
      */
     public static Enemigo nuevoEnemigoDerecha(GeneradorId generadorId, Mundo mundo, Entorno entorno) {
-        var princesa = mundo.princesa();
-        var enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
-        var intentos = 0;
+        Princesa princesa = mundo.princesa();
+        Enemigo enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
+        int intentos = 0;
         while (mundo.enemigosEnColision(enemigo.rectangulo()).length > 0) {
             enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
             if (intentos++ == 100) {
@@ -49,9 +49,9 @@ public class Enemigo {
      * @return un nuevo enemigo por izquierda
      */
     public static Enemigo nuevoEnemigoIzquierda(GeneradorId generadorId, Mundo mundo, Entorno entorno) {
-        var princesa = mundo.princesa();
-        var enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() - entorno.ancho() / 2.0,  0.0);
-        var intentos = 0;
+        Princesa princesa = mundo.princesa();
+        Enemigo enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() - entorno.ancho() / 2.0,  0.0);
+        int intentos = 0;
         while (mundo.enemigosEnColision(enemigo.rectangulo()).length > 0) {
             enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() - entorno.ancho() / 2.0, 0.0);
             if (intentos++ == 100) {
@@ -63,12 +63,12 @@ public class Enemigo {
     }
 
     private static Enemigo enemigoAleatorio(GeneradorId generadorId, Mundo mundo, double x, double angulo) {
-        final var altoMundo = mundo.limitesMundo().alto();
-        final var alto = Isla.proporcionAlto * altoMundo;
-        final var alturaMinima = Isla.proporcionAlturaMinima * altoMundo;
-        final var yMax = altoMundo - alturaMinima;
-        final var yMin = altoMundo - alturaMinima - alto;
-        final var y = alturaAleatoria(Isla.niveles, yMin, yMax);
+        double  altoMundo = mundo.limitesMundo().alto();
+        double  alto = Isla.proporcionAlto * altoMundo;
+        double  alturaMinima = Isla.proporcionAlturaMinima * altoMundo;
+        double  yMax = altoMundo - alturaMinima;
+        double  yMin = altoMundo - alturaMinima - alto;
+        double  y = alturaAleatoria(Isla.niveles, yMin, yMax);
 
         return new Enemigo(generadorId, x, y, anchoEnemigo, altoEnemigo, angulo, imagenEnemigo);
     }
@@ -77,20 +77,20 @@ public class Enemigo {
         if (n < 2) {
             throw new IllegalArgumentException("n no puede ser inferior a 2");
         }
-        var q = Juego.enteroRandom(0, n - 1);
-        var indice = 2 * q + 1;
-        var rango = yMax - yMin;
+        int q = Juego.enteroRandom(0, n - 1);
+        int indice = 2 * q + 1;
+        double rango = yMax - yMin;
         return indice * rango / (2 * (n - 1)) + yMin;
     }
 
     private double x;
-    private final double y;
-    private final double ancho;
-    private final double alto;
-    private final Image enemigo;
-    private final int id;
-    private final double velocidad;
-    private final double angulo;
+    private double y;
+    private double ancho;
+    private double alto;
+    private Image enemigo;
+    private int id;
+    private double velocidad;
+    private double angulo;
     private boolean vivo = true;
 
     /**
@@ -129,9 +129,9 @@ public class Enemigo {
      * @param mundo el mundo
      */
     public void dibujar(Entorno entorno, Mundo mundo) {
-        final var coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
-        final var x = coordenadasRelativas.x();
-        final var y = coordenadasRelativas.y();
+        Coordenadas coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
+        double x = coordenadasRelativas.x();
+        double y = coordenadasRelativas.y();
         entorno.dibujarImagen(enemigo, x, y, 0);
     }
 

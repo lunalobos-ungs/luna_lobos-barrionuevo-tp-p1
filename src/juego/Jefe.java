@@ -12,17 +12,17 @@ import java.awt.*;
  */
 public class Jefe {
 
-    public static final double altoJefe = 130;
-    public static final double anchoJefe = 120;
+    public static double altoJefe = 130;
+    public static double anchoJefe = 120;
     private double x;
     private double y;
-    private final double ancho;
-    private final double alto;
-    private final Image jefeHaciaDerecha;
-    private final Image jefeHaciaIzquierda;
+    private double ancho;
+    private double alto;
+    private Image jefeHaciaDerecha;
+    private Image jefeHaciaIzquierda;
     private Image jefe;
     private double cos;
-    private final double velocidad;
+    private double velocidad;
     private int vidas;
     private Isla isla;
 
@@ -73,13 +73,13 @@ public class Jefe {
      * @param mundo   el mundo
      */
     public void dibujar(Entorno entorno, Mundo mundo) {
-        final var coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
-        final var x = coordenadasRelativas.x();
-        final var y = coordenadasRelativas.y();
-        final var rectanguloRojo = new Rectangulo(x, y - alto / 2.0, 100, 10);
+        Coordenadas coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
+        double x = coordenadasRelativas.x();
+        double y = coordenadasRelativas.y();
+        Rectangulo rectanguloRojo = new Rectangulo(x, y - alto / 2.0, 100, 10);
         double proporcion = vidas / 10.0;
         double diferencia = rectanguloRojo.ancho() - proporcion * 100;
-        final var rectanguloNegro = new Rectangulo(x - diferencia / 2, y - alto / 2.0, 100 * proporcion, 10);
+        Rectangulo rectanguloNegro = new Rectangulo(x - diferencia / 2, y - alto / 2.0, 100 * proporcion, 10);
         rectanguloRojo.dibujarRectangulo(entorno, Color.RED);
         rectanguloNegro.dibujarRectangulo(entorno, Color.BLACK);
         entorno.dibujarImagen(jefe, x, y, 0);

@@ -12,19 +12,19 @@ import entorno.Herramientas;
  * @author Miguel Angel Luna Lobos
  */
 public class Princesa {
-    public static final double altoPrincesa = 100;
-    public static final double anchoPrincesa = 100;
-    public static final double ladoCorazon = 30.0;
-    private final Image princesa;
-    private final Image corazon;
+    public static double altoPrincesa = 100;
+    public static double anchoPrincesa = 100;
+    public static double ladoCorazon = 30.0;
+    private Image princesa;
+    private Image corazon;
     private double x;
     private double y;
-    private final double ancho;
-    private final double alto;
+    private double ancho;
+    private double alto;
     private double angulo;
-    private final double velocidad;
+    private double velocidad;
     private double velocidadCaidaLibre;
-    private final double velocidadSalto;
+    private double velocidadSalto;
     private boolean enSalto;
     private double aceleracionGravitatoria;
     private Instant marcaTemporalDeCaida;
@@ -106,8 +106,8 @@ public class Princesa {
 
 
     public void dibujar(Entorno entorno) {
-        var espacio = 5.0;
-        for (var i = 0; i < vidas; i++) {
+        double espacio = 5.0;
+        for (int i = 0; i < vidas; i++) {
             double l = ladoCorazon * (i + 0.5) + (i + 1) * 5.0;
             entorno.dibujarImagen(
                     corazon,
@@ -116,8 +116,8 @@ public class Princesa {
                     1
             );
         }
-        final var dx = entorno.ancho() / 2.0;
-        final var dy = entorno.alto() / 2.0;
+        double dx = entorno.ancho() / 2.0;
+        double dy = entorno.alto() / 2.0;
         entorno.dibujarImagen(princesa, dx, dy, 0, 1);
     }
 
@@ -256,14 +256,14 @@ public class Princesa {
      * @param entorno el entorno
      */
     public void disparar(Mundo mundo, Entorno entorno) {
-        final var mouseX = entorno.mouseX() + x - entorno.ancho() / 2.0;
-        final var mouseY = entorno.mouseY() + y - entorno.alto() / 2.0;
-        final var distanciaX = mouseX - x;
-        final var distanciaY = mouseY - y;
-        final var distancia = Math.sqrt(Math.pow(distanciaX, 2.0) + Math.pow(distanciaY, 2.0));
-        final var cos = (distanciaX) / distancia;
-        final var sin = (distanciaY) / distancia;
-        final var proyectil = new ProyectilPrincesa(x, y, cos, sin);
+        double mouseX = entorno.mouseX() + x - entorno.ancho() / 2.0;
+        double mouseY = entorno.mouseY() + y - entorno.alto() / 2.0;
+        double distanciaX = mouseX - x;
+        double distanciaY = mouseY - y;
+        double distancia = Math.sqrt(Math.pow(distanciaX, 2.0) + Math.pow(distanciaY, 2.0));
+        double cos = (distanciaX) / distancia;
+        double sin = (distanciaY) / distancia;
+        ProyectilPrincesa proyectil = new ProyectilPrincesa(x, y, cos, sin);
         // se agrega sonido cuando la princesa dispara
         // se llamo a la clase de herramientas play
         try {
