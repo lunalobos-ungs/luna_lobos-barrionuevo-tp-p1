@@ -268,6 +268,10 @@ public class Mundo {
         this.proyectilPrincesa = proyectilPrincesa;
     }
 
+    public void borrarIslas(){
+        islas = new Isla[10];
+        largoIslas = 0;
+    }
 
     public Enemigo[] enemigos() {
         Enemigo[] copiaEnemigos = new Enemigo[largoEnemigos];
