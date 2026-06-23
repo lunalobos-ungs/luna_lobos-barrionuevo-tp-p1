@@ -2,31 +2,130 @@ package juego;
 
 
 import entorno.Entorno;
+import entorno.Herramientas;
 import entorno.InterfaceJuego;
 
 import java.awt.*;
 import java.util.Objects;
 import java.util.Random;
 
-import entorno.Herramientas ;
-
 public class Juego extends InterfaceJuego {
     public static Random random = new Random();
 
-    static int enteroRandom(int min, int max){
-        if(min > max){
+    static int enteroRandom(int min, int max) {
+        if (min > max) {
             throw new IllegalArgumentException("max debe ser mayor a min");
         }
         int rango = max - min;
         // max - min - 1 + min = max - 1
-        if(rango == 0) {
+        if (rango == 0) {
             return min;
         }
         return random.nextInt(rango) + min;
     }
-    public static Image cargarYEscalar(String nombreArchivo, double ancho, double alto){
+
+    public static Image cargarYEscalar(String nombreArchivo, double ancho, double alto) {
         Image imagen = Herramientas.cargarImagen("recursos/" + nombreArchivo);
         return imagen.getScaledInstance((int) ancho, (int) alto, Image.SCALE_DEFAULT);
+    }
+
+    /**
+     * Determina la dirección desde la que r1 llega a colisionar con r2.
+     *
+     * @param r1 el rectángulo cuya dirección de llegada se determina
+     * @param r2 el rectángulo impactado
+     * @return "desde arriba", "desde abajo", "desde la izquierda"
+     * o "desde la derecha"
+     * @throws IllegalArgumentException si los rectángulos no están en colisión
+     */
+    public static String tipoDeColision(Rectangulo r1, Rectangulo r2) {
+        double x1 = r1.x();
+        double x2 = r2.x();
+        double y1 = r1.y();
+        double y2 = r2.y();
+        double bordeIzquierdo1 = r1.bordeIzquierdo();
+        double bordeDerecho1 = r1.bordeDerecho();
+        double bordeSuperior1 = r1.bordeSuperior();
+        double bordeInferior1 = r1.bordeInferior();
+        double bordeIzquierdo2 = r2.bordeIzquierdo();
+        double bordeDerecho2 = r2.bordeDerecho();
+        double bordeSuperior2 = r2.bordeSuperior();
+        double bordeInferior2 = r2.bordeInferior();
+
+        double deltaY = 0.0;
+        double deltaX = 0.0;
+        boolean desdeArriba = bordeInferior1 >= bordeSuperior2 && y1 <= y2;
+        boolean desdeAbajo = bordeSuperior1 <= bordeInferior2 && y1 >= y2;
+        boolean desdeLaDerecha = bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2;
+        boolean desdeLaIzquierda = bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2;
+
+        if (desdeArriba) {
+            deltaY = Math.min(bordeInferior1 - bordeSuperior2, r1.alto());
+        }
+
+        if (desdeAbajo) {
+            deltaY = Math.min(bordeInferior2 - bordeSuperior1, r1.alto());
+        }
+
+        if (desdeLaDerecha) {
+            deltaX = Math.min(bordeDerecho1 - bordeIzquierdo2, r1.ancho());
+        }
+
+        if (desdeLaIzquierda) {
+            deltaX = Math.min(bordeDerecho2 - bordeIzquierdo1, r1.ancho());
+        }
+
+        if (deltaY >= deltaX) { // lateral
+            if (desdeLaDerecha) {
+                return "desde la derecha";
+            } else if (desdeLaIzquierda) {
+                return "desde la izquierda";
+            }
+        } else { // vertical
+            if (desdeArriba) {
+                return "desde arriba";
+            } else if (desdeAbajo) {
+                return "desde abajo";
+            }
+        }
+
+        throw new IllegalArgumentException("no hay colisión");
+    }
+
+    /**
+     * Detecta si dos rectángulos se encuentran o no en colisión.
+     *
+     * @param r1 el primer rectángulo
+     * @param r2 el segundo rectángulo
+     * @return true si están en colisión o false de lo contrario
+     */
+    public static boolean enColision(Rectangulo r1, Rectangulo r2) {
+        double x1 = r1.x();
+        double x2 = r2.x();
+        double y1 = r1.y();
+        double y2 = r2.y();
+        double bordeIzquierdo1 = r1.bordeIzquierdo();
+        double bordeDerecho1 = r1.bordeDerecho();
+        double bordeSuperior1 = r1.bordeSuperior();
+        double bordeInferior1 = r1.bordeInferior();
+        double bordeIzquierdo2 = r2.bordeIzquierdo();
+        double bordeDerecho2 = r2.bordeDerecho();
+        double bordeSuperior2 = r2.bordeSuperior();
+        double bordeInferior2 = r2.bordeInferior();
+        return ((bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2) || (bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2))
+                && ((bordeSuperior1 <= bordeInferior2 && y1 >= y2) || (bordeInferior1 >= bordeSuperior2 && y1 <= y2));
+    }
+
+    public static double transformarX(double x, Mundo mundo, Entorno entorno){
+        Rectangulo rectanguloPrincesa = mundo.princesa().rectangulo();
+        double dx = entorno.ancho() / 2.0;
+        return x - rectanguloPrincesa.x() + dx;
+    }
+
+    public static double transformarY(double y, Mundo mundo, Entorno entorno){
+        Rectangulo rectanguloPrincesa = mundo.princesa().rectangulo();
+        double dy = entorno.alto() / 2.0;
+        return y - rectanguloPrincesa.y() + dy;
     }
 
     // El objeto Entorno que controla el tiempo y otros
@@ -34,11 +133,12 @@ public class Juego extends InterfaceJuego {
 
     // Variables y métodos propios de cada grupo
     // ...
-    private GeneradorId generadorId;
     private Mundo mundo;
 
     private boolean victoria;
     private boolean derrota;
+
+    private int idEnemigoActual;
 
     Juego() {
         // Inicializa el objeto entorno
@@ -47,7 +147,6 @@ public class Juego extends InterfaceJuego {
         // Inicializar lo que haga falta para el juego
         // ...
 
-        generadorId = new GeneradorId();
         victoria = false;
         derrota = false;
         double anchoPantalla = entorno.ancho();
@@ -61,7 +160,7 @@ public class Juego extends InterfaceJuego {
         Princesa princesa = new Princesa(0.0, 0.0, Princesa.anchoPrincesa, Princesa.altoPrincesa, imagenPrincesa, imagenCorazon);
         Image imagenJefeHaciaDerecha = cargarYEscalar("jefe_hacia_derecha.png", Jefe.anchoJefe, Jefe.altoJefe);
         Image imagenJefeHaciaIzquierda = cargarYEscalar("jefe_hacia_izquierda.png", Jefe.anchoJefe, Jefe.altoJefe);
-        Jefe jefe = new Jefe( 0, 0, Jefe.anchoJefe, Jefe.altoJefe, imagenJefeHaciaDerecha, imagenJefeHaciaIzquierda);
+        Jefe jefe = new Jefe(0, 0, Jefe.anchoJefe, Jefe.altoJefe, imagenJefeHaciaDerecha, imagenJefeHaciaIzquierda);
         Image imagenFondo = cargarYEscalar("fondo.png", anchoPantalla, altoPantalla);
         Fondo fondo = new Fondo(anchoPantalla / 2.0, altoPantalla / 2.0, imagenFondo);
         Image imagenCastillo = cargarYEscalar("castillo.png", Isla.anchoMinimo, Isla.anchoMinimo);
@@ -116,6 +215,7 @@ public class Juego extends InterfaceJuego {
         this.entorno.iniciar();
     }
 
+
     /**
      * Durante el juego, el método tick() será ejecutado en cada instante y
      * por lo tanto es el método más importante de esta clase. Aquí se debe
@@ -153,17 +253,12 @@ public class Juego extends InterfaceJuego {
             return;
         }
         if (mundo.faltanEnemigos()) {
-            int opcion = Juego.enteroRandom(0, 2);
             Enemigo enemigo;
-            switch (opcion) {
-                case 0:
-                    enemigo = Enemigo.nuevoEnemigoDerecha(generadorId, mundo, entorno);
-                    break;
-                case 1:
-                    enemigo = Enemigo.nuevoEnemigoIzquierda(generadorId, mundo, entorno);
-                    break;
-                default:
-                    throw new RuntimeException("error desconocido");
+
+            if(random.nextBoolean()){
+                enemigo = Enemigo.nuevoEnemigoDerecha(idEnemigoActual++, mundo, entorno);
+            } else {
+                enemigo = Enemigo.nuevoEnemigoIzquierda(idEnemigoActual++, mundo, entorno);
             }
 
             if (enemigo != null) {
@@ -183,24 +278,22 @@ public class Juego extends InterfaceJuego {
     }
 
     private void dibujarEnemigos() {
-        IteradorEnemigos iterador = mundo.iteradorEnemigos();
-        while (iterador.tieneOtro()) {
-            Enemigo enemigo = iterador.proximo();
+        Enemigo[] enemigos = mundo.enemigos();
+        for (Enemigo enemigo : enemigos) {
             enemigo.mover();
             enemigo.dibujar(entorno, mundo);
         }
     }
 
     private void colisionesIslas() {
-        IteradorIslas iterador = mundo.iteradorIslas();
         Princesa princesa = mundo.princesa();
         ProyectilPrincesa proyectil = mundo.proyectilPrincesa();
-        while (iterador.tieneOtro()) {
-            Isla isla = iterador.proximo();
-            if (Rectangulos.enColision(isla.rectangulo(), princesa.rectangulo())) {
+        Isla[] islas = mundo.islas();
+        for (Isla isla : islas) {
+            if (enColision(isla.rectangulo(), princesa.rectangulo())) {
                 isla.actuarSobrePrincesa(princesa);
             }
-            if (proyectil != null && Rectangulos.enColision(isla.rectangulo(), proyectil.rectangulo())) {
+            if (proyectil != null && enColision(isla.rectangulo(), proyectil.rectangulo())) {
                 isla.actuarSobreProyectilPrincesa(proyectil);
             }
             isla.dibujar(entorno, mundo);
@@ -214,7 +307,7 @@ public class Juego extends InterfaceJuego {
         }
 
         Princesa princesa = mundo.princesa();
-        if (Rectangulos.enColision(jefe.rectangulo(), princesa.rectangulo())) {
+        if (enColision(jefe.rectangulo(), princesa.rectangulo())) {
             princesa.recibirMensaje("morir");
         }
         jefe.mover();
@@ -227,31 +320,29 @@ public class Juego extends InterfaceJuego {
             return;
         }
         Jefe jefe = mundo.jefe();
-        if (jefe != null && Rectangulos.enColision(jefe.rectangulo(), proyectil.rectangulo())) {
+        if (jefe != null && enColision(jefe.rectangulo(), proyectil.rectangulo())) {
             mundo.establecerProyectilPrincesa(null);
             jefe.recibirMensaje("una vida menos");
-            // El dragon emite sonido cuando un
-            //proyectil lo colisiona
+            // El dragon emite sonido cuando un proyectil lo colisiona
             try {
                 Herramientas.play("recursos/dragon.wav");
-            }
-            catch (Exception error){
-            System.out.println ("No se puede reproducir sonido de dragon");
+            } catch (Exception error) {
+                System.out.println("No se puede reproducir sonido de dragon");
             }
         }
         proyectil = mundo.proyectilPrincesa();
-        if(proyectil == null){
+        if (proyectil == null) {
             return;
         }
         Enemigo[] enemigosEnColision = mundo.enemigosEnColision(proyectil.rectangulo());
-        if(enemigosEnColision.length > 0){
+        if (enemigosEnColision.length > 0) {
             mundo.establecerProyectilPrincesa(null);
         }
-        for (int i = 0; i < enemigosEnColision.length; i++) {
-            enemigosEnColision[i].recibirMensaje("morir");
+        for (Enemigo enemigo : enemigosEnColision) {
+            enemigo.recibirMensaje("morir");
         }
         proyectil = mundo.proyectilPrincesa();
-        if(proyectil == null){
+        if (proyectil == null) {
             return;
         }
         proyectil.mover();
@@ -263,23 +354,23 @@ public class Juego extends InterfaceJuego {
         if (princesa.vidas() <= 0) {
             derrota = true;
         }
-        if (princesa.y() > mundo.limitesMundo().alto()*2.5) {
-            //se agrega sonido cuando la princesa cae al vacio y pierde una vida
-            try{
-                Herramientas.play ("recursos/dragon2.wav");
-            }catch (Exception error){
+        if (princesa.y() > mundo.limitesMundo().alto() * 2.5) {
+            // se agrega sonido cuando la princesa cae al vacío y pierde una vida
+            try {
+                Herramientas.play("recursos/dragon2.wav");
+            } catch (Exception error) {
                 System.out.println("Princesa cae al vacio no funciona el sonido");
             }
             princesaCaeAlVacio();
         }
         Enemigo[] enemigosEnColision = mundo.enemigosEnColision(princesa.rectangulo());
-        for (int i = 0; i < enemigosEnColision.length; i++) {
-            enemigosEnColision[i].recibirMensaje("morir");
-            //la princesa emite sonido cuando le sacan vidas
-            try{
-                Herramientas.play ("recursos/PrincesaPierdeVidas.wav");
-            } catch (Exception error){
-                System.out.println ("Sonido de pierde vidas con enemigo");
+        for (Enemigo enemigo : enemigosEnColision) {
+            enemigo.recibirMensaje("morir");
+            // la princesa emite sonido cuando le sacan vidas
+            try {
+                Herramientas.play("recursos/PrincesaPierdeVidas.wav");
+            } catch (Exception error) {
+                System.out.println("Sonido de pierde vidas con enemigo");
             }
             princesa.recibirMensaje("una vida menos");
         }
@@ -287,31 +378,32 @@ public class Juego extends InterfaceJuego {
         princesa.dibujar(entorno);
     }
 
-    private void princesaCaeAlVacio(){
+    private void princesaCaeAlVacio() {
         Princesa princesa = mundo.princesa();
         princesa.recibirMensaje("una vida menos");
-        if(princesa.vidas() <= 0){
+        if (princesa.vidas() <= 0) {
             derrota = true;
             return;
         }
-        IteradorIslas iteradorIslas = mundo.iteradorIslas();
-        Isla islaMasCercana = iteradorIslas.proximo();
-        double deltaX = Math.abs(islaMasCercana.x() - princesa.x());
-        while(iteradorIslas.tieneOtro()){
-            Isla isla = iteradorIslas.proximo();
+
+        Isla islaMasCercana = null;
+        double deltaX = Double.POSITIVE_INFINITY;
+        Isla[] islas = mundo.islas();
+        for (Isla isla : islas) {
             double nuevoDeltaX = Math.abs(isla.x() - princesa.x());
-            if(nuevoDeltaX <= deltaX){
+            if (nuevoDeltaX <= deltaX) {
                 deltaX = nuevoDeltaX;
                 islaMasCercana = isla;
             }
         }
+        Objects.requireNonNull(islaMasCercana, "error fatal, no se ha encontrado una isla donde colocar a la princesa");
         princesa.trasladar(islaMasCercana.x(), islaMasCercana.y() - Isla.altoIsla / 2.0 - princesa.alto() / 2.0);
     }
 
     private void colisionesCastillo() {
         Princesa princesa = mundo.princesa();
         Castillo castillo = mundo.castillo();
-        if (Rectangulos.enColision(princesa.rectangulo(), castillo.rectangulo())) {
+        if (enColision(princesa.rectangulo(), castillo.rectangulo())) {
             victoria = true;
         }
         mundo.castillo().dibujar(entorno, mundo);

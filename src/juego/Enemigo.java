@@ -22,17 +22,17 @@ public class Enemigo {
 
     /**
      * Crea un nuevo enemigo que ingresa en pantalla por la derecha.
-     * @param generadorId el generador de identificadores únicos
+     * @param id el identificador único del enemigo
      * @param mundo el mundo
      * @param entorno el entorno
      * @return un nuevo enemigo por derecha
      */
-    public static Enemigo nuevoEnemigoDerecha(GeneradorId generadorId, Mundo mundo, Entorno entorno) {
+    public static Enemigo nuevoEnemigoDerecha(int id, Mundo mundo, Entorno entorno) {
         Princesa princesa = mundo.princesa();
-        Enemigo enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
+        Enemigo enemigo = enemigoAleatorio(id, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
         int intentos = 0;
         while (mundo.enemigosEnColision(enemigo.rectangulo()).length > 0) {
-            enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
+            enemigo = enemigoAleatorio(id, mundo, princesa.x() + entorno.ancho() / 2.0, Math.PI);
             if (intentos++ == 100) {
                 System.out.println("advertencia, no se pudo generar un enemigo");
                 return null;
@@ -43,17 +43,17 @@ public class Enemigo {
 
     /**
      * Crea un nuevo enemigo que ingresa en pantalla por la derecha.
-     * @param generadorId el generador de identificadores únicos
+     * @param id el identificador único del enemigo
      * @param mundo el mundo
      * @param entorno el entorno
      * @return un nuevo enemigo por izquierda
      */
-    public static Enemigo nuevoEnemigoIzquierda(GeneradorId generadorId, Mundo mundo, Entorno entorno) {
+    public static Enemigo nuevoEnemigoIzquierda(int id, Mundo mundo, Entorno entorno) {
         Princesa princesa = mundo.princesa();
-        Enemigo enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() - entorno.ancho() / 2.0,  0.0);
+        Enemigo enemigo = enemigoAleatorio(id, mundo, princesa.x() - entorno.ancho() / 2.0,  0.0);
         int intentos = 0;
         while (mundo.enemigosEnColision(enemigo.rectangulo()).length > 0) {
-            enemigo = enemigoAleatorio(generadorId, mundo, princesa.x() - entorno.ancho() / 2.0, 0.0);
+            enemigo = enemigoAleatorio(id, mundo, princesa.x() - entorno.ancho() / 2.0, 0.0);
             if (intentos++ == 100) {
                 System.out.println("advertencia, no se pudo generar un enemigo");
                 return null;
@@ -62,7 +62,7 @@ public class Enemigo {
         return enemigo;
     }
 
-    private static Enemigo enemigoAleatorio(GeneradorId generadorId, Mundo mundo, double x, double angulo) {
+    private static Enemigo enemigoAleatorio(int id, Mundo mundo, double x, double angulo) {
         double  altoMundo = mundo.limitesMundo().alto();
         double  alto = Isla.proporcionAlto * altoMundo;
         double  alturaMinima = Isla.proporcionAlturaMinima * altoMundo;
@@ -70,7 +70,7 @@ public class Enemigo {
         double  yMin = altoMundo - alturaMinima - alto;
         double  y = alturaAleatoria(Isla.niveles, yMin, yMax);
 
-        return new Enemigo(generadorId, x, y, anchoEnemigo, altoEnemigo, angulo, imagenEnemigo);
+        return new Enemigo(id, x, y, anchoEnemigo, altoEnemigo, angulo, imagenEnemigo);
     }
 
     private static double alturaAleatoria(int n, double yMin, double yMax) {
@@ -93,24 +93,14 @@ public class Enemigo {
     private double angulo;
     private boolean vivo = true;
 
-    /**
-     * Crea un nuevo enemigo.
-     * @param generadorId el generador de identificadores únicos
-     * @param x la coordenada x
-     * @param y la coordenada y
-     * @param ancho el ancho
-     * @param alto el alto
-     * @param angulo el ángulo
-     * @param enemigo la imagen del enemigo
-     */
-    Enemigo(GeneradorId generadorId, double x, double y, double ancho, double alto, double angulo, Image enemigo) {
+
+    Enemigo(int id, double x, double y, double ancho, double alto, double angulo, Image enemigo) {
         this.x = x;
         this.y = y;
         this.ancho = ancho;
         this.alto = alto;
         this.enemigo = enemigo;
-
-        id = generadorId.nuevoId();
+        this.id = id;
         velocidad = 1.0;
         this.angulo = angulo;
     }
@@ -129,9 +119,8 @@ public class Enemigo {
      * @param mundo el mundo
      */
     public void dibujar(Entorno entorno, Mundo mundo) {
-        Coordenadas coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
-        double x = coordenadasRelativas.x();
-        double y = coordenadasRelativas.y();
+        double x = Juego.transformarX(this.x, mundo, entorno);
+        double y = Juego.transformarY(this.y, mundo, entorno);
         entorno.dibujarImagen(enemigo, x, y, 0);
     }
 

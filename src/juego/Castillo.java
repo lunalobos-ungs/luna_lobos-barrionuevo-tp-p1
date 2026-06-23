@@ -39,9 +39,8 @@ public class Castillo {
      * @param mundo el mundo
      */
     public void dibujar(Entorno entorno, Mundo mundo){
-        Coordenadas coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
-        double x = coordenadasRelativas.x();
-        double y = coordenadasRelativas.y();
+        double x = Juego.transformarX(this.x, mundo, entorno);
+        double y = Juego.transformarY(this.y, mundo, entorno);
         entorno.dibujarImagen(castillo, x, y, 0);
     }
 
