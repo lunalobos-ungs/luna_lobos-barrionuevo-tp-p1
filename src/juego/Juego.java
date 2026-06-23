@@ -169,45 +169,61 @@ public class Juego extends InterfaceJuego {
 
         double cantidadIslasBajas = Isla.proporcionIslasBajas * mundo.limitesMundo().area();
         double cantidadIslasAltas = Isla.proporcionIslasAltas * mundo.limitesMundo().area();
-        int contador = 0;
-        while (contador < cantidadIslasBajas) {
-            Isla isla = Isla.nuevaNivelBajo(mundo);
-            if (isla == null) {
-                break;
-            }
-            mundo.agregarIsla(isla);
-            contador++;
-        }
-        contador = 0;
-        double xMin = mundo.limitesMundo().ancho();
-        double xMax = 0.0;
-        double yMin = mundo.limitesMundo().alto();
+        int contadorExcepciones = 0;
+
         Isla primeraIsla = null;
         Isla anteUltimaIsla = null;
         Isla ultimaIsla = null;
-        while (contador < cantidadIslasAltas) {
-            Isla isla = Isla.nuevaNivelAlto(mundo);
 
-            if (isla == null) {
+
+        while(contadorExcepciones < 1000){
+            try {
+                mundo.borrarIslas();
+                int contador = 0;
+                while (contador < cantidadIslasBajas) {
+                    Isla isla = Isla.nuevaNivelBajo(mundo);
+                    if (isla == null) {
+                        break;
+                    }
+                    mundo.agregarIsla(isla);
+                    contador++;
+                }
+                contador = 0;
+                double xMin = mundo.limitesMundo().ancho();
+                double xMax = 0.0;
+                double yMin = mundo.limitesMundo().alto();
+                while (contador < cantidadIslasAltas) {
+                    Isla isla = Isla.nuevaNivelAlto(mundo);
+
+                    if (isla == null) {
+                        break;
+                    }
+                    if (isla.x() < xMin) {
+                        xMin = isla.x();
+                        primeraIsla = isla;
+                    }
+                    if (isla.x() > xMax && isla.y() <= yMin) {
+                        xMax = isla.x();
+                        yMin = isla.y();
+                        anteUltimaIsla = ultimaIsla;
+                        ultimaIsla = isla;
+                    }
+
+                    mundo.agregarIsla(isla);
+                    contador++;
+                }
+                Objects.requireNonNull(primeraIsla, "no se ha encontrado una isla en la cual colocar a la princesa");
+                Objects.requireNonNull(anteUltimaIsla, "no se ha encontrado una isla en la cual colocar al jefe");
+                Objects.requireNonNull(ultimaIsla, "no se ha encontrado una isla en la cual colocar el castillo");
                 break;
+            } catch (NullPointerException e){
+                contadorExcepciones++;
             }
-            if (isla.x() < xMin) {
-                xMin = isla.x();
-                primeraIsla = isla;
-            }
-            if (isla.x() > xMax && isla.y() <= yMin) {
-                xMax = isla.x();
-                yMin = isla.y();
-                anteUltimaIsla = ultimaIsla;
-                ultimaIsla = isla;
-            }
-
-            mundo.agregarIsla(isla);
-            contador++;
         }
         Objects.requireNonNull(primeraIsla, "no se ha encontrado una isla en la cual colocar a la princesa");
         Objects.requireNonNull(anteUltimaIsla, "no se ha encontrado una isla en la cual colocar al jefe");
         Objects.requireNonNull(ultimaIsla, "no se ha encontrado una isla en la cual colocar el castillo");
+
         mundo.princesa().trasladar(primeraIsla.x(), primeraIsla.y() - Isla.altoIsla / 2.0 - mundo.princesa().alto() / 2.0);
         mundo.jefe().establecerIsla(anteUltimaIsla);
         mundo.castillo().trasladar(ultimaIsla.x(), ultimaIsla.y() - Isla.altoIsla / 2.0 - mundo.castillo().alto() / 2.0);
