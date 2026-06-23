@@ -3,7 +3,6 @@ package juego;
 import entorno.Entorno;
 
 import java.awt.*;
-import java.util.Random;
 
 /**
  * Representa una isla flotante del juego.
@@ -133,9 +132,8 @@ public class Isla {
      * @param mundo el mundo
      */
     public void dibujar(Entorno entorno, Mundo mundo) {
-        Coordenadas coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
-        double x = coordenadasRelativas.x();
-        double y = coordenadasRelativas.y();
+        double x = Juego.transformarX(this.x, mundo, entorno);
+        double y = Juego.transformarY(this.y, mundo, entorno);
         entorno.dibujarImagen(isla, x, y, 0);
     }
 
@@ -144,7 +142,7 @@ public class Isla {
      * @param princesa la princesa
      */
     public void actuarSobrePrincesa(Princesa princesa) {
-        String tipoDeColision = Rectangulos.tipoDeColision(princesa.rectangulo(), this.rectangulo());
+        String tipoDeColision = Juego.tipoDeColision(princesa.rectangulo(), this.rectangulo());
 
         switch (tipoDeColision) {
             case "desde arriba":
@@ -170,7 +168,7 @@ public class Isla {
      * @param proyectil el proyectil
      */
     public void actuarSobreProyectilPrincesa(ProyectilPrincesa proyectil) {
-        String tipoDeColision = Rectangulos.tipoDeColision(proyectil.rectangulo(), this.rectangulo());
+        String tipoDeColision = Juego.tipoDeColision(proyectil.rectangulo(), this.rectangulo());
         switch (tipoDeColision) {
             case "desde arriba":
                 proyectil.recibirMensaje("rebotar desde arriba");

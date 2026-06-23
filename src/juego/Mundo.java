@@ -123,7 +123,7 @@ public class Mundo {
         int contador = 0;
         for (int i = 0; i < largoIslas; i++) {
             Isla isla_ = islas[i];
-            if (Rectangulos.enColision(rectangulo, isla_.rectangulo())) {
+            if (Juego.enColision(rectangulo, isla_.rectangulo())) {
                 almacenador[contador++] = isla_;
             }
         }
@@ -138,7 +138,7 @@ public class Mundo {
         for (int i = 0; i < largoIslas; i++) {
             Isla isla = islas[i];
             Rectangulo frontera = isla.rectangulo().escalar(Isla.factorFronteraAncho, Isla.factorFronteraAlto);
-            if (Rectangulos.enColision(rectangulo, frontera)) {
+            if (Juego.enColision(rectangulo, frontera)) {
                 almacenador[contador++] = isla;
             }
         }
@@ -157,7 +157,7 @@ public class Mundo {
         int contador = 0;
         for (int i = 0; i < largoEnemigos; i++) {
             Enemigo enemigo = enemigos[i];
-            if (Rectangulos.enColision(rectangulo, enemigo.rectangulo())) {
+            if (Juego.enColision(rectangulo, enemigo.rectangulo())) {
                 almacenador[contador++] = enemigo;
             }
         }
@@ -244,7 +244,7 @@ public class Mundo {
         int i = 0;
         while (i < largoEnemigos) {
             Enemigo enemigo = enemigos[i];
-            if (!Rectangulos.enColision(enemigo.rectangulo(), limitesPantalla()) || enemigo.debeEliminarse()) {
+            if (!Juego.enColision(enemigo.rectangulo(), limitesPantalla()) || enemigo.debeEliminarse()) {
                 quitarEnemigo(enemigo);
             } else {
                 i++;
@@ -255,7 +255,7 @@ public class Mundo {
             jefe = null;
         }
 
-        if(proyectilPrincesa != null && !Rectangulos.enColision(proyectilPrincesa.rectangulo(), limitesPantalla())){
+        if(proyectilPrincesa != null && !Juego.enColision(proyectilPrincesa.rectangulo(), limitesPantalla())){
             proyectilPrincesa = null;
         }
     }
@@ -268,20 +268,17 @@ public class Mundo {
         this.proyectilPrincesa = proyectilPrincesa;
     }
 
-    /**
-     * Devuelve un iterador de islas.
-     * @return un iterador que recorre todas las islas del mundo
-     */
-    public IteradorIslas iteradorIslas(){
-        return new IteradorIslas(islas, largoIslas);
+
+    public Enemigo[] enemigos() {
+        Enemigo[] copiaEnemigos = new Enemigo[largoEnemigos];
+        System.arraycopy(enemigos, 0, copiaEnemigos, 0, largoEnemigos);
+        return copiaEnemigos;
     }
 
-    /**
-     * Devuelve un iterador de enemigos.
-     * @return un iterador que recorre todos los enemigos del mundo
-     */
-    public IteradorEnemigos iteradorEnemigos(){
-        return new IteradorEnemigos(enemigos, largoEnemigos);
+    public Isla[] islas() {
+        Isla[] copiaIslas = new Isla[largoIslas];
+        System.arraycopy(islas, 0, copiaIslas, 0, largoIslas);
+        return copiaIslas;
     }
 
     /**

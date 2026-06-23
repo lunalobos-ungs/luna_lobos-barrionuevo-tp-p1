@@ -73,9 +73,8 @@ public class Jefe {
      * @param mundo   el mundo
      */
     public void dibujar(Entorno entorno, Mundo mundo) {
-        Coordenadas coordenadasRelativas = Coordenadas.transformar(this.x, this.y, mundo, entorno);
-        double x = coordenadasRelativas.x();
-        double y = coordenadasRelativas.y();
+        double x = Juego.transformarX(this.x, mundo, entorno);
+        double y = Juego.transformarY(this.y, mundo, entorno);
         Rectangulo rectanguloRojo = new Rectangulo(x, y - alto / 2.0, 100, 10);
         double proporcion = vidas / 10.0;
         double diferencia = rectanguloRojo.ancho() - proporcion * 100;
