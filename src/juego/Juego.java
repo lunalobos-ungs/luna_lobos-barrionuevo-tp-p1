@@ -244,10 +244,10 @@ public class Juego extends InterfaceJuego {
         mundo.fondo().dibujar(entorno);
         if (victoria) {
             dibujarEnemigos();
-            colisionesIslas();
-            colisionesJefe();
-            colisionesProyectilPrincesa();
-            colisionesCastillo();
+            colisionesYDibujoIslas();
+            colisionesYDibujoJefe();
+            colisionesYDibujoProyectilPrincesa();
+            colisionesYDibujoCastillo();
             double x = mundo.princesa().x();
             double y = mundo.princesa().y();
             mundo.princesa().trasladar(x, y);
@@ -257,10 +257,10 @@ public class Juego extends InterfaceJuego {
         }
         if (derrota) {
             dibujarEnemigos();
-            colisionesIslas();
-            colisionesJefe();
-            colisionesProyectilPrincesa();
-            colisionesCastillo();
+            colisionesYDibujoIslas();
+            colisionesYDibujoJefe();
+            colisionesYDibujoProyectilPrincesa();
+            colisionesYDibujoCastillo();
             double x = mundo.princesa().x();
             double y = mundo.princesa().y();
             mundo.princesa().trasladar(x, y);
@@ -285,12 +285,12 @@ public class Juego extends InterfaceJuego {
         if (entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO) && mundo.proyectilPrincesa() == null) {
             mundo.princesa().disparar(mundo, entorno);
         }
-        colisionesIslas();
-        colisionesJefe();
-        colisionesProyectilPrincesa();
+        colisionesYDibujoIslas();
+        colisionesYDibujoJefe();
+        colisionesYDibujoProyectilPrincesa();
         dibujarEnemigos();
-        colisionesCastillo();
-        colisionesPrincesa();
+        colisionesYDibujoCastillo();
+        colisionesYDibujoPrincesa();
     }
 
     private void dibujarEnemigos() {
@@ -301,22 +301,53 @@ public class Juego extends InterfaceJuego {
         }
     }
 
-    private void colisionesIslas() {
+    private void colisionesYDibujoIslas() {
         Princesa princesa = mundo.princesa();
         ProyectilPrincesa proyectil = mundo.proyectilPrincesa();
         Isla[] islas = mundo.islas();
         for (Isla isla : islas) {
-            if (enColision(isla.rectangulo(), princesa.rectangulo())) {
-                isla.actuarSobrePrincesa(princesa);
+            Rectangulo rectanguloIsla = isla.rectangulo();
+            if (enColision(princesa.rectangulo(), rectanguloIsla)) {
+                String tipoDeColision = Juego.tipoDeColision(princesa.rectangulo(), rectanguloIsla);
+
+                switch (tipoDeColision) {
+                    case "desde arriba":
+                        princesa.trasladar(princesa.x(), rectanguloIsla.y() - rectanguloIsla.alto() / 2.0 - princesa.alto() / 2.0);
+                        princesa.enTierraFirme();
+                        break;
+                    case "desde abajo":
+                        princesa.chocarTecho();
+                        break;
+                    case "desde la derecha":
+                        princesa.chocarMuroPorDerecha();
+                        break;
+                    case "desde la izquierda":
+                        princesa.chocarMuroPorIzquierda();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("tipo de colisión " + tipoDeColision + " no válido");
+                }
             }
-            if (proyectil != null && enColision(isla.rectangulo(), proyectil.rectangulo())) {
-                isla.actuarSobreProyectilPrincesa(proyectil);
+            if (proyectil != null && enColision(proyectil.rectangulo(), rectanguloIsla)) {
+                String tipoDeColision = Juego.tipoDeColision(proyectil.rectangulo(), rectanguloIsla);
+                switch (tipoDeColision) {
+                    case "desde arriba":
+                    case "desde abajo":
+                        proyectil.reboteVertical();
+                        break;
+                    case "desde la derecha":
+                    case "desde la izquierda":
+                        proyectil.reboteHorizontal();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("tipo de colisión %s no soportado".formatted(tipoDeColision));
+                }
             }
             isla.dibujar(entorno, mundo);
         }
     }
 
-    private void colisionesJefe() {
+    private void colisionesYDibujoJefe() {
         Jefe jefe = mundo.jefe();
         if (jefe == null) {
             return;
@@ -324,13 +355,13 @@ public class Juego extends InterfaceJuego {
 
         Princesa princesa = mundo.princesa();
         if (enColision(jefe.rectangulo(), princesa.rectangulo())) {
-            princesa.recibirMensaje("morir");
+            princesa.morir();
         }
         jefe.mover();
         jefe.dibujar(entorno, mundo);
     }
 
-    private void colisionesProyectilPrincesa() {
+    private void colisionesYDibujoProyectilPrincesa() {
         ProyectilPrincesa proyectil = mundo.proyectilPrincesa();
         if (proyectil == null) {
             return;
@@ -338,8 +369,8 @@ public class Juego extends InterfaceJuego {
         Jefe jefe = mundo.jefe();
         if (jefe != null && enColision(jefe.rectangulo(), proyectil.rectangulo())) {
             mundo.establecerProyectilPrincesa(null);
-            jefe.recibirMensaje("una vida menos");
-            // El dragon emite sonido cuando un proyectil lo colisiona
+            jefe.pierdeUnaVida();
+            // El jefe emite sonido cuando un proyectil lo colisiona
             try {
                 Herramientas.play("recursos/dragon.wav");
             } catch (Exception error) {
@@ -355,7 +386,7 @@ public class Juego extends InterfaceJuego {
             mundo.establecerProyectilPrincesa(null);
         }
         for (Enemigo enemigo : enemigosEnColision) {
-            enemigo.recibirMensaje("morir");
+            enemigo.morir();
         }
         proyectil = mundo.proyectilPrincesa();
         if (proyectil == null) {
@@ -365,7 +396,7 @@ public class Juego extends InterfaceJuego {
         proyectil.dibujar(entorno, mundo);
     }
 
-    private void colisionesPrincesa() {
+    private void colisionesYDibujoPrincesa() {
         Princesa princesa = mundo.princesa();
         if (princesa.vidas() <= 0) {
             derrota = true;
@@ -381,14 +412,14 @@ public class Juego extends InterfaceJuego {
         }
         Enemigo[] enemigosEnColision = mundo.enemigosEnColision(princesa.rectangulo());
         for (Enemigo enemigo : enemigosEnColision) {
-            enemigo.recibirMensaje("morir");
+            enemigo.morir();
             // la princesa emite sonido cuando le sacan vidas
             try {
                 Herramientas.play("recursos/PrincesaPierdeVidas.wav");
             } catch (Exception error) {
                 System.out.println("Sonido de pierde vidas con enemigo");
             }
-            princesa.recibirMensaje("una vida menos");
+            princesa.pierdeUnaVida();
         }
         princesa.mover(entorno);
         princesa.dibujar(entorno);
@@ -396,7 +427,7 @@ public class Juego extends InterfaceJuego {
 
     private void princesaCaeAlVacio() {
         Princesa princesa = mundo.princesa();
-        princesa.recibirMensaje("una vida menos");
+        princesa.pierdeUnaVida();
         if (princesa.vidas() <= 0) {
             derrota = true;
             return;
@@ -416,7 +447,7 @@ public class Juego extends InterfaceJuego {
         princesa.trasladar(islaMasCercana.x(), islaMasCercana.y() - Isla.altoIsla / 2.0 - princesa.alto() / 2.0);
     }
 
-    private void colisionesCastillo() {
+    private void colisionesYDibujoCastillo() {
         Princesa princesa = mundo.princesa();
         Castillo castillo = mundo.castillo();
         if (enColision(princesa.rectangulo(), castillo.rectangulo())) {

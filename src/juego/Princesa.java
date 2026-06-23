@@ -194,46 +194,24 @@ public class Princesa {
         aceleracionGravitatoria = 10.0;
     }
 
-    /**
-     * Recibe mensajes.
-     * @param mensaje el mensaje
-     */
-    public void recibirMensaje(String mensaje) {
-
-        switch (mensaje) {
-            case "una vida menos": // :C
-                vidas--;
-                break;
-            case "estas en tierra firme":
-                enTierraFirme();
-                break;
-            case "chocaste con el techo":
-                chocarTecho();
-                break;
-            case "chocaste con un muro desde tu derecha":
-                chocarMuroPorDerecha();
-                break;
-            case "chocaste con un muro desde tu izquierda":
-                chocarMuroPorIzquierda();
-                break;
-            case "morir":
-                vidas = 0;
-                break;
-            default:
-                throw new IllegalArgumentException("así no se le habla a la princesa -> mensaje: " + mensaje);
-        }
+    public void pierdeUnaVida(){
+        vidas--;
     }
 
-    private void chocarMuroPorIzquierda() {
+    public void morir(){
+        vidas = 0;
+    }
+
+    public void chocarMuroPorIzquierda() {
         enSalto = false;
         xNoDecrece = true;
     }
 
-    private void chocarTecho() {
+    public void chocarTecho() {
         enSalto = false;
     }
 
-    private void chocarMuroPorDerecha() {
+    public void chocarMuroPorDerecha() {
         enSalto = false;
         xNoCrece = true;
     }
@@ -243,7 +221,7 @@ public class Princesa {
         velocidadCaidaLibre = 0.0;
     }
 
-    private void enTierraFirme() {
+    public void enTierraFirme() {
         aceleracionGravitatoria = 0.0;
         enSalto = false;
         marcaTemporalDeCaida = null;

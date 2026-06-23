@@ -60,26 +60,12 @@ public class ProyectilPrincesa {
         y += velocidad * sen;
     }
 
-    /**
-     * Recibe un mensaje.
-     *
-     * @param mensaje el mensaje
-     */
-    public void recibirMensaje(String mensaje) {
-        switch (mensaje) {
-            case "rebotar desde arriba":
-            case "rebotar desde abajo":
-                // la superficie de impacto es horizontal: se invierte la componente vertical
-                sen = -sen;
-                break;
-            case "rebotar desde la derecha":
-            case "rebotar desde la izquierda":
-                // la superficie de impacto es vertical: se invierte la componente horizontal
-                cos = -cos;
-                break;
-            default:
-                throw new IllegalArgumentException("el proyectil no entiende el mensaje %s".formatted(mensaje));
-        }
+    public void reboteVertical(){
+        sen = -sen;
+    }
+
+    public void reboteHorizontal(){
+        cos = -cos;
     }
 
     /**

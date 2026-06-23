@@ -131,14 +131,8 @@ public class Enemigo {
         x = x + velocidad * Math.cos(angulo);
     }
 
-    /**
-     * Recibe un mensaje.
-     * @param mensaje
-     */
-    public void recibirMensaje(String mensaje) {
-        if (mensaje.equals("morir")) {
-            vivo = false;
-        }
+    public void morir(){
+        vivo = false;
     }
 
     /**
