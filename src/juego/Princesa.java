@@ -1,10 +1,10 @@
 package juego;
 
 import entorno.Entorno;
+import entorno.Herramientas;
 
 import java.awt.*;
 import java.time.Instant;
-import entorno.Herramientas;
 
 /**
  * Personaje principal del juego.
@@ -36,12 +36,12 @@ public class Princesa {
      * Crea a la princesa en el centro horizontal de la pantalla e inicia la simulación
      * de caída libre.
      *
-     * @param x la coordenada x
-     * @param y la coordenada y
-     * @param ancho el ancho
-     * @param alto el alto
+     * @param x        la coordenada x
+     * @param y        la coordenada y
+     * @param ancho    el ancho
+     * @param alto     el alto
      * @param princesa la imagen de la princesa
-     * @param corazon la imagen del corazón
+     * @param corazon  la imagen del corazón
      */
     public Princesa(double x, double y, double ancho, double alto, Image princesa, Image corazon) {
         this.x = x;
@@ -74,6 +74,7 @@ public class Princesa {
 
     /**
      * La coordenada x.
+     *
      * @return la coordenada x
      */
     public double x() {
@@ -82,6 +83,7 @@ public class Princesa {
 
     /**
      * La coordenada y.
+     *
      * @return la coordenada y
      */
     public double y() {
@@ -90,6 +92,7 @@ public class Princesa {
 
     /**
      * El ancho.
+     *
      * @return el ancho
      */
     public double ancho() {
@@ -98,6 +101,7 @@ public class Princesa {
 
     /**
      * El alto.
+     *
      * @return el alto
      */
     public double alto() {
@@ -109,12 +113,7 @@ public class Princesa {
         double espacio = 5.0;
         for (int i = 0; i < vidas; i++) {
             double l = ladoCorazon * (i + 0.5) + (i + 1) * 5.0;
-            entorno.dibujarImagen(
-                    corazon,
-                    l, espacio + ladoCorazon / 2.0,
-                    0,
-                    1
-            );
+            entorno.dibujarImagen(corazon, l, espacio + ladoCorazon / 2.0, 0, 1);
         }
         double dx = entorno.ancho() / 2.0;
         double dy = entorno.alto() / 2.0;
@@ -123,6 +122,7 @@ public class Princesa {
 
     /**
      * Ejecuta el movimiento de la princesa.
+     *
      * @param entorno el entorno
      */
     public void mover(Entorno entorno) {
@@ -194,11 +194,11 @@ public class Princesa {
         aceleracionGravitatoria = 10.0;
     }
 
-    public void pierdeUnaVida(){
+    public void pierdeUnaVida() {
         vidas--;
     }
 
-    public void morir(){
+    public void morir() {
         vidas = 0;
     }
 
@@ -230,10 +230,11 @@ public class Princesa {
 
     /**
      * Dispara un proyectil.
-     * @param mundo el mundo
+     *
      * @param entorno el entorno
+     * @param juego   el juego
      */
-    public void disparar(Mundo mundo, Entorno entorno) {
+    public void disparar(Entorno entorno, Juego juego) {
         double mouseX = entorno.mouseX() + x - entorno.ancho() / 2.0;
         double mouseY = entorno.mouseY() + y - entorno.alto() / 2.0;
         double distanciaX = mouseX - x;
@@ -242,19 +243,17 @@ public class Princesa {
         double cos = (distanciaX) / distancia;
         double sin = (distanciaY) / distancia;
         ProyectilPrincesa proyectil = new ProyectilPrincesa(x, y, cos, sin);
-        // se agrega sonido cuando la princesa dispara
-        // se llamo a la clase de herramientas play
         try {
             Herramientas.play("recursos/sonidoPoder.wav");
+        } catch (Exception error) {
+            System.out.println("No se puede reproducir sonido");
         }
-        catch (Exception error){
-            System.out.println ("No se puede reproducir sonido");
-        }
-        mundo.establecerProyectilPrincesa(proyectil);
+        juego.establecerProyectilPrincesa(proyectil);
     }
 
     /**
      * El rectángulo de colisión
+     *
      * @return el rectángulo de colisión
      */
     public Rectangulo rectangulo() {

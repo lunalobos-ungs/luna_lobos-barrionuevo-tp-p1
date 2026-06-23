@@ -24,12 +24,12 @@ public class Isla {
     public static double proporcionIslasBajas = 10.0 / (800.0 * 600.0);
     public static double proporcionIslasAltas = 10.0 / (800.0 * 600.0);
 
-    private static Image crearImagenIsla(double ancho){
-        return  Juego.cargarYEscalar("isla.png", ancho, altoIsla);
+    private static Image crearImagenIsla(double ancho) {
+        return Juego.cargarYEscalar("isla.png", ancho, altoIsla);
     }
 
-    static double decimalRandom(double min, double max){
-        if(min > max){
+    static double decimalRandom(double min, double max) {
+        if (min > max) {
             throw new IllegalArgumentException("max debe ser mayor a min");
         }
         double rango = max - min;
@@ -62,7 +62,7 @@ public class Isla {
         return isla;
     }
 
-    private static Isla islaAleatoriaNivelBajo( Mundo mundo) {
+    private static Isla islaAleatoriaNivelBajo(Mundo mundo) {
         double anchoMundo = mundo.limitesMundo().ancho();
         double altoMundo = mundo.limitesMundo().alto();
         double alto = proporcionAlto * altoMundo;
@@ -79,7 +79,7 @@ public class Isla {
         return new Isla(x, y, anchoIslaNivelBajo, altoIsla, crearImagenIsla(anchoIslaNivelBajo));
     }
 
-    private static Isla islaAleatoriaNivelAlto( Mundo mundo) {
+    private static Isla islaAleatoriaNivelAlto(Mundo mundo) {
         double anchoMundo = mundo.limitesMundo().ancho();
         double altoMundo = mundo.limitesMundo().alto();
         double alto = proporcionAlto * altoMundo;
@@ -112,6 +112,7 @@ public class Isla {
 
     /**
      * La coordenada x.
+     *
      * @return la coordenada x
      */
     public double x() {
@@ -120,6 +121,7 @@ public class Isla {
 
     /**
      * La coordenada y.
+     *
      * @return la coordenada y
      */
     public double y() {
@@ -128,20 +130,22 @@ public class Isla {
 
     /**
      * Dibuja la isla.
-     * @param entorno el entorno
-     * @param mundo el mundo
+     *
+     * @param entorno  el entorno
+     * @param princesa la princesa
      */
-    public void dibujar(Entorno entorno, Mundo mundo) {
-        double x = Juego.transformarX(this.x, mundo, entorno);
-        double y = Juego.transformarY(this.y, mundo, entorno);
+    public void dibujar(Entorno entorno, Princesa princesa) {
+        double x = Juego.transformarX(this.x, princesa, entorno);
+        double y = Juego.transformarY(this.y, princesa, entorno);
         entorno.dibujarImagen(isla, x, y, 0);
     }
 
     /**
      * El rectángulo de colisión de la isla.
+     *
      * @return el rectángulo de colisión de la isla
      */
     public Rectangulo rectangulo() {
-    	return new Rectangulo(x,y,ancho,alto) ;
+        return new Rectangulo(x, y, ancho, alto);
     }
 }

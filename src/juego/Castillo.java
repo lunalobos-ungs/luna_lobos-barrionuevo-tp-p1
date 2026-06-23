@@ -18,13 +18,14 @@ public class Castillo {
 
     /**
      * Crea un nuevo castillo.
-     * @param x la coordenada x
-     * @param y la coordenada y
-     * @param ancho el ancho
-     * @param alto el alto
+     *
+     * @param x        la coordenada x
+     * @param y        la coordenada y
+     * @param ancho    el ancho
+     * @param alto     el alto
      * @param castillo la imagen del castillo
      */
-    public Castillo(double x, double y, double ancho, double alto, Image castillo){
+    public Castillo(double x, double y, double ancho, double alto, Image castillo) {
         this.x = x;
         this.y = y;
         this.ancho = ancho;
@@ -35,30 +36,32 @@ public class Castillo {
 
     /**
      * Dibuja el castillo.
-     * @param entorno el entorno
-     * @param mundo el mundo
+     *
+     * @param entorno  el entorno
+     * @param princesa la princesa
      */
-    public void dibujar(Entorno entorno, Mundo mundo){
-        double x = Juego.transformarX(this.x, mundo, entorno);
-        double y = Juego.transformarY(this.y, mundo, entorno);
+    public void dibujar(Entorno entorno, Princesa princesa) {
+        double x = Juego.transformarX(this.x, princesa, entorno);
+        double y = Juego.transformarY(this.y, princesa, entorno);
         entorno.dibujarImagen(castillo, x, y, 0);
     }
 
     /**
      * Traslada el castillo a nuevo punto x, y.
+     *
      * @param x la coordenada x
      * @param y la coordenada y
      */
-    public void trasladar(double x, double y){
+    public void trasladar(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public double alto(){
+    public double alto() {
         return alto;
     }
 
-    public Rectangulo rectangulo(){
+    public Rectangulo rectangulo() {
         return new Rectangulo(x, y, ancho * 0.2, alto);
     }
 }
