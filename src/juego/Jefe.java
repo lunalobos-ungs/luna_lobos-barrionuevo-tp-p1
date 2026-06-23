@@ -96,15 +96,8 @@ public class Jefe {
         x += velocidad * cos;
     }
 
-    /**
-     * Recibe mensajes.
-     *
-     * @param mensaje el mensaje
-     */
-    public void recibirMensaje(String mensaje) {
-        if (mensaje.equals("una vida menos")) {
-            vidas--;
-        }
+    public void pierdeUnaVida(){
+        vidas--;
     }
 
     /**
