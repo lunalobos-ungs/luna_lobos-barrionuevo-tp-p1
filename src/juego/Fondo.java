@@ -11,14 +11,15 @@ import java.awt.*;
  * @author Noelia Barrionuevo
  */
 public class Fondo {
-    private  double x;
-    private  double y;
-    private  Image fondo;
+    private double x;
+    private double y;
+    private Image fondo;
 
     /**
      * Crea un nuevo fondo.
-     * @param x la coordenada x
-     * @param y la coordenada y
+     *
+     * @param x     la coordenada x
+     * @param y     la coordenada y
      * @param fondo la imagen del fondo
      */
     public Fondo(double x, double y, Image fondo) {
@@ -29,6 +30,7 @@ public class Fondo {
 
     /**
      * Dibuja el fondo.
+     *
      * @param entorno el entorno
      */
     public void dibujar(Entorno entorno) {

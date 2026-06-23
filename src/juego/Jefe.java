@@ -40,7 +40,7 @@ public class Jefe {
         vidas = 10;
     }
 
-    public void establecerIsla(Isla isla){
+    public void establecerIsla(Isla isla) {
         this.isla = isla;
         this.x = isla.x();
         this.y = isla.y() - alto / 2.0 - Isla.altoIsla / 2.0;
@@ -62,19 +62,19 @@ public class Jefe {
         return alto;
     }
 
-    public int vidas(){
+    public int vidas() {
         return vidas;
     }
 
     /**
      * Dibuja al jefe.
      *
-     * @param entorno el entorno
-     * @param mundo   el mundo
+     * @param entorno  el entorno
+     * @param princesa la princesa
      */
-    public void dibujar(Entorno entorno, Mundo mundo) {
-        double x = Juego.transformarX(this.x, mundo, entorno);
-        double y = Juego.transformarY(this.y, mundo, entorno);
+    public void dibujar(Entorno entorno, Princesa princesa) {
+        double x = Juego.transformarX(this.x, princesa, entorno);
+        double y = Juego.transformarY(this.y, princesa, entorno);
         Rectangulo rectanguloRojo = new Rectangulo(x, y - alto / 2.0, 100, 10);
         double proporcion = vidas / 10.0;
         double diferencia = rectanguloRojo.ancho() - proporcion * 100;
@@ -85,9 +85,9 @@ public class Jefe {
     }
 
     public void mover() {
-        if(x <= isla.rectangulo().bordeIzquierdo() || x >= isla.rectangulo().bordeDerecho()){
+        if (x <= isla.rectangulo().bordeIzquierdo() || x >= isla.rectangulo().bordeDerecho()) {
             cos = -cos;
-            if(cos < 0){
+            if (cos < 0) {
                 jefe = jefeHaciaIzquierda;
             } else {
                 jefe = jefeHaciaDerecha;
@@ -96,12 +96,13 @@ public class Jefe {
         x += velocidad * cos;
     }
 
-    public void pierdeUnaVida(){
+    public void pierdeUnaVida() {
         vidas--;
     }
 
     /**
      * El rectángulo de colisión.
+     *
      * @return el rectángulo de colisión
      */
     public Rectangulo rectangulo() {

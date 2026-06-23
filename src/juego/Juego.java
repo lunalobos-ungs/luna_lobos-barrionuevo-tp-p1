@@ -112,18 +112,17 @@ public class Juego extends InterfaceJuego {
         double bordeDerecho2 = r2.bordeDerecho();
         double bordeSuperior2 = r2.bordeSuperior();
         double bordeInferior2 = r2.bordeInferior();
-        return ((bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2) || (bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2))
-                && ((bordeSuperior1 <= bordeInferior2 && y1 >= y2) || (bordeInferior1 >= bordeSuperior2 && y1 <= y2));
+        return ((bordeDerecho1 >= bordeIzquierdo2 && x1 <= x2) || (bordeIzquierdo1 <= bordeDerecho2 && x1 >= x2)) && ((bordeSuperior1 <= bordeInferior2 && y1 >= y2) || (bordeInferior1 >= bordeSuperior2 && y1 <= y2));
     }
 
-    public static double transformarX(double x, Mundo mundo, Entorno entorno){
-        Rectangulo rectanguloPrincesa = mundo.princesa().rectangulo();
+    public static double transformarX(double x, Princesa princesa, Entorno entorno) {
+        Rectangulo rectanguloPrincesa = princesa.rectangulo();
         double dx = entorno.ancho() / 2.0;
         return x - rectanguloPrincesa.x() + dx;
     }
 
-    public static double transformarY(double y, Mundo mundo, Entorno entorno){
-        Rectangulo rectanguloPrincesa = mundo.princesa().rectangulo();
+    public static double transformarY(double y, Princesa princesa, Entorno entorno) {
+        Rectangulo rectanguloPrincesa = princesa.rectangulo();
         double dy = entorno.alto() / 2.0;
         return y - rectanguloPrincesa.y() + dy;
     }
@@ -135,6 +134,14 @@ public class Juego extends InterfaceJuego {
     // ...
     private Mundo mundo;
 
+    private Princesa princesa;
+
+    private Jefe jefe;
+
+    private Enemigo[] enemigos;
+    private int largoEnemigos;
+
+    private ProyectilPrincesa proyectilPrincesa;
     private boolean victoria;
     private boolean derrota;
 
@@ -146,7 +153,6 @@ public class Juego extends InterfaceJuego {
 
         // Inicializar lo que haga falta para el juego
         // ...
-
         victoria = false;
         derrota = false;
         double anchoPantalla = entorno.ancho();
@@ -157,16 +163,17 @@ public class Juego extends InterfaceJuego {
         Rectangulo limitesMundo = new Rectangulo(anchoMundo / 2.0, altoMundo / 2.0, anchoMundo, altoMundo);
         Image imagenPrincesa = cargarYEscalar("princesa.png", Princesa.anchoPrincesa, Princesa.altoPrincesa);
         Image imagenCorazon = cargarYEscalar("corazon.png", Princesa.ladoCorazon, Princesa.ladoCorazon);
-        Princesa princesa = new Princesa(0.0, 0.0, Princesa.anchoPrincesa, Princesa.altoPrincesa, imagenPrincesa, imagenCorazon);
+        princesa = new Princesa(0.0, 0.0, Princesa.anchoPrincesa, Princesa.altoPrincesa, imagenPrincesa, imagenCorazon);
         Image imagenJefeHaciaDerecha = cargarYEscalar("jefe_hacia_derecha.png", Jefe.anchoJefe, Jefe.altoJefe);
         Image imagenJefeHaciaIzquierda = cargarYEscalar("jefe_hacia_izquierda.png", Jefe.anchoJefe, Jefe.altoJefe);
-        Jefe jefe = new Jefe(0, 0, Jefe.anchoJefe, Jefe.altoJefe, imagenJefeHaciaDerecha, imagenJefeHaciaIzquierda);
+        jefe = new Jefe(0, 0, Jefe.anchoJefe, Jefe.altoJefe, imagenJefeHaciaDerecha, imagenJefeHaciaIzquierda);
         Image imagenFondo = cargarYEscalar("fondo.png", anchoPantalla, altoPantalla);
         Fondo fondo = new Fondo(anchoPantalla / 2.0, altoPantalla / 2.0, imagenFondo);
         Image imagenCastillo = cargarYEscalar("castillo.png", Isla.anchoMinimo, Isla.anchoMinimo);
         Castillo castillo = new Castillo(0.0, 0.0, Isla.anchoMinimo, Isla.anchoMinimo, imagenCastillo);
-        mundo = new Mundo(limitesPantalla, limitesMundo, princesa, jefe, fondo, castillo);
-
+        mundo = new Mundo(limitesPantalla, limitesMundo, fondo, castillo);
+        enemigos = new Enemigo[10];
+        largoEnemigos = 0;
         double cantidadIslasBajas = Isla.proporcionIslasBajas * mundo.limitesMundo().area();
         double cantidadIslasAltas = Isla.proporcionIslasAltas * mundo.limitesMundo().area();
         int contadorExcepciones = 0;
@@ -175,8 +182,7 @@ public class Juego extends InterfaceJuego {
         Isla anteUltimaIsla = null;
         Isla ultimaIsla = null;
 
-
-        while(contadorExcepciones < 1000){
+        while (contadorExcepciones < 1000) {
             try {
                 mundo.borrarIslas();
                 int contador = 0;
@@ -216,7 +222,7 @@ public class Juego extends InterfaceJuego {
                 Objects.requireNonNull(anteUltimaIsla, "no se ha encontrado una isla en la cual colocar al jefe");
                 Objects.requireNonNull(ultimaIsla, "no se ha encontrado una isla en la cual colocar el castillo");
                 break;
-            } catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 contadorExcepciones++;
             }
         }
@@ -224,8 +230,8 @@ public class Juego extends InterfaceJuego {
         Objects.requireNonNull(anteUltimaIsla, "no se ha encontrado una isla en la cual colocar al jefe");
         Objects.requireNonNull(ultimaIsla, "no se ha encontrado una isla en la cual colocar el castillo");
 
-        mundo.princesa().trasladar(primeraIsla.x(), primeraIsla.y() - Isla.altoIsla / 2.0 - mundo.princesa().alto() / 2.0);
-        mundo.jefe().establecerIsla(anteUltimaIsla);
+        princesa.trasladar(primeraIsla.x(), primeraIsla.y() - Isla.altoIsla / 2.0 - princesa.alto() / 2.0);
+        jefe.establecerIsla(anteUltimaIsla);
         mundo.castillo().trasladar(ultimaIsla.x(), ultimaIsla.y() - Isla.altoIsla / 2.0 - mundo.castillo().alto() / 2.0);
         // Inicia el juego!
         this.entorno.iniciar();
@@ -248,9 +254,9 @@ public class Juego extends InterfaceJuego {
             colisionesYDibujoJefe();
             colisionesYDibujoProyectilPrincesa();
             colisionesYDibujoCastillo();
-            double x = mundo.princesa().x();
-            double y = mundo.princesa().y();
-            mundo.princesa().trasladar(x, y);
+            double x = princesa.x();
+            double y = princesa.y();
+            princesa.trasladar(x, y);
             entorno.cambiarFont("Arial", 72, Color.BLUE);
             entorno.escribirTexto("¡Ganaste!", entorno.ancho() / 2.0 - 160, entorno.alto() / 2.0);
             return;
@@ -261,29 +267,46 @@ public class Juego extends InterfaceJuego {
             colisionesYDibujoJefe();
             colisionesYDibujoProyectilPrincesa();
             colisionesYDibujoCastillo();
-            double x = mundo.princesa().x();
-            double y = mundo.princesa().y();
-            mundo.princesa().trasladar(x, y);
+            double x = princesa.x();
+            double y = princesa.y();
+            princesa.trasladar(x, y);
             entorno.cambiarFont("Arial", 72, Color.RED);
             entorno.escribirTexto("Perdiste", entorno.ancho() / 2.0 - 150, entorno.alto() / 2.0);
             return;
         }
-        if (mundo.faltanEnemigos()) {
+
+        if (faltanEnemigos()) {
             Enemigo enemigo;
 
-            if(random.nextBoolean()){
-                enemigo = Enemigo.nuevoEnemigoDerecha(idEnemigoActual++, mundo, entorno);
+            if (random.nextBoolean()) {
+                enemigo = Enemigo.nuevoEnemigoDerecha(idEnemigoActual++, princesa, mundo, entorno, this);
             } else {
-                enemigo = Enemigo.nuevoEnemigoIzquierda(idEnemigoActual++, mundo, entorno);
+                enemigo = Enemigo.nuevoEnemigoIzquierda(idEnemigoActual++, princesa, mundo, entorno, this);
             }
 
             if (enemigo != null) {
-                mundo.agregarEnemigo(enemigo);
+                agregarEnemigo(enemigo);
             }
         }
-        mundo.purgar(); // eliminamos a aquellos que se salen del mundo
-        if (entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO) && mundo.proyectilPrincesa() == null) {
-            mundo.princesa().disparar(mundo, entorno);
+
+        int i = 0;
+        while (i < largoEnemigos) {
+            Enemigo enemigo = enemigos[i];
+            if (!Juego.enColision(enemigo.rectangulo(), mundo.limitesPantalla(princesa)) || enemigo.debeEliminarse()) {
+                quitarEnemigo(enemigo);
+            } else {
+                i++;
+            }
+        }
+        if (jefe != null && jefe.vidas() <= 0) {
+            jefe = null;
+        }
+        if (proyectilPrincesa != null && !Juego.enColision(proyectilPrincesa.rectangulo(), mundo.limitesPantalla(princesa))) {
+            proyectilPrincesa = null;
+        }
+
+        if (entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO) && proyectilPrincesa == null) {
+            princesa.disparar(entorno, this);
         }
         colisionesYDibujoIslas();
         colisionesYDibujoJefe();
@@ -293,17 +316,83 @@ public class Juego extends InterfaceJuego {
         colisionesYDibujoPrincesa();
     }
 
+    public boolean faltanEnemigos() {
+        return largoEnemigos < Enemigo.minimoEnemigos;
+    }
+
+    public void agregarEnemigo(Enemigo enemigo) {
+        if (largoEnemigos == enemigos.length) {
+            Enemigo[] nuevoArray = new Enemigo[enemigos.length * 2];
+            System.arraycopy(enemigos, 0, nuevoArray, 0, enemigos.length);
+            enemigos = nuevoArray;
+        }
+        enemigos[largoEnemigos++] = enemigo;
+    }
+
+    public void quitarEnemigo(Enemigo enemigo) {
+        int indice = indiceDeEnemigo(enemigo);
+        if (indice >= 0) {
+            for (int i = indice; i < largoEnemigos - 1; i++) {
+                enemigos[i] = enemigos[i + 1];
+            }
+            enemigos[largoEnemigos - 1] = null;
+            largoEnemigos--;
+        }
+    }
+
+    private int indiceDeEnemigo(Enemigo enemigo) {
+        int indiceMinimo = 0;
+        int indiceMaximo = largoEnemigos - 1;
+        while (indiceMinimo <= indiceMaximo) {
+            int indiceIntermedio = (indiceMinimo + indiceMaximo) / 2;
+            Enemigo elementoIntermedio = enemigos[indiceIntermedio];
+            int comparacion = compararEnemigos(elementoIntermedio, enemigo);
+
+            if (comparacion < 0) {
+                indiceMinimo = indiceIntermedio + 1;
+            } else if (comparacion > 0) {
+                indiceMaximo = indiceIntermedio - 1;
+            } else {
+                return indiceIntermedio; // Encontrado (comparacion == 0)
+            }
+        }
+        return -(indiceMinimo + 1);
+    }
+
+    private int compararEnemigos(Enemigo enemigo1, Enemigo enemigo2) {
+        if (enemigo1.id() < enemigo2.id()) {
+            return -1;
+        } else if (enemigo1.id() == enemigo2.id()) {
+            return 0; // esta condición nunca debería ocurrir porque los ids son únicos
+        } else {
+            return 1;
+        }
+    }
+
+    public Enemigo[] enemigosEnColision(Rectangulo rectangulo) {
+        Enemigo[] almacenador = new Enemigo[largoEnemigos];
+        int contador = 0;
+        for (int i = 0; i < largoEnemigos; i++) {
+            Enemigo enemigo = enemigos[i];
+            if (Juego.enColision(rectangulo, enemigo.rectangulo())) {
+                almacenador[contador++] = enemigo;
+            }
+        }
+        Enemigo[] salida = new Enemigo[contador];
+        System.arraycopy(almacenador, 0, salida, 0, contador);
+        return salida;
+    }
+
     private void dibujarEnemigos() {
-        Enemigo[] enemigos = mundo.enemigos();
-        for (Enemigo enemigo : enemigos) {
+        for (int i = 0; i < largoEnemigos; i++) {
+            Enemigo enemigo = enemigos[i];
             enemigo.mover();
-            enemigo.dibujar(entorno, mundo);
+            enemigo.dibujar(entorno, princesa);
         }
     }
 
     private void colisionesYDibujoIslas() {
-        Princesa princesa = mundo.princesa();
-        ProyectilPrincesa proyectil = mundo.proyectilPrincesa();
+        ProyectilPrincesa proyectil = proyectilPrincesa;
         Isla[] islas = mundo.islas();
         for (Isla isla : islas) {
             Rectangulo rectanguloIsla = isla.rectangulo();
@@ -343,32 +432,30 @@ public class Juego extends InterfaceJuego {
                         throw new IllegalArgumentException("tipo de colisión %s no soportado".formatted(tipoDeColision));
                 }
             }
-            isla.dibujar(entorno, mundo);
+            isla.dibujar(entorno, princesa);
         }
     }
 
     private void colisionesYDibujoJefe() {
-        Jefe jefe = mundo.jefe();
+        if (jefe != null && jefe.vidas() <= 0) {
+            jefe = null;
+        }
         if (jefe == null) {
             return;
         }
-
-        Princesa princesa = mundo.princesa();
         if (enColision(jefe.rectangulo(), princesa.rectangulo())) {
             princesa.morir();
         }
         jefe.mover();
-        jefe.dibujar(entorno, mundo);
+        jefe.dibujar(entorno, princesa);
     }
 
     private void colisionesYDibujoProyectilPrincesa() {
-        ProyectilPrincesa proyectil = mundo.proyectilPrincesa();
-        if (proyectil == null) {
+        if (proyectilPrincesa == null) {
             return;
         }
-        Jefe jefe = mundo.jefe();
-        if (jefe != null && enColision(jefe.rectangulo(), proyectil.rectangulo())) {
-            mundo.establecerProyectilPrincesa(null);
+        if (jefe != null && enColision(jefe.rectangulo(), proyectilPrincesa.rectangulo())) {
+            proyectilPrincesa = null;
             jefe.pierdeUnaVida();
             // El jefe emite sonido cuando un proyectil lo colisiona
             try {
@@ -376,28 +463,23 @@ public class Juego extends InterfaceJuego {
             } catch (Exception error) {
                 System.out.println("No se puede reproducir sonido de dragon");
             }
-        }
-        proyectil = mundo.proyectilPrincesa();
-        if (proyectil == null) {
             return;
         }
-        Enemigo[] enemigosEnColision = mundo.enemigosEnColision(proyectil.rectangulo());
+
+        Enemigo[] enemigosEnColision = enemigosEnColision(proyectilPrincesa.rectangulo());
         if (enemigosEnColision.length > 0) {
-            mundo.establecerProyectilPrincesa(null);
-        }
-        for (Enemigo enemigo : enemigosEnColision) {
-            enemigo.morir();
-        }
-        proyectil = mundo.proyectilPrincesa();
-        if (proyectil == null) {
+            proyectilPrincesa = null;
+            for (Enemigo enemigo : enemigosEnColision) {
+                enemigo.morir();
+            }
             return;
         }
-        proyectil.mover();
-        proyectil.dibujar(entorno, mundo);
+
+        proyectilPrincesa.mover();
+        proyectilPrincesa.dibujar(entorno, princesa);
     }
 
     private void colisionesYDibujoPrincesa() {
-        Princesa princesa = mundo.princesa();
         if (princesa.vidas() <= 0) {
             derrota = true;
         }
@@ -410,7 +492,7 @@ public class Juego extends InterfaceJuego {
             }
             princesaCaeAlVacio();
         }
-        Enemigo[] enemigosEnColision = mundo.enemigosEnColision(princesa.rectangulo());
+        Enemigo[] enemigosEnColision = enemigosEnColision(princesa.rectangulo());
         for (Enemigo enemigo : enemigosEnColision) {
             enemigo.morir();
             // la princesa emite sonido cuando le sacan vidas
@@ -426,7 +508,6 @@ public class Juego extends InterfaceJuego {
     }
 
     private void princesaCaeAlVacio() {
-        Princesa princesa = mundo.princesa();
         princesa.pierdeUnaVida();
         if (princesa.vidas() <= 0) {
             derrota = true;
@@ -448,16 +529,19 @@ public class Juego extends InterfaceJuego {
     }
 
     private void colisionesYDibujoCastillo() {
-        Princesa princesa = mundo.princesa();
         Castillo castillo = mundo.castillo();
         if (enColision(princesa.rectangulo(), castillo.rectangulo())) {
             victoria = true;
         }
-        mundo.castillo().dibujar(entorno, mundo);
+        mundo.castillo().dibujar(entorno, princesa);
     }
 
     @SuppressWarnings("unused")
     public static void main(String[] args) {
         Juego juego = new Juego();
+    }
+
+    public void establecerProyectilPrincesa(ProyectilPrincesa proyectil) {
+        proyectilPrincesa = proyectil;
     }
 }

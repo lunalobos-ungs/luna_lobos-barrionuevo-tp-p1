@@ -43,12 +43,12 @@ public class ProyectilPrincesa {
     /**
      * Dibuja el proyectil.
      *
-     * @param entorno el entorno
-     * @param mundo   el mundo
+     * @param entorno  el entorno
+     * @param princesa la princesa
      */
-    public void dibujar(Entorno entorno, Mundo mundo) {
-        double x = Juego.transformarX(this.x, mundo, entorno);
-        double y = Juego.transformarY(this.y, mundo, entorno);
+    public void dibujar(Entorno entorno, Princesa princesa) {
+        double x = Juego.transformarX(this.x, princesa, entorno);
+        double y = Juego.transformarY(this.y, princesa, entorno);
         entorno.dibujarImagen(proyectil, x, y, 0);
     }
 
@@ -60,19 +60,20 @@ public class ProyectilPrincesa {
         y += velocidad * sen;
     }
 
-    public void reboteVertical(){
+    public void reboteVertical() {
         sen = -sen;
     }
 
-    public void reboteHorizontal(){
+    public void reboteHorizontal() {
         cos = -cos;
     }
 
     /**
      * El rectángulo de colisión.
+     *
      * @return el rectángulo de colisión
      */
     public Rectangulo rectangulo() {
-        return new Rectangulo (x,y,ancho,alto);
+        return new Rectangulo(x, y, ancho, alto);
     }
 }

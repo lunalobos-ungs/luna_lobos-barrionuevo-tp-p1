@@ -83,9 +83,10 @@ public class Rectangulo {
 
     /**
      * Devuelve el área del rectángulo.
+     *
      * @return el área del rectángulo
      */
-    public double area(){
+    public double area() {
         return ancho() * alto();
     }
 }
